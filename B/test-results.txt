@@ -1,0 +1,3 @@
+Score: 10 out of 40
+"Test Output:"
+file '/course/cs4500f22/ta/github/yanda1928-josuma26/./B/xcollects' does not exist
