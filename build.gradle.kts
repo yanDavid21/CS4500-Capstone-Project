@@ -31,7 +31,7 @@ tasks.jar {
     }
 
     from(configurations.compileClasspath.get().map { if (it.isDirectory()) it else zipTree(it) })
-    destinationDirectory.set(File("src/main/kotlin/C/Other"))
+    destinationDirectory.set(File("C/Other"))
 
 
 }
