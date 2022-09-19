@@ -52,6 +52,7 @@ fun jsonToAcceptableCharacter(json: List<CardinalCharacters>): JsonArray {
  * Reads JSON objects from STDIN, prints to STDOUT.
  */
 fun main(args: Array<String>) {
+
     val cardinalCharacters = mutableListOf<CardinalCharacters>()
 
     val text = InputStreamReader(System.`in`).readText()

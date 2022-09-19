@@ -3,6 +3,8 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 plugins {
     kotlin("jvm") version "1.7.10"
     kotlin("plugin.serialization") version "1.7.10"
+
+    id("org.openjfx.javafxplugin") version "0.0.13"
 }
 
 group = "org.example"
@@ -11,7 +13,7 @@ version = "1.0-SNAPSHOT"
 sourceSets {
     main {
         java {
-            srcDirs("C")
+            srcDirs("D")
         }
     }
 }
@@ -35,15 +37,20 @@ tasks.test {
 tasks.jar {
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
     manifest {
-        attributes["Main-Class"] = "C.Other.XJsonKt"
+        attributes["Main-Class"] = "D.Other.XGuiKt"
     }
 
     from(configurations.compileClasspath.get().map { if (it.isDirectory()) it else zipTree(it) })
-    destinationDirectory.set(File("C/Other"))
+    destinationDirectory.set(File("D/Other"))
 
 
 }
 
 tasks.withType<KotlinCompile> {
     kotlinOptions.jvmTarget = "11"
+}
+
+javafx {
+    version = "19"
+    modules = mutableListOf("javafx.controls", "javafx.fxml" )
 }
