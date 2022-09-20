@@ -9,7 +9,6 @@ import javafx.scene.layout.HBox
 import javafx.scene.layout.VBox
 import javafx.stage.Stage
 import java.io.InputStreamReader
-import java.io.Reader
 
 
 enum class AcceptableCharacter {
@@ -46,41 +45,20 @@ class Row(val characters: List<AcceptableCharacter>) {
     }
 }
 
-/**
- * Reads a series of well-formed JSON objects from the console and outputs a list of AcceptableCharacters
- */
-fun readFromConsole(reader: Reader):List<Row> {
-    val lines = reader.readText().split("\"")
-
-    val rows = mutableListOf<Row>()
-    lines.forEach { line ->
-        val chars = mutableListOf<AcceptableCharacter>()
-        line.forEach { char ->
-            if (AcceptableCharacter.isAcceptable(char)) {
-                chars.add(AcceptableCharacter.fromChar(char))
-            }
-        }
-        if (chars.isNotEmpty()) { rows.add(Row(chars)) }
-    }
-
-    return rows
-}
 
 fun main() {
 
-    val rows = readFromConsole(InputStreamReader(System.`in`))
+    val text = InputStreamReader(System.`in`).readText()
 
-    launch(GUI::class.java)
-    // TODO: draw(rows)
-    // print gui mouse click event coordinates to STD out
+    launch(GUI::class.java, text)
 }
 
-class GUI : Application() {
+class GUI: Application() {
 
-    private var rows: List<Row>
+    private var rows = listOf<Row>()
 
-    init {
-     rows = readFromConsole(InputStreamReader(System.`in`))
+    override fun `init`() {
+        rows = readFromConsole(parameters.raw[0])
     }
 
     override fun start(primaryStage: Stage) {
@@ -88,7 +66,7 @@ class GUI : Application() {
         val layout = VBox().apply {
             rows.forEach { row ->
                 val listOfLabels: Array<Node> = Array(row.characters.size) {
-                    Label(row.characters.get(it).toString())
+                    drawCharacter(row.characters[it])
                 }
                 children.add(HBox(*listOfLabels))
             }
@@ -97,5 +75,30 @@ class GUI : Application() {
             scene = Scene(layout)
             show()
         }
+    }
+
+    private fun drawCharacter(char: AcceptableCharacter): Node {
+        return Label(char.toString())
+    }
+
+    /**
+     * Reads a series of well-formed JSON objects and outputs a list of Rows, containing all acceptable characters
+     * for that row.
+     */
+    private fun readFromConsole(text: String):List<Row> {
+        val lines = text.split("\"")
+
+        val rows = mutableListOf<Row>()
+        lines.forEach { line ->
+            val chars = mutableListOf<AcceptableCharacter>()
+            line.forEach { char ->
+                if (AcceptableCharacter.isAcceptable(char)) {
+                    chars.add(AcceptableCharacter.fromChar(char))
+                }
+            }
+            if (chars.isNotEmpty()) { rows.add(Row(chars)) }
+        }
+
+        return rows
     }
 }
