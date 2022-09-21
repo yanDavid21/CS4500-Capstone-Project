@@ -31,6 +31,7 @@ dependencies {
 
     runtimeOnly("org.openjfx:javafx-graphics:18.0.2:linux")
     runtimeOnly("org.openjfx:javafx-controls:18.0.2:linux")
+    runtimeOnly("org.openjfx:javafx-fxml:18.0.2:linux")
 }
 
 tasks.test {
@@ -43,7 +44,7 @@ tasks.jar {
         attributes["Main-Class"] = "D.Other.XGuiKt"
     }
 
-    from(configurations.runtimeClasspath.get().map { if (it.isDirectory()) it else zipTree(it) })
+    from(configurations.compileClasspath.get().map { if (it.isDirectory()) it else zipTree(it) })
     destinationDirectory.set(File("D/Other"))
 }
 
