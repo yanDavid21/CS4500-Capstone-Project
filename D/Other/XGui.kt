@@ -41,7 +41,12 @@ class GUI : Application() {
     override fun start(primaryStage: Stage) {
         val layout = createScene()
 
-        layout.setOnMouseClicked(::handleClick)
+        layout.setOnMouseClicked {event ->
+            val x = event.sceneX
+            val y = event.sceneY
+            println(Json.encodeToJsonElement(arrayOf(x,y)))
+            Platform.exit()
+        }
 
         primaryStage.run {
             scene = Scene(layout)
@@ -71,10 +76,7 @@ class GUI : Application() {
      * Print the x and y coordinates of the mouse as JSON and end the program.
      */
     private fun handleClick(event: MouseEvent) {
-        val x = event.sceneX
-        val y = event.sceneY
-        println(Json.encodeToJsonElement(arrayOf(x,y)))
-        Platform.exit()
+
     }
 }
 
