@@ -28,13 +28,6 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.4.0")
 
     runtimeOnly("org.jetbrains.kotlin:kotlin-runtime:1.2.71")
-
-    runtimeOnly("org.openjfx:javafx-base:18.0.2:linux")
-    runtimeOnly("org.openjfx:javafx-graphics:18.0.2:linux")
-    runtimeOnly("org.openjfx:javafx-controls:18.0.2:linux")
-    runtimeOnly("org.openjfx:javafx-fxml:18.0.2:linux")
-    runtimeOnly("org.openjfx:javafx-media:18.0.2:linux")
-    runtimeOnly("org.openjfx:javafx-swing:18.0.2:linux")
 }
 
 tasks.test {
