@@ -2,7 +2,6 @@ package D.Other
 
 import Other.AcceptableCharacter
 import javafx.application.Application
-import javafx.application.Application.launch
 import javafx.application.Platform
 import javafx.scene.Node
 import javafx.scene.Parent
@@ -15,10 +14,22 @@ import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.encodeToJsonElement
 import java.io.InputStreamReader
 import java.io.Reader
+import javax.swing.JFrame
+import javax.swing.JLabel
 
 fun main() {
-    GUI.initialize()
-    launch(GUI::class.java)
+    //GUI.initialize()
+
+    javax.swing.SwingUtilities.invokeLater {
+        val frame = JFrame("Gello world")
+
+        frame.add(JLabel("hello"))
+
+        frame.pack()
+
+        frame.isVisible = true
+    }
+    //launch(GUI::class.java)
 }
 
 class GUI : Application() {
