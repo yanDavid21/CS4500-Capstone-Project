@@ -30,6 +30,7 @@ dependencies {
     runtimeOnly("org.jetbrains.kotlin:kotlin-runtime:1.2.71")
 
     runtimeOnly("org.openjfx:javafx-graphics:18.0.2:linux")
+    runtimeOnly("org.openjfx:javafx-controls:18.0.2:linux")
 }
 
 tasks.test {
