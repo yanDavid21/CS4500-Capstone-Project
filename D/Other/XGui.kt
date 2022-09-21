@@ -11,8 +11,6 @@ import javafx.scene.input.MouseEvent
 import javafx.scene.layout.HBox
 import javafx.scene.layout.VBox
 import javafx.stage.Stage
-import kotlinx.serialization.json.Json
-import kotlinx.serialization.json.encodeToJsonElement
 import java.io.InputStreamReader
 import java.io.Reader
 
@@ -41,12 +39,7 @@ class GUI : Application() {
     override fun start(primaryStage: Stage) {
         val layout = createScene()
 
-        layout.setOnMouseClicked {event ->
-            val x = event.sceneX
-            val y = event.sceneY
-            println(Json.encodeToJsonElement(arrayOf(x,y)))
-            Platform.exit()
-        }
+        layout.setOnMouseClicked(::handleClick)
 
         primaryStage.run {
             scene = Scene(layout)
@@ -76,7 +69,11 @@ class GUI : Application() {
      * Print the x and y coordinates of the mouse as JSON and end the program.
      */
     private fun handleClick(event: MouseEvent) {
-
+        val x = event.sceneX
+        val y = event.sceneY
+        println(x + y)
+        //println(Json.encodeToJsonElement(arrayOf(x,y)))
+        Platform.exit()
     }
 }
 
