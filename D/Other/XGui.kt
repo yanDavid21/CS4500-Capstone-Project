@@ -1,88 +1,78 @@
 package D.Other
 
+import Other.AcceptableCharacter
 import javafx.application.Application
 import javafx.application.Application.launch
-import javafx.geometry.Pos
+import javafx.application.Platform
 import javafx.scene.Node
+import javafx.scene.Parent
 import javafx.scene.Scene
+import javafx.scene.input.MouseEvent
 import javafx.scene.layout.HBox
-import javafx.scene.layout.StackPane
 import javafx.scene.layout.VBox
-import javafx.scene.paint.Color
-import javafx.scene.shape.Rectangle
 import javafx.stage.Stage
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.encodeToJsonElement
+import java.io.InputStreamReader
 import java.io.Reader
-import java.io.StringReader
 
+fun main() {
+    GUI.initialize()
+    launch(GUI::class.java)
+}
 
-enum class AcceptableCharacter {
-    LEFT_UP,
-    RIGHT_UP,
-    RIGHT_DOWN,
-    LEFT_DOWN;
+class GUI : Application() {
 
+    /**
+     * JavaFX's API instantiates this class with no arguments.
+     *
+     * Static field instantiation is required to initialize the row data for the JavaFX GUI isntance to use.
+     */
     companion object {
-        fun fromChar(symbol: Char): AcceptableCharacter {
-            return when (symbol) {
-                '┘' -> LEFT_UP
-                '┌' -> RIGHT_DOWN
-                '┐' -> LEFT_DOWN
-                '└' -> RIGHT_UP
-                else -> throw java.lang.IllegalArgumentException("$symbol is not an acceptable character.")
-            }
-        }
+        private var rows = listOf<Row>()
 
-        fun isAcceptable(symbol: Char): Boolean {
-            return when (symbol) {
-                '┘', '┐', '┌', '└' -> true
-                else -> false
-            }
+        fun initialize() {
+            rows = readFromConsole(InputStreamReader(System.`in`))
         }
     }
 
+    override fun start(primaryStage: Stage) {
+        val layout = createScene()
 
-    fun toJavaFXRectangle(): Node {
-        val stack = StackPane()
-        val background = Rectangle()
-        background.width = 100.0;
-        background.height = 100.0;
+        layout.setOnMouseClicked(::handleClick)
 
-
-        val alignment = when (this) {
-            LEFT_UP -> Pos.BOTTOM_RIGHT
-            RIGHT_UP -> Pos.BOTTOM_LEFT
-            LEFT_DOWN -> Pos.TOP_RIGHT
-            RIGHT_DOWN -> Pos.TOP_LEFT
-            else -> throw java.lang.IllegalArgumentException("$this is not an acceptable character.")
+        primaryStage.run {
+            scene = Scene(layout)
+            show()
         }
-
-
-
-        stack.children.addAll(background, makeRectangleShape(alignment))
-
-        return stack
     }
 
     /**
-     * Makes a Right Down shape, can be transformed into any other shape.
+     * Creates a rectangular box where every row of the scene is the graphical representation
+     * of the input characters.
      */
-    private fun makeRectangleShape(alignment: Pos): Node {
-        val horizontal = Rectangle(70.0, 20.0)
-        val vertical = Rectangle(20.0, 70.0)
-
-        horizontal.fill = Color.WHITE
-        vertical.fill = Color.WHITE
-
-        val sp = StackPane(horizontal, vertical)
-        sp.alignment = alignment
-        return sp
+    private fun createScene(): Parent {
+        return VBox().apply {
+            rows.forEach { row ->
+                val listOfRectangles: Array<Node> = Array(row.characters.size) { index ->
+                    row.characters.get(index).toJavaFXRectangle()
+                }
+                val hbox = HBox(*listOfRectangles)
+                hbox.spacing = 5.0
+                children.add(hbox)
+            }
+            this.spacing = 5.0
+        }
     }
-}
 
-class Row(val characters: List<AcceptableCharacter>) {
-
-    override fun toString(): String {
-        return characters.fold("") { a, b -> "$a $b"}
+    /**
+     * Print the x and y coordinates of the mouse as JSON and end the program.
+     */
+    private fun handleClick(event: MouseEvent) {
+        val x = event.sceneX
+        val y = event.sceneY
+        println(Json.encodeToJsonElement(arrayOf(x,y)))
+        Platform.exit()
     }
 }
 
@@ -100,44 +90,14 @@ fun readFromConsole(reader: Reader):List<Row> {
                 chars.add(AcceptableCharacter.fromChar(char))
             }
         }
+        // if line contained whitespace, don't add a row
         if (chars.isNotEmpty()) { rows.add(Row(chars)) }
     }
 
     return rows
 }
 
-fun main() {
+class Row(val characters: List<AcceptableCharacter>)
 
-    //val rows = readFromConsole(InputStreamReader(System.`in`))
 
-    launch(GUI::class.java)
-    // TODO: draw(rows)
-    // print gui mouse click event coordinates to STD out
-}
 
-class GUI : Application() {
-
-    private var rows: List<Row>
-
-    init {
-        rows = readFromConsole(StringReader("\"┌┌┐\"\n" +
-                "\n" +
-                "    \"└└┘\""))
-    }
-
-    override fun start(primaryStage: Stage) {
-
-        val layout = VBox().apply {
-            rows.forEach { row ->
-                val listOfRectangles: Array<Node> = Array(row.characters.size) { index ->
-                    row.characters.get(index).toJavaFXRectangle()
-                }
-                children.add(HBox(*listOfRectangles))
-            }
-        }
-        primaryStage.run {
-            scene = Scene(layout)
-            show()
-        }
-    }
-}
