@@ -50,5 +50,5 @@ tasks.withType<KotlinCompile> {
 
 javafx {
     version = "19"
-    modules = mutableListOf("javafx.controls", "javafx.fxml" )
+    modules = mutableListOf("javafx.controls", "javafx.fxml", "javafx.base")
 }
