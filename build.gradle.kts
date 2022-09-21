@@ -33,6 +33,7 @@ dependencies {
     runtimeOnly("org.openjfx:javafx-graphics:18.0.2:linux")
     runtimeOnly("org.openjfx:javafx-controls:18.0.2:linux")
     runtimeOnly("org.openjfx:javafx-fxml:18.0.2:linux")
+    runtimeOnly("org.openjfx:javafx-media:18.0.2:linux")
 }
 
 tasks.test {
