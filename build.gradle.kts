@@ -29,7 +29,7 @@ dependencies {
 
     runtimeOnly("org.jetbrains.kotlin:kotlin-runtime:1.2.71")
 
-    compileOnly("org.openjfx:javafx-graphics:11.0.1:linux")
+    runtimeOnly("org.openjfx:javafx-graphics:18.0.2:linux")
 }
 
 tasks.test {
@@ -42,7 +42,7 @@ tasks.jar {
         attributes["Main-Class"] = "D.Other.XGuiKt"
     }
 
-    from(configurations.runtimeClasspath.get().map { if (it.isDirectory()) it else zipTree(it) })
+    from(configurations.compileClasspath.get().map { if (it.isDirectory()) it else zipTree(it) })
     destinationDirectory.set(File("D/Other"))
 }
 
