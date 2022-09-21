@@ -42,7 +42,7 @@ tasks.jar {
         attributes["Main-Class"] = "D.Other.XGuiKt"
     }
 
-    from(configurations.compileClasspath.get().map { if (it.isDirectory()) it else zipTree(it) })
+    from(configurations.runtimeClasspath.get().map { if (it.isDirectory()) it else zipTree(it) })
     destinationDirectory.set(File("D/Other"))
 }
 
