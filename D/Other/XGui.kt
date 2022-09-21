@@ -11,8 +11,6 @@ import javafx.scene.input.MouseEvent
 import javafx.scene.layout.HBox
 import javafx.scene.layout.VBox
 import javafx.stage.Stage
-import kotlinx.serialization.json.Json
-import kotlinx.serialization.json.encodeToJsonElement
 import java.io.InputStreamReader
 import java.io.Reader
 
@@ -73,7 +71,8 @@ class GUI : Application() {
     private fun handleClick(event: MouseEvent) {
         val x = event.sceneX
         val y = event.sceneY
-        println(Json.encodeToJsonElement(listOf(x, y)))
+        val arr = arrayOf(x,y)
+        println(arr)
         Platform.exit()
     }
 }
