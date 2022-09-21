@@ -73,7 +73,8 @@ class GUI : Application() {
     private fun handleClick(event: MouseEvent) {
         val x = event.sceneX
         val y = event.sceneY
-        println(Json.encodeToJsonElement(arrayOf<Double>(x,y)))
+        val arr: Array<Double> = arrayOf(x, y)
+        println(Json.encodeToJsonElement(arr))
         Platform.exit()
     }
 }
