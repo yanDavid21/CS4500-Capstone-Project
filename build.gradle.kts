@@ -28,6 +28,8 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.4.0")
 
     runtimeOnly("org.jetbrains.kotlin:kotlin-runtime:1.2.71")
+
+    compileOnly("org.openjfx:javafx-graphics:11.0.1:linux")
 }
 
 tasks.test {
@@ -42,8 +44,6 @@ tasks.jar {
 
     from(configurations.compileClasspath.get().map { if (it.isDirectory()) it else zipTree(it) })
     destinationDirectory.set(File("D/Other"))
-
-
 }
 
 tasks.withType<KotlinCompile> {
