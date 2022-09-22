@@ -16,13 +16,18 @@ import kotlinx.serialization.json.JsonPrimitive
 import java.io.InputStreamReader
 import java.io.Reader
 
+/**
+ * Entry point for the funciton. Initializes a class (static) variable and launches a JavaFX instance of the GUI class.
+ */
 fun main() {
     GUI.initialize()
-
-
     launch(GUI::class.java)
 }
 
+/**
+ * JavaFX implementation that renders a series of valid and well formed JSON strings comprising of AcceptableCharacters.
+ * The GUI allows for user interaction, printing the coordinates of a single mouse click then gracefully closes.
+ */
 class GUI : Application() {
 
     /**
@@ -38,6 +43,9 @@ class GUI : Application() {
         }
     }
 
+    /**
+     * Initializes and renders the window.
+     */
     override fun start(primaryStage: Stage) {
         val layout = createScene()
 
@@ -50,8 +58,7 @@ class GUI : Application() {
     }
 
     /**
-     * Creates a rectangular box where every row of the scene is the graphical representation
-     * of the input characters.
+     * Creates a rectangular box where every row of the scene is the graphical representation of the input characters.
      */
     private fun createScene(): Parent {
         return VBox().apply {
