@@ -13,7 +13,7 @@ version = "1.0-SNAPSHOT"
 sourceSets {
     main {
         java {
-            srcDirs("D")
+            srcDirs("E")
         }
     }
 }
@@ -44,11 +44,11 @@ tasks.test {
 tasks.jar {
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
     manifest {
-        attributes["Main-Class"] = "D.Other.XGuiKt"
+        attributes["Main-Class"] = "E.Other.XtcpKt"
     }
 
     from(configurations.runtimeClasspath.get().map { if (it.isDirectory()) it else zipTree(it) })
-    destinationDirectory.set(File("D/Other"))
+    destinationDirectory.set(File("E/Other"))
 }
 
 tasks.withType<KotlinCompile> {
