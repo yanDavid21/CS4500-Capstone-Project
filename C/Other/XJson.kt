@@ -1,6 +1,8 @@
 package C.Other
 
-import kotlinx.serialization.Serializable
+import Other.CardinalCharacters
+import Other.Horizontal
+import Other.Vertical
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonArray
@@ -8,41 +10,29 @@ import kotlinx.serialization.json.encodeToJsonElement
 import kotlinx.serialization.json.jsonArray
 import java.io.InputStreamReader
 
-
 /**
- * A JSON representation of characters, contains horizontal and vertical information.
+ * Converts a CardinalCharacter to its string representation. Throws an error if not one of the valid enumerations of
+ * CardinalCharacter.
  */
-@Serializable
-data class CardinalCharacters(
-    val horizontal: Horizontal,
-    val vertical: Vertical,
-)
-
-@Serializable
-enum class Horizontal {
-    LEFT, RIGHT
-}
-
-@Serializable
-enum class Vertical {
-    UP, DOWN
+fun cardinalCharacterToString(cardinalChar: CardinalCharacters):String {
+    return when(cardinalChar) {
+        CardinalCharacters(Horizontal.LEFT, Vertical.UP) -> "┘"
+        CardinalCharacters(Horizontal.RIGHT, Vertical.UP) -> "└"
+        CardinalCharacters(Horizontal.LEFT, Vertical.DOWN) -> "┐"
+        CardinalCharacters(Horizontal.RIGHT, Vertical.DOWN) -> "┌"
+        else -> throw IllegalStateException("Can not reach this branch.")
+    }
 }
 
 /**
  * Accepts a series of well-formed and valid json objects.  For each object, computes the corresponding cardinal
- * character prints out a JSON array of this collection
+ * character prints out a JSON array of this collection.
  */
-fun jsonToAcceptableCharacter(json: List<CardinalCharacters>): JsonArray {
+fun List<CardinalCharacters>.mapToJSONArray(json: List<CardinalCharacters>): JsonArray {
     val outputList = mutableListOf<String>()
 
     json.forEach {
-        outputList.add(when(it) {
-            CardinalCharacters(Horizontal.LEFT, Vertical.UP) -> "┘"
-            CardinalCharacters(Horizontal.RIGHT, Vertical.UP) -> "└"
-            CardinalCharacters(Horizontal.LEFT, Vertical.DOWN) -> "┐"
-            CardinalCharacters(Horizontal.RIGHT, Vertical.DOWN) -> "┌"
-            else -> throw IllegalStateException("Can not reach this branch.")
-        })
+        outputList.add(cardinalCharacterToString(it))
     }
 
     return Json.encodeToJsonElement(outputList).jsonArray
@@ -64,7 +54,7 @@ fun main(args: Array<String>) {
         )
     }
 
-    println(jsonToAcceptableCharacter(cardinalCharacters))
+    println(cardinalCharacters.mapToJSONArray)
 }
 
 
