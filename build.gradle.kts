@@ -28,6 +28,7 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.4.0")
 
     runtimeOnly("org.jetbrains.kotlin:kotlin-runtime:1.2.71")
+    runtimeOnly("org.jetbrains.kotlin:kotlin-reflect:1.7.0")
 
     runtimeOnly("org.openjfx:javafx-base:18.0.2:linux")
     runtimeOnly("org.openjfx:javafx-graphics:18.0.2:linux")
@@ -44,10 +45,12 @@ tasks.test {
 tasks.jar {
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
     manifest {
-        attributes["Main-Class"] = "E.Other.XtcpKt"
+        attributes["Main-Class"] = "Other.XtcpKt"
     }
 
-    from(configurations.runtimeClasspath.get().map { if (it.isDirectory()) it else zipTree(it) })
+    from(
+        configurations.compileClasspath.get().map { if (it.isDirectory()) it else zipTree(it) })
+
     destinationDirectory.set(File("E/Other"))
 }
 

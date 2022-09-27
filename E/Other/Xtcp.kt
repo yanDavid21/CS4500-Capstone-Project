@@ -18,10 +18,11 @@ fun main(args: Array<String>) {
     // accept only one client
     val clientSocket = ServerSocket(portNumber).accept()
     val socketInputStreamReader = InputStreamReader(clientSocket.getInputStream())
+    val socketOutputStreamWriter =  OutputStreamWriter(clientSocket.getOutputStream())
 
     val cardinalCharacterJSONArr = readFromInputStream(socketInputStreamReader)
 
-    val socketOutputStreamWriter =  OutputStreamWriter(clientSocket.getOutputStream())
+
     socketOutputStreamWriter.write(cardinalCharacterJSONArr.toString())
 
     clientSocket.close()
