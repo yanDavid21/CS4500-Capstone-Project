@@ -1,0 +1,7 @@
+Pair: yanda1928-josuma26
+Commit: 8339c5f8744bddc29cf6a9b390868f0b7045cbcd
+Self-eval: 
+Score: 40/40
+Grader: Eshwari Bhide
+
+Commit URL: https://github.khoury.northeastern.edu/CS4500-F22/yanda1928-josuma26/tree/8339c5f8744bddc29cf6a9b390868f0b7045cbcd
