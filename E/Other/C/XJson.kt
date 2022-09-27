@@ -14,7 +14,7 @@ import java.io.Reader
 fun readFromInputStream(input: Reader): JsonArray {
     val cardinalCharacters = mutableListOf<CardinalCharacters>()
 
-    val text = input.use { input.readText() }
+    val text = input.readText()
 
     val split = text.split("{")
     for (segment in split.subList(1, split.size)) {

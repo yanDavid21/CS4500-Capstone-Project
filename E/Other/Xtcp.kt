@@ -22,8 +22,8 @@ fun main(args: Array<String>) {
 
     val cardinalCharacterJSONArr = readFromInputStream(socketInputStreamReader)
 
-
     socketOutputStreamWriter.write(cardinalCharacterJSONArr.toString())
+    socketOutputStreamWriter.flush()
 
     clientSocket.close()
 }

@@ -48,8 +48,7 @@ tasks.jar {
         attributes["Main-Class"] = "Other.XtcpKt"
     }
 
-    from(
-        configurations.compileClasspath.get().map { if (it.isDirectory()) it else zipTree(it) })
+    from(configurations.compileClasspath.get().map { if (it.isDirectory()) it else zipTree(it) })
 
     destinationDirectory.set(File("E/Other"))
 }
