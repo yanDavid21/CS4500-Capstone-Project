@@ -10,16 +10,20 @@ This assignment comes with three distinct, unrelated tasks.
 So, indicate below each bullet which file/unit takes care of each task:
 
 
-1. dealing with the command-line argument (PORT)
+1. dealing with the command-line argument (PORT)  
+Function ``toValidatedPortNumber`` starting at line:
+https://github.khoury.northeastern.edu/CS4500-F22/yanda1928-josuma26/blob/eb93e80190a2f93803937916c118c2897fb10576/E/Other/Xtcp.kt#L35   
 
 
+2. connecting the client on the specified port to the functionality  
+In the ``main`` function from lines 20 to 24:   
+https://github.khoury.northeastern.edu/CS4500-F22/yanda1928-josuma26/blob/eb93e80190a2f93803937916c118c2897fb10576/E/Other/Xtcp.kt#L20-L24  
+While lines 20-24 form a logical unit, we believe it was better to just write the constinuent lines. Since each line is a function call in itself and does not contain any logic, we did not see the need to compose these function calls into a separate function. We maintain that this is readable code.
 
-2. connecting the client on the specified port to the functionality
 
-
-
-3. core functionality (either copied or imported from `C`)
-
+3. core functionality (either copied or imported from `C`)  
+Called from main on line 24, copied over from C, function ``readFromInputStream``: 
+https://github.khoury.northeastern.edu/CS4500-F22/yanda1928-josuma26/blob/eb93e80190a2f93803937916c118c2897fb10576/E/Other/C/XJson.kt#L14  
 
 
 The ideal feedback for each of these three points is a GitHub
