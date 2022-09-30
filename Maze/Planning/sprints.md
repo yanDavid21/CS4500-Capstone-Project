@@ -30,8 +30,17 @@ This sprint will focus on completing the game logic implementation, which began 
 We will also continue the development of a static UI. After these components have been 
 created, we will have a better idea of how to design the server.
 
-### Target state
+#### Target state
 
+* Game logic implementation is finished. (10 hours)
+  * Moving players
+  * Capturing treasure
+  * Game termination
+* Simple static UI of the board is developed (3 hours)
+* Design document for server has begun (3 hours)
+
+#### Reach goals:
+* MVC interfaces
 
 ### Sprint 3 (ends 10/22)
 Once the game implementation is finished, we can create a controller to actually play the game.
