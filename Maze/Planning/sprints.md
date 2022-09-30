@@ -1,12 +1,12 @@
 Memorandum
 
-TO: CS4500 Course Staff (CEOs of our soon-to-be unicorn)
+**TO**: CS4500 Course Staff (CEOs of our soon-to-be unicorn)
 
-FROM: David Yan, Jose Sulaiman Manzur
+**FROM**: David Yan, Jose Sulaiman Manzur
 
-DATE: Sep 30, 2022
+**DATE**: Sep 30, 2022
 
-SUBJECT: Three Sprint Planning
+**SUBJECT**: Three Sprint Planning
 
 After deliberating with the (two-man) team, we have come up with the following plan for our first three sprints. We estimate each 
 sprint will take about 16 hours of work. We will begin by designing the first game you want to implement: Maze. We know we
