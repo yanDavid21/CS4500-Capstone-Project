@@ -1,12 +1,9 @@
 Memorandum
 
-**TO**: CS4500 Course Staff (CEOs of our soon-to-be unicorn)
-
-**FROM**: David Yan, Jose Sulaiman Manzur
-
-**DATE**: Sep 30, 2022
-
-**SUBJECT**: Three Sprint Planning
+**TO**: CS4500 Course Staff (CEOs of our soon-to-be unicorn)  
+**FROM**: David Yan, Jose Sulaiman Manzur  
+**DATE**: Sep 30, 2022  
+**SUBJECT**: Three Sprint Planning  
 
 After deliberating with the (two-man) team, we have come up with the following plan for our first three sprints. We estimate each 
 sprint will take about 16 hours of work. We will begin by designing the first game you want to implement: Maze. We know we
@@ -30,14 +27,15 @@ design for games and then implement the server.
 
 ### Sprint 2 (ends 10/15)
 This sprint will focus on completing the game logic implementation, which began last print.
-
+We will also continue the development of a static UI. After these components have been 
+created, we will have a better idea of how to design the server.
 
 ### Target state
 
 
 ### Sprint 3 (ends 10/22)
-#### Current state
-Game logic (model) and static UI (view) is finished.
+Once the game implementation is finished, we can create a controller to actually play the game.
+Finishing this will open up development for the server.
 #### Target state
 * Design document for server finished. (3 hours)
 * First iteration of MVC interfaces are completed (2 hours)
