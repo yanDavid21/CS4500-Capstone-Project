@@ -29,8 +29,8 @@ design for games and then implement the server.
 * Have a basic UI for easy visual testing (read from model and display)
 
 ### Sprint 2 (ends 10/15)
-#### Current state
-Game design has been documented and the model is being developed.
+This sprint will focus on completing the game logic implementation, which began last print.
+
 
 ### Target state
 
