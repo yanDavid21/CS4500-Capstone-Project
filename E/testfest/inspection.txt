@@ -1,0 +1,13 @@
+Pair: yanda1928-josuma26
+Commit: eb93e80190a2f93803937916c118c2897fb10576
+Self-eval: https://github.khoury.northeastern.edu/CS4500-F22/yanda1928-josuma26/blob/4d331b6f456988e7ee87a5d5534bfa5121dee2c6/E/self-E.md
+Score: 20/30
+Grader: Eshwari Bhide
+
+10/10: Self-Eval
+
+0/10 pts: for dealing with tcp part as a separate function/method. This was not factored out into its own method. I agree your code is readable, however we have to follow the rubric. Please see Matthias if you have further questions about it. 
+
+10/10 pts: for being able to find the reused functionality from C:
+
+Commit URL: https://github.khoury.northeastern.edu/CS4500-F22/yanda1928-josuma26/tree/eb93e80190a2f93803937916c118c2897fb10576
