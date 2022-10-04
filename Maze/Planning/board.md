@@ -10,7 +10,7 @@ direction.
 Should be called in a state after a `slide` call.
  - `rotateSpareTile(Degree) -> Unit`: rotates the spare tile by the specified amount.
  - `getReachableTiles(x,y) -> Set<Tile>`: gets the tiles reachable from `(x,y)`
- - `makeRandom() -> Unit`: creates a random board.
+ - `makeRandom(size) -> Unit`: creates a random board.
 
 ### Fields
 
