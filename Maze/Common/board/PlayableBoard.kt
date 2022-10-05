@@ -16,6 +16,6 @@ interface PlayableBoard {
 
     fun rotateSpareTile(degree: Degree)
 
-    fun getReachableTiles(rowPosition: RowPosition, columnPosition: ColumnPosition): Set<Tile>
+    fun getReachableTiles(position: Coordinates): Set<Tile>
 
 }
