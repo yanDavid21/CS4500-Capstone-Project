@@ -1,4 +1,0 @@
-package Common
-
-class Gem {
-}

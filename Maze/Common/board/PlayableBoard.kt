@@ -1,6 +1,7 @@
 package Common.board
 
 import Common.*
+import Common.board.tile.Degree
 
 /**
  * A Maze board that supports player operations.
