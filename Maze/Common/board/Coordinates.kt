@@ -1,44 +1,31 @@
 package Common
 
+
 interface Position {
-    fun getValue(): Int
-}
-
-data class ColumnPosition(
-    val y: Int
-): Position {
-
-    init {
-        if (y > MAX_VALUE) {
-            throw IllegalArgumentException("Y-coordinate should not exceed $MAX_VALUE, given $y")
-        }
-    }
-
-    override fun getValue(): Int {
-        return y
-    }
+    val value: Int
 
     companion object {
-        var MAX_VALUE = 7
+        const val MAX_X_VALUE = 7
+        const val MAX_Y_VALUE = 7
     }
 }
 
-data class RowPosition(
-    val x: Int
-):Position {
+data class ColumnPosition(override val value: Int): Position {
     init {
-        if (x > ColumnPosition.MAX_VALUE) {
-            throw IllegalArgumentException("X-coordinate should not exceed ${MAX_VALUE}, given $x")
+        if (value > Position.MAX_X_VALUE) {
+            throw IllegalArgumentException("Y-coordinate should not exceed $Position.MAX_X_VALUE, given $value")
+        }
+    }
+}
+
+
+data class RowPosition(override val value: Int): Position {
+    init {
+        if (value > Position.MAX_Y_VALUE) {
+            throw IllegalArgumentException("X-coordinate should not exceed ${Position.MAX_Y_VALUE}, given $value")
         }
     }
 
-    override fun getValue(): Int {
-        return x
-    }
-
-    companion object {
-        var MAX_VALUE = 7
-    }
 }
 
 data class Coordinates(

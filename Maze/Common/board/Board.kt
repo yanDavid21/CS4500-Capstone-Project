@@ -24,10 +24,10 @@ class Board(
     // TODO: abstract slide
     override fun slide(rowPosition: RowPosition, direction: HorizontalDirection) {
         if (!isSlideable(rowPosition)) {
-            throw IllegalArgumentException("Row Position ${rowPosition.x} is not slideable.")
+            throw IllegalArgumentException("Row Position $rowPosition is not slideable.")
         }
 
-        val row = tiles[rowPosition.getValue()]
+        val row = tiles[rowPosition.value]
 
         when (direction) {
             HorizontalDirection.LEFT -> {
@@ -44,10 +44,10 @@ class Board(
     //TODO: abstract out
     override fun slide(columnPosition: ColumnPosition, direction: VerticalDirection) {
         if (!isSlideable(columnPosition)) {
-            throw IllegalArgumentException("Column Position ${columnPosition.y} is not slideable.")
+            throw IllegalArgumentException("Column Position $columnPosition is not slideable.")
         }
 
-        val col = tiles[columnPosition.getValue()]
+        val col = tiles[columnPosition.value]
 
         when (direction) {
             VerticalDirection.UP -> {
@@ -65,10 +65,11 @@ class Board(
         dislodgedTile?.let { dislodgedTile ->
             emptySlot?.let { emptySlot ->
                 this.setTile(emptySlot, spareTile)
-                this.spareTile = dislodgedTile
-
-                this.dislodgedTile = null
                 this.emptySlot = null
+
+                this.spareTile = dislodgedTile
+                this.dislodgedTile = null
+
             }
         } ?: throw IllegalStateException("Empty slot and dislodged tile both need to be non-null.")
 
@@ -103,48 +104,42 @@ class Board(
 
     private fun addReachableNeighborToPath(currentPosition: Coordinates, outgoingDirection: Direction,
                                            stack: Stack<Coordinates>, visitedNodes: MutableSet<Tile>) {
-        val neighborPosition = getPositionAdjacentTo(currentPosition, outgoingDirection)
-        neighborPosition?.let { neighborPosition ->
+        getPositionAdjacentTo(currentPosition, outgoingDirection)?.let { neighborPosition ->
             val neighbor = getTile(neighborPosition)
             if (neighbor.canBeReachedFrom(outgoingDirection)) {
                 stack.add(neighborPosition)
             }
             visitedNodes.add(neighbor)
         }
-
     }
 
     private fun isSlideable(position: Position): Boolean {
-        return position.getValue() % 2 == 1
+        return position.value % 2 == 0
     }
 
     private fun setTile(position: Coordinates, tile: Tile) {
-        val row = tiles[position.row.getValue()]
-        row[position.col.getValue()] = tile
+        val row = tiles[position.row.value]
+        row[position.col.value] = tile
     }
 
     private fun getTile(position: Coordinates): Tile {
-        return tiles[position.row.getValue()][position.col.getValue()]
+        return tiles[position.row.value][position.col.value]
     }
 
     private fun getPositionAdjacentTo(position: Coordinates, outgoingDirection: Direction): Coordinates? {
-        val rowValue = position.row.getValue()
-        val colValue = position.col.getValue()
+        val rowValue = position.row.value
+        val colValue = position.col.value
 
-        return when (outgoingDirection) {
-            VerticalDirection.UP-> if (rowValue > 0) position.copyWithNewRow(rowValue - 1)  else null
-            VerticalDirection.DOWN -> if (rowValue < this.height) position.copyWithNewRow(rowValue + 1) else null
-            HorizontalDirection.LEFT->
-                if (colValue > 0) position.copyWithNewCol(colValue - 1) else null
-            HorizontalDirection.RIGHT->
-                if (colValue < this.width) position.copyWithNewCol(colValue + 1) else null
-            else -> {
-                throw IllegalStateException("Invalid Direction given, must be one of: UP, DOWN, LEFT, RIGHT")
-            }
+        return if (outgoingDirection == VerticalDirection.UP && rowValue > 0) {
+            position.copyWithNewRow(rowValue - 1)
+        } else if (outgoingDirection == VerticalDirection.DOWN && rowValue < this.height - 1) {
+            position.copyWithNewRow(rowValue + 1)
+        } else if (outgoingDirection == HorizontalDirection.LEFT && colValue > 0) {
+            position.copyWithNewCol(colValue - 1)
+        } else if (outgoingDirection == HorizontalDirection.RIGHT && colValue < this.width - 1) {
+            position.copyWithNewCol(colValue + 1)
+        } else {
+            null
         }
     }
-
-
-
-
 }

@@ -6,7 +6,7 @@ import Common.VerticalDirection
 import Common.board.tile.Degree
 
 
-class Tile(val path: Path, var degree: Degree) {
+data class Tile(val path: Path, var degree: Degree) {
     private lateinit var incomingDirections: Set<Direction>
     private lateinit var outgoingDirections: Set<Direction>
 

@@ -11,6 +11,12 @@ group = "org.example"
 version = "1.0-SNAPSHOT"
 
 sourceSets {
+    test {
+        java {
+            srcDirs("test")
+        }
+    }
+
     main {
         java {
             srcDirs("Maze")
