@@ -46,7 +46,7 @@ dependencies {
 }
 
 tasks.test {
-    useJUnitPlatform()
+    useJUnit()
 }
 
 tasks.jar {

@@ -5,6 +5,7 @@ import Common.Coordinates
 import Common.HorizontalDirection
 import Common.RowPosition
 import Common.board.tile.Degree
+import org.junit.Assert
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
 import org.junit.jupiter.api.assertThrows
@@ -22,12 +23,13 @@ internal class BoardTest {
         board.slide(RowPosition(0), HorizontalDirection.RIGHT)
 
         val newFirstRow = tiles[0]
-        assertEquals(mutableListOf(Tile(Path.VERTICAL, Degree.ZERO), Tile(Path.CROSS, Degree.TWO_SEVENTY)), newFirstRow)
+        val expectedTiles = arrayOf(EmptyTile(), GameTile(Path.VERTICAL, Degree.ZERO), GameTile(Path.CROSS, Degree.TWO_SEVENTY))
+        Assert.assertArrayEquals(expectedTiles, newFirstRow)
 
         board.slide(RowPosition(2), HorizontalDirection.LEFT)
 
         val newLastRow = tiles[2]
-        assertEquals(mutableListOf(Tile(Path.CROSS, Degree.TWO_SEVENTY), Tile(Path.T, Degree.NINETY)), newLastRow)
+        Assert.assertArrayEquals(arrayOf(GameTile(Path.CROSS, Degree.TWO_SEVENTY), GameTile(Path.T, Degree.NINETY), EmptyTile()), newLastRow)
     }
 
     @Test
@@ -47,13 +49,13 @@ internal class BoardTest {
 
         board.insertSpareTile()
 
-        assertEquals(mutableListOf(spareTile, Tile(Path.VERTICAL, Degree.ZERO), Tile(Path.CROSS, Degree.TWO_SEVENTY)), tiles[0])
+        Assert.assertArrayEquals(arrayOf(spareTile, GameTile(Path.VERTICAL, Degree.ZERO), GameTile(Path.CROSS, Degree.TWO_SEVENTY)), tiles[0])
 
         board.slide(RowPosition(2), HorizontalDirection.LEFT)
 
         board.insertSpareTile()
 
-        assertEquals(mutableListOf(Tile(Path.CROSS, Degree.TWO_SEVENTY), Tile(Path.T, Degree.NINETY), Tile(Path.T, Degree.NINETY)), tiles[2])
+        Assert.assertArrayEquals(arrayOf<Tile>(GameTile(Path.CROSS, Degree.TWO_SEVENTY), GameTile(Path.T, Degree.NINETY), GameTile(Path.T, Degree.NINETY)), tiles[2])
 
     }
 
@@ -66,17 +68,17 @@ internal class BoardTest {
         assertEquals(setOf(tiles[1][0]), reachableFromTopLeft)
     }
 
-    private fun createTiles(): MutableList<MutableList<Tile>> {
-        return mutableListOf(
-            mutableListOf(Tile(Path.VERTICAL, Degree.ZERO), Tile(Path.CROSS, Degree.TWO_SEVENTY), Tile(Path.T, Degree.NINETY)),
-            mutableListOf(Tile(Path.UP_RIGHT, Degree.ONE_EIGHTY), Tile(Path.T, Degree.TWO_SEVENTY), Tile(Path.CROSS, Degree.NINETY)),
-            mutableListOf(Tile(Path.VERTICAL, Degree.ZERO), Tile(Path.CROSS, Degree.TWO_SEVENTY), Tile(Path.T, Degree.NINETY)))
+    private fun createTiles(): Array<Array<Tile>> {
+        return arrayOf(
+            arrayOf(GameTile(Path.VERTICAL, Degree.ZERO), GameTile(Path.CROSS, Degree.TWO_SEVENTY), GameTile(Path.T, Degree.NINETY)),
+            arrayOf(GameTile(Path.UP_RIGHT, Degree.ONE_EIGHTY), GameTile(Path.T, Degree.TWO_SEVENTY), GameTile(Path.CROSS, Degree.NINETY)),
+            arrayOf(GameTile(Path.VERTICAL, Degree.ZERO), GameTile(Path.CROSS, Degree.TWO_SEVENTY), GameTile(Path.T, Degree.NINETY)))
     }
     private fun createSpareTile(): Tile {
-        return Tile(Path.T, Degree.ONE_EIGHTY)
+        return GameTile(Path.T, Degree.ONE_EIGHTY)
     }
 
-    private fun createBoard(tiles: MutableList<MutableList<Tile>>): Board {
+    private fun createBoard(tiles: Array<Array<Tile>>): Board {
         return Board(tiles, createSpareTile())
     }
 

@@ -5,8 +5,44 @@ import Common.HorizontalDirection
 import Common.VerticalDirection
 import Common.board.tile.Degree
 
+interface Tile {
+    fun getOutgoingDirections(): Set<Direction>
 
-data class Tile(val path: Path, var degree: Degree) {
+    fun getIncomingDirections(): Set<Direction>
+
+    fun rotate(degree: Degree)
+
+
+    fun canBeReachedFrom(incomingDirection: Direction): Boolean
+}
+
+class EmptyTile : Tile {
+    override fun getOutgoingDirections(): Set<Direction> {
+        return emptySet()
+    }
+
+    override fun rotate(degree: Degree) {
+        return
+    }
+
+    override fun getIncomingDirections(): Set<Direction> {
+        return emptySet()
+    }
+
+    override fun canBeReachedFrom(incomingDirection: Direction): Boolean {
+        return false
+    }
+
+    override fun hashCode(): Int {
+        return 0
+    }
+
+    override fun equals(other: Any?): Boolean {
+        return other is EmptyTile
+    }
+}
+
+data class GameTile(val path: Path, var degree: Degree): Tile {
     private lateinit var incomingDirections: Set<Direction>
     private lateinit var outgoingDirections: Set<Direction>
 
@@ -14,29 +50,32 @@ data class Tile(val path: Path, var degree: Degree) {
         recomputeDirections()
     }
 
-    fun rotate(degree: Degree) {
+    override fun rotate(degree: Degree) {
         this.degree = this.degree.add(degree)
         recomputeDirections()
     }
 
     private fun recomputeDirections() {
-        outgoingDirections = path.getDefaultOutgoingDirections().mapTo(mutableSetOf()) { it.transform(degree) }
+        outgoingDirections = path.getDefaultOutgoingDirections().mapTo(mutableSetOf()) { it.rotateBy(degree) }
         incomingDirections = outgoingDirections.mapTo(mutableSetOf()) { it.reverse() }
     }
 
-    fun getOutgoingDirections(): Set<Direction> {
+    override fun getOutgoingDirections(): Set<Direction> {
         return outgoingDirections
     }
 
-    fun getIncomingDirections(): Set<Direction> {
+    override fun getIncomingDirections(): Set<Direction> {
         return incomingDirections
     }
 
 
-    fun canBeReachedFrom(incomingDirection: Direction): Boolean {
+    override fun canBeReachedFrom(incomingDirection: Direction): Boolean {
         return this.incomingDirections.contains(incomingDirection)
     }
 
+    override fun toString(): String {
+        return "($path, $degree)"
+    }
 }
 
 enum class Path(val symbol: String) {

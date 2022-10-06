@@ -4,11 +4,20 @@ import Common.board.tile.Degree
 
 interface Direction {
 
-    fun transform(degree: Degree): Direction {
-        return this // TODO
+    val degree: Degree
+
+    fun rotateBy(degree: Degree): Direction {
+        return fromDegree(this.degree.add(degree))
     }
 
+
     fun reverse(): Direction
+
+    companion object {
+        fun fromDegree(degree: Degree): Direction {
+
+        }
+    }
 
 }
 
