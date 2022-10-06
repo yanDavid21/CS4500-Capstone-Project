@@ -39,7 +39,7 @@ data class Tile(val path: Path, var degree: Degree) {
 
 }
 
-enum class Path(symbol: String) {
+enum class Path(val symbol: String) {
     VERTICAL("│"),UP_RIGHT("└"),T("┬"),CROSS("┼");
 
     fun getDefaultOutgoingDirections(): Set<Direction> {
@@ -49,5 +49,9 @@ enum class Path(symbol: String) {
             UP_RIGHT -> setOf(VerticalDirection.UP, HorizontalDirection.RIGHT)
             T -> setOf(HorizontalDirection.LEFT, HorizontalDirection.RIGHT, VerticalDirection.DOWN)
         }
+    }
+
+    override fun toString(): String {
+        return symbol
     }
 }

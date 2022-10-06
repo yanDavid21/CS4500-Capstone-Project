@@ -1,5 +1,7 @@
 package Common.board
 
+import Common.ColumnPosition
+import Common.Coordinates
 import Common.HorizontalDirection
 import Common.RowPosition
 import Common.board.tile.Degree
@@ -52,6 +54,16 @@ internal class BoardTest {
         board.insertSpareTile()
 
         assertEquals(mutableListOf(Tile(Path.CROSS, Degree.TWO_SEVENTY), Tile(Path.T, Degree.NINETY), Tile(Path.T, Degree.NINETY)), tiles[2])
+
+    }
+
+    @Test
+    fun testGetReachableTiles() {
+        val tiles = createTiles()
+        val board = createBoard(tiles)
+
+        val reachableFromTopLeft = board.getReachableTiles(Coordinates(RowPosition(0), ColumnPosition(0)))
+        assertEquals(setOf(tiles[1][0]), reachableFromTopLeft)
     }
 
     private fun createTiles(): MutableList<MutableList<Tile>> {

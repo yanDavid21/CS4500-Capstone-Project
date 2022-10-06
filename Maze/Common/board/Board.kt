@@ -87,7 +87,7 @@ class Board(
         val startingTile = getTile(startingPosition)
         val stack = Stack<Coordinates>()
         val visitedNodes = HashSet<Tile>()
-        visitedNodes.add(startingTile)
+        stack.add(startingPosition)
 
         while (stack.isNotEmpty()) {
             val currentPosition = stack.pop()

@@ -5,7 +5,7 @@ import Common.board.tile.Degree
 interface Direction {
 
     fun transform(degree: Degree): Direction {
-        return VerticalDirection.UP // TODO
+        return this // TODO
     }
 
     fun reverse(): Direction
