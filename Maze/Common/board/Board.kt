@@ -32,7 +32,7 @@ class Board(
         when (direction) {
             HorizontalDirection.LEFT -> {
                 this.dislodgedTile = row.removeAt(0)
-                this.emptySlot = Coordinates(rowPosition, ColumnPosition(this.width))
+                this.emptySlot = Coordinates(rowPosition, ColumnPosition(this.width - 1))
             }
             HorizontalDirection.RIGHT -> {
                 this.dislodgedTile = row.removeAt(width - 1)
@@ -52,7 +52,7 @@ class Board(
         when (direction) {
             VerticalDirection.UP -> {
                 this.dislodgedTile = col.removeAt(0)
-                this.emptySlot = Coordinates(RowPosition(this.height), columnPosition)
+                this.emptySlot = Coordinates(RowPosition(this.height - 1), columnPosition)
             }
             VerticalDirection.DOWN -> {
                 this.dislodgedTile = col.removeAt(height - 1)
@@ -119,7 +119,7 @@ class Board(
 
     private fun setTile(position: Coordinates, tile: Tile) {
         val row = tiles[position.row.value]
-        row[position.col.value] = tile
+        row.add(position.col.value, tile)
     }
 
     private fun getTile(position: Coordinates): Tile {

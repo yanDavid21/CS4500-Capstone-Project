@@ -5,4 +5,4 @@ clean:
 	rm -rf .gradle
 
 jar:
-	./gradlew jar
+	./gradlew clean build
