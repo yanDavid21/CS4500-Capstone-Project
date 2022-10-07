@@ -1,4 +1,4 @@
-package Common.board.tile
+package Common.tile
 
 /**
  * A Stub for now, we defined to to uniquely identify tiles in a board.

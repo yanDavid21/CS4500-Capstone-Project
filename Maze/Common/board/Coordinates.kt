@@ -1,4 +1,4 @@
-package Common
+package Common.board
 
 data class Coordinates(
     val row: RowPosition,

@@ -1,9 +1,5 @@
 package Common.tile
 
-import Common.Direction
-import Common.HorizontalDirection
-import Common.VerticalDirection
-import Common.board.tile.Degree
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 

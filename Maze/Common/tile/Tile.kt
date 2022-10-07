@@ -1,10 +1,5 @@
-package Common.board
+package Common.tile
 
-import Common.Direction
-import Common.HorizontalDirection
-import Common.VerticalDirection
-import Common.board.tile.Degree
-import Common.board.tile.Gem
 import java.util.*
 
 interface Tile {
@@ -91,19 +86,3 @@ data class GameTile(val path: Path, var degree: Degree, val gem: Gem): Tile {
     }
 }
 
-enum class Path(val symbol: String) {
-    VERTICAL("│"),UP_RIGHT("└"),T("┬"),CROSS("┼");
-
-    fun getDefaultOutgoingDirections(): Set<Direction> {
-        return when (this) {
-            VERTICAL -> setOf(VerticalDirection.UP, VerticalDirection.DOWN)
-            CROSS -> setOf(VerticalDirection.UP, VerticalDirection.DOWN, HorizontalDirection.LEFT, HorizontalDirection.RIGHT)
-            UP_RIGHT -> setOf(VerticalDirection.UP, HorizontalDirection.RIGHT)
-            T -> setOf(HorizontalDirection.LEFT, HorizontalDirection.RIGHT, VerticalDirection.DOWN)
-        }
-    }
-
-    override fun toString(): String {
-        return symbol
-    }
-}

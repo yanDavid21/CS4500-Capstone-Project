@@ -29,10 +29,10 @@ internal class TileTest {
 
     @Test
     fun getIncomingDirectionsNoRotation() {
-        assertEquals(setOf(U, D), GameTile(Path.VERTICAL, Degree.ZERO).getIncomingDirections())
-        assertEquals(setOf(L, D), GameTile(Path.UP_RIGHT, Degree.ZERO).getIncomingDirections())
-        assertEquals(setOf(R, L, U), GameTile(Path.T, Degree.ZERO).getIncomingDirections())
-        assertEquals(setOf(L, R, D, U), GameTile(Path.CROSS, Degree.ZERO).getIncomingDirections())
+        assertEquals(setOf(U, D), GameTile(Path.VERTICAL, Degree.ZERO, Gem(0)).getIncomingDirections())
+        assertEquals(setOf(L, D), GameTile(Path.UP_RIGHT, Degree.ZERO, Gem(0)).getIncomingDirections())
+        assertEquals(setOf(R, L, U), GameTile(Path.T, Degree.ZERO, Gem(0)).getIncomingDirections())
+        assertEquals(setOf(L, R, D, U), GameTile(Path.CROSS, Degree.ZERO, Gem(0)).getIncomingDirections())
     }
 
     @Test

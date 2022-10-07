@@ -1,10 +1,10 @@
-package Common.board.tile
+package Common.tile
 
 enum class Degree(private val value: Int) {
     ZERO(0), NINETY(90), ONE_EIGHTY(180), TWO_SEVENTY(270);
 
     fun add(other: Degree): Degree {
-        return Degree.valueOf((this.value + other.value) % 360)
+        return valueOf((this.value + other.value) % 360)
     }
 
     companion object {

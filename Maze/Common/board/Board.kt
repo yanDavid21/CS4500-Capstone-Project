@@ -1,7 +1,9 @@
 package Common.board
 
-import Common.*
-import Common.board.tile.Degree
+import Common.tile.Degree
+import Common.tile.HorizontalDirection
+import Common.tile.Tile
+import Common.tile.VerticalDirection
 
 class Board(
     tiles: Array<Array<Tile>>, private var spareTile: Tile

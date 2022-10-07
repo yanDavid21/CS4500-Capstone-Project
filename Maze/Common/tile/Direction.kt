@@ -1,6 +1,4 @@
-package Common
-
-import Common.board.tile.Degree
+package Common.tile
 
 interface Direction {
 

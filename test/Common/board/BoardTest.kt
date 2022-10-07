@@ -13,18 +13,23 @@ internal class BoardTest {
 
     @Test
     fun testSlideHorizontal() {
+        //ARRANGE
         val tiles = createTiles()
         val board = createBoard(tiles)
 
+        // ACT
         board.slide(RowPosition(0), HorizontalDirection.RIGHT)
-
         val newFirstRow = tiles[0]
         val expectedTiles = arrayOf(EmptyTile(), GameTile(Path.VERTICAL, Degree.ZERO, Gem(1)), GameTile(Path.CROSS, Degree.TWO_SEVENTY, Gem(2)))
+
+        // ASSERT
         Assert.assertArrayEquals(expectedTiles, newFirstRow)
 
         // ACT
         board.slide(RowPosition(2), HorizontalDirection.LEFT)
         val newLastRow = tiles[2]
+
+        // ASSERT
         Assert.assertArrayEquals(arrayOf(GameTile(Path.CROSS, Degree.TWO_SEVENTY,  Gem(7)), GameTile(Path.T, Degree.NINETY,  Gem(8)), EmptyTile()), newLastRow)
     }
 
@@ -66,22 +71,24 @@ internal class BoardTest {
 
     @Test
     fun testInsertAfterASlide() {
+        // ARRANGE
         val tiles = createTiles()
         val spareTile = createSpareTile()
         val board = Board(tiles, spareTile)
 
+        // ACT
         board.slide(RowPosition(0), HorizontalDirection.RIGHT)
-
         board.insertSpareTile()
 
+        // ASSERT
         Assert.assertArrayEquals(arrayOf(spareTile, GameTile(Path.VERTICAL, Degree.ZERO,  Gem(1)), GameTile(Path.CROSS, Degree.TWO_SEVENTY,  Gem(2))), tiles[0])
 
+        // ACT
         board.slide(RowPosition(2), HorizontalDirection.LEFT)
-
         board.insertSpareTile()
 
+        // ASSERT
         Assert.assertArrayEquals(arrayOf<Tile>(GameTile(Path.CROSS, Degree.TWO_SEVENTY,  Gem(7)), GameTile(Path.T, Degree.NINETY,  Gem(8)), GameTile(Path.T, Degree.NINETY,  Gem(3))), tiles[2])
-
     }
 
     @Test
@@ -99,6 +106,7 @@ internal class BoardTest {
 
     @Test
     fun testGetUnreachableTilesSome() {
+        // ARRANGE
         val tiles = createTiles()
         val board = createBoard(tiles)
 
