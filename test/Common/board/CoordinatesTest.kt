@@ -64,11 +64,13 @@ internal class CoordinatesTest {
 
     @Test
     fun testCopyWithNewColInvalid() {
-
+        assertThrows<java.lang.IllegalArgumentException> { someCoordinate.copyWithNewCol(-5)  }
+        assertThrows<java.lang.IllegalArgumentException> { someCoordinate.copyWithNewCol(maxX + 10)  }
     }
 
     @Test
     fun testCopyWithNewRowInvalid() {
-
+        assertThrows<java.lang.IllegalArgumentException> { someCoordinate.copyWithNewRow(-5)  }
+        assertThrows<java.lang.IllegalArgumentException> { someCoordinate.copyWithNewRow(maxY + 10)  }
     }
 }

@@ -56,17 +56,22 @@ internal class BoardTest {
     fun testInsertBeforeSlideInvalid() {
         val board = createBoard()
 
-        assertThrows<>()
+        assertThrows<IllegalStateException>("must be non-null") {
+            board.insertSpareTile()
+        }
     }
 
-    @Test
-    fun testInsertWithNoSlide() {
-
-    }
 
     @Test
     fun testInsertAfterInsertInvalid() {
+        val board = createBoard()
 
+        board.slide(RowPosition(0), HorizontalDirection.RIGHT)
+        board.insertSpareTile()
+
+        assertThrows<IllegalStateException>("must be non-null") {
+            board.insertSpareTile()
+        }
     }
 
     @Test
