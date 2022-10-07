@@ -1,11 +1,6 @@
 package Common.board
 
-import Common.ColumnPosition
-import Common.Coordinates
-import Common.HorizontalDirection
-import Common.RowPosition
-import Common.board.tile.Degree
-import Common.board.tile.Gem
+import Common.tile.*
 import org.junit.Assert
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
@@ -27,10 +22,15 @@ internal class BoardTest {
         val expectedTiles = arrayOf(EmptyTile(), GameTile(Path.VERTICAL, Degree.ZERO, Gem(1)), GameTile(Path.CROSS, Degree.TWO_SEVENTY, Gem(2)))
         Assert.assertArrayEquals(expectedTiles, newFirstRow)
 
+        // ACT
         board.slide(RowPosition(2), HorizontalDirection.LEFT)
-
         val newLastRow = tiles[2]
         Assert.assertArrayEquals(arrayOf(GameTile(Path.CROSS, Degree.TWO_SEVENTY,  Gem(7)), GameTile(Path.T, Degree.NINETY,  Gem(8)), EmptyTile()), newLastRow)
+    }
+
+    @Test
+    fun testSlideVertical() {
+
     }
 
     @Test
@@ -38,6 +38,30 @@ internal class BoardTest {
         val board = createBoard()
         assertThrows<IllegalArgumentException> { board.slide(RowPosition(1), HorizontalDirection.RIGHT) }
         assertThrows<IllegalArgumentException> { board.slide(RowPosition(3), HorizontalDirection.LEFT) }
+    }
+
+    @Test
+    fun testSlideInvalidVerticalPosition() {
+        val board = createBoard()
+        assertThrows<IllegalArgumentException> { board.slide(ColumnPosition(1), VerticalDirection.UP) }
+        assertThrows<IllegalArgumentException> { board.slide(ColumnPosition(3), VerticalDirection.DOWN) }
+    }
+
+    @Test
+    fun testInsertBeforeSlideInvalid() {
+        val board = createBoard()
+
+        assertThrows<>()
+    }
+
+    @Test
+    fun testInsertWithNoSlide() {
+
+    }
+
+    @Test
+    fun testInsertAfterInsertInvalid() {
+
     }
 
     @Test
@@ -62,10 +86,14 @@ internal class BoardTest {
 
     @Test
     fun testGetReachableTilesUnreachable() {
+        // ARRANGE
         val tiles = createTiles()
         val board = createBoard(tiles)
 
+        // ACT
         val reachableFromTopLeft = board.getReachableTiles(Coordinates(RowPosition(0), ColumnPosition(0)))
+
+        // ASSERT
         assertEquals(setOf(), reachableFromTopLeft)
     }
 
@@ -74,7 +102,7 @@ internal class BoardTest {
         val tiles = createTiles()
         val board = createBoard(tiles)
 
-        // TODO: test is failing because tiles with same path and degree are considered equal, need to add gems to  differentiate
+        // ASSERT
         val reachableFromTopRight = board.getReachableTiles(Coordinates(RowPosition(0), ColumnPosition(2)))
         assertEquals(setOf(tiles[1][2], tiles[2][2]), reachableFromTopRight)
     }

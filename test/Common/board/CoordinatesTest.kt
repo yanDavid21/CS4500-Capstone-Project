@@ -1,19 +1,15 @@
 package Common.board
 
-import Common.ColumnPosition
-import Common.Coordinates
-import Common.Position
-import Common.RowPosition
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import kotlin.test.assertEquals
 
-internal class ColumnPositionTest {
+internal class CoordinatesTest {
 
     private val minX = Position.MIN_X_INDEX
     private val maxX = Position.MAX_X_INDEX
     private val minY = Position.MIN_Y_INDEX
-    private val maxY = Position.MAX_Y_VALUE
+    private val maxY = Position.MAX_Y_INDEX
 
     private val xInterval = "[$minX, $maxX]"
     private val yInterval = "[$minY, $maxY]"
@@ -31,7 +27,7 @@ internal class ColumnPositionTest {
     @Test
     fun testCreateInvalidRowPosition() {
         assertThrows<IllegalArgumentException>("Position should be in the interval $yInterval, given ${maxY + 2}.") {
-            RowPosition(Position.MAX_Y_VALUE + 2)
+            RowPosition(Position.MAX_Y_INDEX + 2)
         }
 
         assertThrows<IllegalArgumentException>("Position should be in the interval $yInterval, given ${minY - 2}.") {
@@ -64,5 +60,15 @@ internal class ColumnPositionTest {
     @Test
     fun testCopyWithNewCol() {
         assertEquals(Coordinates(someRowPosition, ColumnPosition(maxX)), someCoordinate.copyWithNewCol(maxX))
+    }
+
+    @Test
+    fun testCopyWithNewColInvalid() {
+
+    }
+
+    @Test
+    fun testCopyWithNewRowInvalid() {
+
     }
 }

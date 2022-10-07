@@ -9,7 +9,7 @@ enum class Degree(private val value: Int) {
 
     companion object {
         fun valueOf(int: Int): Degree {
-            return when (int) {
+            return when (int % 360) {
                 0 -> ZERO
                 90 -> NINETY
                 180 -> ONE_EIGHTY

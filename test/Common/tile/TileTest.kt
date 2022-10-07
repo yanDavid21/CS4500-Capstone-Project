@@ -1,12 +1,5 @@
 package Common.tile
 
-import Common.HorizontalDirection
-import Common.VerticalDirection
-import Common.board.EmptyTile
-import Common.board.GameTile
-import Common.board.Path
-import Common.board.tile.Degree
-import Common.board.tile.Gem
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse

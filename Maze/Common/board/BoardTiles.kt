@@ -1,6 +1,6 @@
 package Common.board
 
-import Common.*
+import Common.tile.*
 import java.util.*
 import kotlin.collections.HashSet
 
