@@ -24,6 +24,7 @@ class BoardTiles(private val tiles: Array<Array<Tile>>,
         }
 
         val dislodgedTile = getDislodgedTile(position, direction)
+
         shiftByDirection(position,direction)
 
         // TODO: deal with player on tile
@@ -47,6 +48,7 @@ class BoardTiles(private val tiles: Array<Array<Tile>>,
                 currentTile.getOutgoingDirections().forEach { outgoingDirection ->
                     addReachableNeighborToPath(currentPosition, outgoingDirection, stack, visitedNodes)
                 }
+                visitedNodes.add(currentTile)
             }
         }
         visitedNodes.remove(startingTile)
@@ -120,7 +122,6 @@ class BoardTiles(private val tiles: Array<Array<Tile>>,
             if (neighbor.canBeReachedFrom(outgoingDirection)) {
                 stack.add(neighborPosition)
             }
-            visitedNodes.add(neighbor)
         }
     }
 

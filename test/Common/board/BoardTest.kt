@@ -60,12 +60,23 @@ internal class BoardTest {
     }
 
     @Test
-    fun testGetReachableTiles() {
+    fun testGetReachableTilesUnreachable() {
         val tiles = createTiles()
         val board = createBoard(tiles)
 
         val reachableFromTopLeft = board.getReachableTiles(Coordinates(RowPosition(0), ColumnPosition(0)))
-        assertEquals(setOf(tiles[1][0]), reachableFromTopLeft)
+        assertEquals(setOf(), reachableFromTopLeft)
+    }
+
+    @Test
+    fun testGetUnreachableTilesSome() {
+        val tiles = createTiles()
+        val board = createBoard(tiles)
+
+        // TODO: test is failing because tiles with same path and degree are considered equal, need to add gems to
+        // differentiate
+        val reachableFromTopRight = board.getReachableTiles(Coordinates(RowPosition(0), ColumnPosition(2)))
+        assertEquals(setOf(tiles[1][2], tiles[2][2]), reachableFromTopRight)
     }
 
     private fun createTiles(): Array<Array<Tile>> {
