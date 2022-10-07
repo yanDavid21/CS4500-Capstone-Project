@@ -4,6 +4,8 @@ import Common.Direction
 import Common.HorizontalDirection
 import Common.VerticalDirection
 import Common.board.tile.Degree
+import Common.board.tile.Gem
+import java.util.*
 
 interface Tile {
     fun getOutgoingDirections(): Set<Direction>
@@ -42,7 +44,7 @@ class EmptyTile : Tile {
     }
 }
 
-data class GameTile(val path: Path, var degree: Degree): Tile {
+data class GameTile(val path: Path, var degree: Degree, val gem: Gem): Tile {
     private lateinit var incomingDirections: Set<Direction>
     private lateinit var outgoingDirections: Set<Direction>
 
@@ -75,6 +77,17 @@ data class GameTile(val path: Path, var degree: Degree): Tile {
 
     override fun toString(): String {
         return "($path, $degree)"
+    }
+
+    override fun hashCode(): Int {
+        return Objects.hash(this.gem, this.path, this.degree)
+    }
+
+    override fun equals(other: Any?): Boolean {
+        if (other is GameTile) {
+            return (this.gem.equals(other.gem) && this.path == other.path && this.degree == other.degree)
+        }
+        return false
     }
 }
 

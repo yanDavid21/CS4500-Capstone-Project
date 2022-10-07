@@ -6,6 +6,7 @@ import Common.board.EmptyTile
 import Common.board.GameTile
 import Common.board.Path
 import Common.board.tile.Degree
+import Common.board.tile.Gem
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
@@ -19,18 +20,18 @@ internal class TileTest {
 
     @Test
     fun testGetOutComingDirectionsNoRotation() {
-        assertEquals(setOf(U, D), GameTile(Path.VERTICAL, Degree.ZERO).getOutgoingDirections())
-        assertEquals(setOf(R, U), GameTile(Path.UP_RIGHT, Degree.ZERO).getOutgoingDirections())
-        assertEquals(setOf(L, R, D), GameTile(Path.T, Degree.ZERO).getOutgoingDirections())
-        assertEquals(setOf(R, U, L, D), GameTile(Path.CROSS, Degree.ZERO).getOutgoingDirections())
+        assertEquals(setOf(U, D), GameTile(Path.VERTICAL, Degree.ZERO, Gem(0)).getOutgoingDirections())
+        assertEquals(setOf(R, U), GameTile(Path.UP_RIGHT, Degree.ZERO,  Gem(0)).getOutgoingDirections())
+        assertEquals(setOf(L, R, D), GameTile(Path.T, Degree.ZERO,  Gem(0)).getOutgoingDirections())
+        assertEquals(setOf(R, U, L, D), GameTile(Path.CROSS, Degree.ZERO,  Gem(0)).getOutgoingDirections())
     }
 
     @Test
     fun testGetOutComingDirectiosnRotate() {
-        assertEquals(setOf(L, R), GameTile(Path.VERTICAL, Degree.NINETY).getOutgoingDirections())
-        assertEquals(setOf(L, U, R, D), GameTile(Path.CROSS, Degree.ONE_EIGHTY).getOutgoingDirections())
-        assertEquals(setOf(L, D), GameTile(Path.UP_RIGHT, Degree.ONE_EIGHTY).getOutgoingDirections())
-        assertEquals(setOf(U, D, L), GameTile(Path.T, Degree.TWO_SEVENTY).getOutgoingDirections())
+        assertEquals(setOf(L, R), GameTile(Path.VERTICAL, Degree.NINETY,  Gem(0)).getOutgoingDirections())
+        assertEquals(setOf(L, U, R, D), GameTile(Path.CROSS, Degree.ONE_EIGHTY,  Gem(0)).getOutgoingDirections())
+        assertEquals(setOf(L, D), GameTile(Path.UP_RIGHT, Degree.ONE_EIGHTY,  Gem(0)).getOutgoingDirections())
+        assertEquals(setOf(U, D, L), GameTile(Path.T, Degree.TWO_SEVENTY,  Gem(0)).getOutgoingDirections())
     }
 
     @Test
@@ -43,7 +44,7 @@ internal class TileTest {
 
     @Test
     fun getDirectionsAfterRotation() {
-        val tile = GameTile(Path.UP_RIGHT, Degree.ZERO)
+        val tile = GameTile(Path.UP_RIGHT, Degree.ZERO,  Gem(0))
 
         assertEquals(setOf(U, R), tile.getOutgoingDirections())
         assertEquals(setOf(D, L), tile.getIncomingDirections())

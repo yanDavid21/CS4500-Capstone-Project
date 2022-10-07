@@ -10,9 +10,9 @@ import kotlin.test.assertEquals
 
 internal class ColumnPositionTest {
 
-    private val minX = Position.MIN_X_VALUE
-    private val maxX = Position.MAX_X_VALUE
-    private val minY = Position.MIN_Y_VALUE
+    private val minX = Position.MIN_X_INDEX
+    private val maxX = Position.MAX_X_INDEX
+    private val minY = Position.MIN_Y_INDEX
     private val maxY = Position.MAX_Y_VALUE
 
     private val xInterval = "[$minX, $maxX]"
@@ -35,7 +35,7 @@ internal class ColumnPositionTest {
         }
 
         assertThrows<IllegalArgumentException>("Position should be in the interval $yInterval, given ${minY - 2}.") {
-            RowPosition(Position.MIN_Y_VALUE - 2)
+            RowPosition(Position.MIN_Y_INDEX - 2)
         }
     }
 
@@ -48,11 +48,11 @@ internal class ColumnPositionTest {
     @Test
     fun testCreateInvalidColumn() {
         assertThrows<IllegalArgumentException>("Position should be in the interval $xInterval, given ${maxX + 2}.") {
-            RowPosition(Position.MAX_X_VALUE + 2)
+            RowPosition(Position.MAX_X_INDEX + 2)
         }
 
         assertThrows<IllegalArgumentException>("Position should be in the interval $xInterval, given ${minX - 3}.") {
-            RowPosition(Position.MIN_X_VALUE - 3)
+            RowPosition(Position.MIN_X_INDEX - 3)
         }
     }
 

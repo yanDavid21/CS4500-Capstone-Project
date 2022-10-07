@@ -17,13 +17,18 @@ players and their attributes
 - board: Board // board to play on and manipulate
 - randomSeed: Int // used to set random seed for board generation
 ### Referee functions
-- handle and respond to player actions 
-  - checkMobilityOfPlayer(coord: Coordinates): Boolean 
-  - sendPlayerOptions(): Unit
-  - executePlayerAction(action: Enum { PASS, ACTION }): Response
-  - 
-- add new players to the game 
+- handle and respond to player actions
+  - checkMobilityFromCoordinates(row: Int, col: Int): Boolean
+  - getPlayerOptions(playerId: String): Response
+  - executePlayerAction(action: Enum { PASS, ACTION }, playerId: String): Response*
+  - movePlayer(row: Int, col: Int, playerId: String): Response
+  - slide(rowOrColPosition: Int, playerId: String): Response
+  - rotateSpareTile(degrees: Int, playerId: String): Response
+- add new players to the game
   - addNewPlayer(): Response
   - generateID(): Response
 - remove player from the game
-  - removePlayer()
+  - removePlayer() Response
+
+Response is an object of guaranteed shape { status: Enum { SUCCESS, FAIL }, message: str, board: Board }. 
+This shape is open to extension, and will be specific to each method.

@@ -16,6 +16,7 @@ class BoardTiles(private val tiles: Array<Array<Tile>>,
             this.setTile(emptySlotPosition, tile)
             this.emptySlotPosition = null
         } ?: throw IllegalStateException("Empty slot must be non-null to insert tile.")
+
     }
 
     fun slide(position: Position, direction: Direction): Tile {
