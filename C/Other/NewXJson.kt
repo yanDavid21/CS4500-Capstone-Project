@@ -63,18 +63,19 @@ fun readMessage(jsonReader: JsonReader):CardinalCharacters? {
 
     reader.beginObject()
     while (reader.hasNext()) {
-        val name: String = reader.nextName()
-        when (name) {
-            "HORIZONTAL" -> {
-                horizontal = reader.nextString()
-            }
-            "VERTICAL" -> {
-                vertical = reader.nextString()
-            }
-            else -> {
-                reader.skipValue()
-            }
-        }
+//        val name: String = reader.nextName()
+//        when (name) {
+//            "HORIZONTAL" -> {
+//                horizontal = reader.nextString()
+//            }
+//            "VERTICAL" -> {
+//                vertical = reader.nextString()
+//            }
+//            else -> {
+//                reader.skipValue()
+//            }
+//        }
+
     }
     reader.endObject()
     return vertical?.let {

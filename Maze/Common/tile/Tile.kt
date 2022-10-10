@@ -39,7 +39,7 @@ class EmptyTile : Tile {
     }
 }
 
-data class GameTile(val path: Path, var degree: Degree, val gem: Gem): Tile {
+data class GameTile(val path: Path, var degree: Degree, val gems: Pair<Gem,Gem>): Tile {
     private lateinit var incomingDirections: Set<Direction>
     private lateinit var outgoingDirections: Set<Direction>
 
@@ -75,12 +75,12 @@ data class GameTile(val path: Path, var degree: Degree, val gem: Gem): Tile {
     }
 
     override fun hashCode(): Int {
-        return Objects.hash(this.gem, this.path, this.degree)
+        return Objects.hash(this.gems, this.path, this.degree)
     }
 
     override fun equals(other: Any?): Boolean {
         if (other is GameTile) {
-            return (this.gem.equals(other.gem) && this.path == other.path && this.degree == other.degree)
+            return (this.gems == other.gems && this.path == other.path && this.degree == other.degree)
         }
         return false
     }
