@@ -33,6 +33,7 @@ dependencies {
     testImplementation(kotlin("test"))
 
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.4.0")
+    implementation("com.google.code.gson:gson:2.9.1")
 
     runtimeOnly("org.jetbrains.kotlin:kotlin-runtime:1.2.71")
     runtimeOnly("org.jetbrains.kotlin:kotlin-reflect:1.7.0")
@@ -43,7 +44,7 @@ dependencies {
     runtimeOnly("org.openjfx:javafx-fxml:18.0.2:linux")
     runtimeOnly("org.openjfx:javafx-media:18.0.2:linux")
     runtimeOnly("org.openjfx:javafx-swing:18.0.2:linux")
-    runtimeOnly("com.google.code.gson:gson:2.9.1")
+
 }
 
 tasks.test {

@@ -1,7 +1,7 @@
 package Common.tile
 
 /**
- * A Stub for now, we defined to to uniquely identify tiles in a board.
+ * A Gem, identified by its name
  */
-data class Gem(val id: Int) {
+data class Gem(val name: String) {
 }
