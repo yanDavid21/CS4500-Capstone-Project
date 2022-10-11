@@ -3,5 +3,12 @@ package Common.tile
 /**
  * A Gem, identified by its name
  */
-data class Gem(val name: String) {
+enum class Gem() {
+    AMETHYST
+
+    companion object {
+        fun loadAllGems(): List<Gem> {
+
+        }
+    }
 }

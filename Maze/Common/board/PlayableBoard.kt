@@ -20,4 +20,11 @@ interface PlayableBoard {
 
     fun getReachableTiles(startingPosition: Coordinates): Set<Tile>
 
+    fun kickOutActivePlayer()
+
+    fun activePlayerCanReachTile(tile: Tile)
+    
+    //fun addPlayerToGame()
+
+
 }
