@@ -79,7 +79,7 @@ internal class BoardTest {
         // ARRANGE
         val tiles = createTiles()
         val spareTile = createSpareTile()
-        val board = Board(tiles, spareTile)
+        val board = Referee(tiles, spareTile)
 
         // ACT
         board.slide(RowPosition(0), HorizontalDirection.RIGHT)
@@ -130,11 +130,11 @@ internal class BoardTest {
         return GameTile(Path.T, Degree.ONE_EIGHTY, Gem(10))
     }
 
-    private fun createBoard(tiles: Array<Array<Tile>>): Board {
-        return Board(tiles, createSpareTile())
+    private fun createBoard(tiles: Array<Array<Tile>>): Referee {
+        return Referee(tiles, createSpareTile())
     }
 
     private fun createBoard(): PlayableBoard {
-        return Board(createTiles(), createSpareTile())
+        return Referee(createTiles(), createSpareTile())
     }
 }

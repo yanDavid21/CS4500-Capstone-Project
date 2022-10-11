@@ -1,6 +1,6 @@
 package testing
 
-import Common.board.Board
+import Common.board.Referee
 import Common.board.ColumnPosition
 import Common.board.Coordinates
 import Common.board.RowPosition
@@ -37,7 +37,7 @@ fun main() {
         }.toTypedArray()
     }.toTypedArray()
 
-    val board = Board(tiles, EmptyTile()) // TODO: will not need spare tile after refactoring
+    val board = Referee(tiles, EmptyTile()) // TODO: will not need spare tile after refactoring
 
     val reachableTiles = board.getReachableTiles(Coordinates(RowPosition(coordinates[0]), ColumnPosition(coordinates[1])))
 
