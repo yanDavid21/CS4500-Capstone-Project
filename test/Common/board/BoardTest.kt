@@ -2,6 +2,7 @@ package Common.board
 
 import Common.tile.*
 import Common.tile.treasure.Gem
+import Common.tile.treasure.Treasure
 import org.junit.Assert
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
@@ -135,7 +136,7 @@ internal class BoardTest {
     }
 
     private fun createSpareTile(): Tile {
-        return GameTile(Path.T, Degree.ONE_EIGHTY, Gem(10))
+        return GameTile(Path.T, Degree.ONE_EIGHTY, Treasure(Gem.AMETHYST, Gem.AMETRINE))
     }
 
 
@@ -157,6 +158,6 @@ internal class BoardTest {
             listOf("┘", "┌", "│",  "┐", "└", "─", "┬")
         )
 
-        val treasures =
+        val treasures = listOf(listOf())
     }
 }

@@ -15,8 +15,9 @@ class PlayerQueue(
         return players[currentPlayerIndex]
     }
 
-    fun removePlayer()  {
-        players.removeAt(currentPlayerIndex)
-        nextPlayer()
+    fun removeCurrentPlayer():Player  {
+        val player = players.removeAt(currentPlayerIndex)
+        currentPlayerIndex %= players.size
+        return player
     }
 }

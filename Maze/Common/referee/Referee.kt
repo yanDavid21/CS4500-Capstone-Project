@@ -3,8 +3,8 @@ package Common.referee
 import Common.GameState
 import Common.Player
 import Common.PlayerQueue
+import Common.board.Board
 import Common.board.ColumnPosition
-import Common.board.IBoard
 import Common.board.RowPosition
 import Common.tile.Degree
 import Common.tile.HorizontalDirection
@@ -12,7 +12,7 @@ import Common.tile.Tile
 import Common.tile.VerticalDirection
 
 class Referee(
-    private val board: IBoard,
+    private val board: Board,
     private var spareTile: Tile,
     players: List<Player>
 ): IReferee {
@@ -40,11 +40,8 @@ class Referee(
 
     override fun insertSpareTile() {
         performActionAndTransitionState(GameState.INSERT, GameState.MOVE) {
-            dislodgedTile?.let { newSpareTile ->
-                if (newSpareTile.hasPlayer()) {
-                    val amnestiedPlayers = newSpareTile.getPlayers()
-                    amnestiedPlayers.forEach { this.spareTile.addPlayerToTile(it) }
-                }
+            dislodgedTile?.let {newSpareTile ->
+                this.moveAmnestiedPlayersIfAny(newSpareTile)
                 this.board.insertTileIntoEmptySlot(spareTile)
                 this.spareTile = newSpareTile
                 this.dislodgedTile = null
@@ -57,11 +54,9 @@ class Referee(
         this.spareTile.rotate(degree)
     }
 
-
-
     override fun kickOutActivePlayer() {
-        playerQueue.removePlayer()
-
+        val activePlayer = playerQueue.removeCurrentPlayer()
+        board.removePlayerFromTiles(activePlayer)
     }
 
     private fun <T> performActionAndTransitionState(initialState: GameState, nextState: GameState, func: () -> T): T {

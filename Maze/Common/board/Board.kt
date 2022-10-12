@@ -1,17 +1,21 @@
 package Common.board
 
+import Common.Player
 import Common.tile.*
 import java.util.*
 import kotlin.collections.HashSet
 
+/**
+ * A Maze board that supports player operations.
+ */
 class Board(private val tiles: Array<Array<Tile>>,
-            private var emptySlotPosition: Coordinates? = null): IBoard {
+            private var emptySlotPosition: Coordinates? = null) {
 
     private val height = tiles.size
     private val width = tiles[0].size
 
 
-    override fun insertTileIntoEmptySlot(tile: Tile) {
+    fun insertTileIntoEmptySlot(tile: Tile) {
         emptySlotPosition?.let { emptySlotPosition ->
             this.setTile(emptySlotPosition, tile)
             this.emptySlotPosition = null
@@ -19,11 +23,11 @@ class Board(private val tiles: Array<Array<Tile>>,
 
     }
 
-    override fun slide(rowPosition: RowPosition, direction: HorizontalDirection): Tile {
+    fun slide(rowPosition: RowPosition, direction: HorizontalDirection): Tile {
         return doSlide(rowPosition, direction)
     }
 
-    override fun slide(columnPosition: ColumnPosition, direction: VerticalDirection): Tile {
+    fun slide(columnPosition: ColumnPosition, direction: VerticalDirection): Tile {
         return doSlide(columnPosition, direction)
     }
 
@@ -37,7 +41,6 @@ class Board(private val tiles: Array<Array<Tile>>,
 
         shiftByDirection(position,direction)
 
-        // TODO: deal with player on tile
         val newEmptySlot = getEmptySlotPositionAfterSliding(position, direction)
         setTile(newEmptySlot, EmptyTile())
         this.emptySlotPosition = newEmptySlot
@@ -49,7 +52,7 @@ class Board(private val tiles: Array<Array<Tile>>,
      * Performs a depth-first search of all reachable tiles starting from _position_, neighbors are determined
      * by whether two adjacent tile's have connecting shapes.
      */
-    override fun getReachableTiles(startingPosition: Coordinates): Set<Tile>  {
+    fun getReachableTiles(startingPosition: Coordinates): Set<Tile>  {
         val startingTile = getTile(startingPosition)
         val stack = Stack<Coordinates>()
         val visitedNodes = HashSet<Tile>()
@@ -60,13 +63,30 @@ class Board(private val tiles: Array<Array<Tile>>,
             val currentTile = getTile(currentPosition)
             if (!visitedNodes.contains(currentTile)) {
                 currentTile.getOutgoingDirections().forEach { outgoingDirection ->
-                    addReachableNeighborToPath(currentPosition, outgoingDirection, stack, visitedNodes)
+                    addReachableNeighborToPath(currentPosition, outgoingDirection, stack)
                 }
                 visitedNodes.add(currentTile)
             }
         }
         visitedNodes.remove(startingTile)
         return visitedNodes
+    }
+
+    fun removePlayerFromTiles(player: Player) {
+        this.tiles.forEach { row -> row.forEach { tile -> tile.removePlayerFromTile(player) }}
+    }
+
+    fun findPlayerLocation(player: Player): Coordinates {
+        for (rowIndex in 0 until this.height) {
+            for (colIndex in 0 until this.width) {
+                val position = Coordinates(RowPosition(rowIndex), ColumnPosition(colIndex))
+                val tile = getTile(position)
+                if (tile.hasCertainPlayer(player)) {
+                    return position
+                }
+            }
+        }
+        throw IllegalStateException("$player not found. Player should always be in the board.")
     }
 
     private fun getDislodgedTile(position: Position, direction: Direction): Tile {
@@ -130,7 +150,7 @@ class Board(private val tiles: Array<Array<Tile>>,
 
 
     private fun addReachableNeighborToPath(currentPosition: Coordinates, outgoingDirection: Direction,
-                                           stack: Stack<Coordinates>, visitedNodes: MutableSet<Tile>) {
+                                           stack: Stack<Coordinates>) {
         getPositionAdjacentTo(currentPosition, outgoingDirection)?.let { neighborPosition ->
             val neighbor = getTile(neighborPosition)
             if (neighbor.canBeReachedFrom(outgoingDirection)) {

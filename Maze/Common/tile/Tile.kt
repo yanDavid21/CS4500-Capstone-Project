@@ -127,7 +127,7 @@ data class GameTile(val path: Path, var degree: Degree, val treasure: Treasure):
     }
 
     override fun getPlayers(): Set<Player> {
-        return this.players
+        return this.players.toSet()
     }
 
     override fun equals(other: Any?): Boolean {
@@ -136,7 +136,5 @@ data class GameTile(val path: Path, var degree: Degree, val treasure: Treasure):
         }
         return false
     }
-
-
 }
 

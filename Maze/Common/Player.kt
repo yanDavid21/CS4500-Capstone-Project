@@ -1,6 +1,5 @@
 package Common
 
-import Common.board.Coordinates
 import Common.tile.Tile
 import Common.tile.treasure.Treasure
 import java.util.*

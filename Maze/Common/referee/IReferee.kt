@@ -22,5 +22,9 @@ interface IReferee {
 
     fun activePlayerCanReachTile(tile: Tile): Boolean
 
+    fun moveActivePlayer(tile: Tile)
+
+    fun hasActivePlayerReachedGoal(): Boolean
+
 }
 
