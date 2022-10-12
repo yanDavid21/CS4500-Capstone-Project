@@ -2,9 +2,9 @@ package Common
 
 
 enum class GameState {
-    SLIDE, INSERT, MOVE;
+    SLIDE_INSERT, MOVE;
 
     companion object {
-        val INITIAL = SLIDE
+        val INITIAL = SLIDE_INSERT
     }
 }

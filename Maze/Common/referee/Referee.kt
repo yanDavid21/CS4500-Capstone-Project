@@ -6,28 +6,17 @@ import Common.PlayerQueue
 import Common.board.Board
 import Common.board.ColumnPosition
 import Common.board.RowPosition
-import Common.tile.Degree
-import Common.tile.HorizontalDirection
-import Common.tile.Tile
-import Common.tile.VerticalDirection
+import Common.tile.*
 
 class Referee(
     private val board: Board,
-    private var spareTile: Tile,
+    private var spareTile: GameTile,
     players: List<Player>
-): IReferee {
-    private var dislodgedTile: Tile? = null
+) {
     private var nextAction: GameState = GameState.INITIAL
     private val playerQueue = PlayerQueue(players.toMutableList())
 
-
-    override fun activePlayerCanReachTile(tile: Tile): Boolean {
-        val currentPlayer = playerQueue.getCurrentPlayer()
-        val playerLocation = board.findPlayerLocation(currentPlayer)
-        return board.getReachableTiles(playerLocation).contains(tile)
-    }
-
-    override fun moveActivePlayer(tile: Tile) {
+    fun moveActivePlayer(tile: GameTile) {
         if (!activePlayerCanReachTile(tile)) {
             throw IllegalArgumentException("Can not move active player to $tile.")
         }
@@ -41,60 +30,37 @@ class Referee(
         // checkWinConditions
     }
 
-    override fun hasActivePlayerReachedGoal(): Boolean {
+    fun hasActivePlayerReachedGoal(): Boolean {
         return playerQueue.getCurrentPlayer().treasureFound
     }
 
-    override fun slideRow(rowPosition: RowPosition, direction: HorizontalDirection) {
-        performActionAndTransitionState(GameState.SLIDE, GameState.INSERT) {
-            this.dislodgedTile = board.slide(rowPosition,direction)
-        }
+    fun slideRowAndInsertSpare(rowPosition: RowPosition, direction: HorizontalDirection) {
+        val dislodgedTile = board.slideRowAndInsert(rowPosition,direction, this.spareTile)
+        this.spareTile = dislodgedTile
+        //moveAmnestiedPlayersIfAny(this.spareTile, toBeInserted)
     }
 
-    override fun slideColumn(columnPosition: ColumnPosition, direction: VerticalDirection) {
-        performActionAndTransitionState(GameState.SLIDE, GameState.INSERT) {
-            this.dislodgedTile = board.slide(columnPosition, direction)
-        }
+    fun slideColumnAndInsertSpare(columnPosition: ColumnPosition, direction: VerticalDirection) {
+        val dislodgedTile = board.slideColAndInsert(columnPosition, direction, this.spareTile)
+        this.spareTile = dislodgedTile
+        //moveAmnestiedPlayersIfAny(this.spareTile, toBeInserted)
     }
 
-    override fun insertSpareTile() {
-        performActionAndTransitionState(GameState.INSERT, GameState.MOVE) {
-            dislodgedTile?.let {newSpareTile ->
-                this.moveAmnestiedPlayersIfAny(newSpareTile)
-                this.board.insertTileIntoEmptySlot(spareTile)
-                this.spareTile = newSpareTile
-                this.dislodgedTile = null
-            } ?: throw IllegalStateException("Dislodged tile must be non-null to insert spare tile.")
-        }
-    }
-
-    override fun rotateSpareTile(degree: Degree) {
-        ensureStateIs(GameState.INSERT)
-        this.spareTile.rotate(degree)
-    }
-
-    override fun kickOutActivePlayer() {
+    fun kickOutActivePlayer() {
         val activePlayer = playerQueue.removeCurrentPlayer()
         board.removePlayerFromTiles(activePlayer)
     }
 
-    private fun <T> performActionAndTransitionState(initialState: GameState, nextState: GameState, func: () -> T): T {
-        ensureStateIs(initialState)
-        val output = func()
-        this.nextAction = nextState
-        return output
-    }
-
-    private fun ensureStateIs(state: GameState) {
-        if (nextAction != state) {
-            throw java.lang.IllegalStateException("This is the incorrect state of the game.")
-        }
-    }
-
-    private fun moveAmnestiedPlayersIfAny(fromTile: Tile) {
+    private fun moveAmnestiedPlayersIfAny(fromTile: GameTile, toTile: GameTile) {
         fromTile.getPlayers().forEach {
             fromTile.removePlayerFromTile(it)
-            this.spareTile.addPlayerToTile(it)
+            toTile.addPlayerToTile(it)
         }
+    }
+
+    private fun activePlayerCanReachTile(tile: GameTile): Boolean {
+        val currentPlayer = playerQueue.getCurrentPlayer()
+        val playerLocation = board.findPlayerLocation(currentPlayer)
+        return board.getReachableTiles(playerLocation).contains(tile)
     }
 }

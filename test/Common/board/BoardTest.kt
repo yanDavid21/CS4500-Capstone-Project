@@ -87,14 +87,14 @@ internal class BoardTest {
         val board = Board(tiles)
 
         // ACT
-        board.slide(RowPosition(0), HorizontalDirection.RIGHT)
+        board.slideRowAndInsert(RowPosition(0), HorizontalDirection.RIGHT)
         board.insertTileIntoEmptySlot(spareTile)
 
         // ASSERT
         Assert.assertArrayEquals(arrayOf(spareTile, GameTile(Path.VERTICAL, Degree.ZERO,  Gem(1)), GameTile(Path.CROSS, Degree.TWO_SEVENTY,  Gem(2))), tiles[0])
 
         // ACT
-        board.slide(RowPosition(2), HorizontalDirection.LEFT)
+        board.slideRowAndInsert(RowPosition(2), HorizontalDirection.LEFT)
         board.insertSpareTile()
 
         // ASSERT

@@ -8,31 +8,20 @@ import kotlin.collections.HashSet
 /**
  * A Maze board that supports player operations.
  */
-class Board(private val tiles: Array<Array<Tile>>,
-            private var emptySlotPosition: Coordinates? = null) {
+class Board(private val tiles: Array<Array<GameTile>>) {
 
     private val height = tiles.size
     private val width = tiles[0].size
 
-
-    fun insertTileIntoEmptySlot(tile: Tile) {
-        emptySlotPosition?.let { emptySlotPosition ->
-            this.setTile(emptySlotPosition, tile)
-            this.emptySlotPosition = null
-        } ?: throw IllegalStateException("Empty slot must be non-null to insert tile.")
-
+    fun slideRowAndInsert(rowPosition: RowPosition, direction: HorizontalDirection, spareTile: GameTile): GameTile {
+        return slideAndInsertSpare(rowPosition, direction, spareTile)
     }
 
-    fun slide(rowPosition: RowPosition, direction: HorizontalDirection): Tile {
-        return doSlide(rowPosition, direction)
+    fun slideColAndInsert(columnPosition: ColumnPosition, direction: VerticalDirection, spareTile: GameTile): GameTile {
+        return slideAndInsertSpare(columnPosition, direction, spareTile)
     }
 
-    fun slide(columnPosition: ColumnPosition, direction: VerticalDirection): Tile {
-        return doSlide(columnPosition, direction)
-    }
-
-    //TODO: rename
-    private fun doSlide(position: Position, direction: Direction): Tile {
+    private fun slideAndInsertSpare(position: Position, direction: Direction, spareTile: GameTile): GameTile {
         if (!isSlideable(position)) {
             throw IllegalArgumentException("Row/col ${position.value} is not slideable.")
         }
@@ -42,8 +31,7 @@ class Board(private val tiles: Array<Array<Tile>>,
         shiftByDirection(position,direction)
 
         val newEmptySlot = getEmptySlotPositionAfterSliding(position, direction)
-        setTile(newEmptySlot, EmptyTile())
-        this.emptySlotPosition = newEmptySlot
+        setTile(newEmptySlot, spareTile)
 
         return dislodgedTile
     }
@@ -52,10 +40,10 @@ class Board(private val tiles: Array<Array<Tile>>,
      * Performs a depth-first search of all reachable tiles starting from _position_, neighbors are determined
      * by whether two adjacent tile's have connecting shapes.
      */
-    fun getReachableTiles(startingPosition: Coordinates): Set<Tile>  {
+    fun getReachableTiles(startingPosition: Coordinates): Set<GameTile>  {
         val startingTile = getTile(startingPosition)
         val stack = Stack<Coordinates>()
-        val visitedNodes = HashSet<Tile>()
+        val visitedNodes = HashSet<GameTile>()
         stack.add(startingPosition)
 
         while (stack.isNotEmpty()) {
@@ -89,7 +77,7 @@ class Board(private val tiles: Array<Array<Tile>>,
         throw IllegalStateException("$player not found. Player should always be in the board.")
     }
 
-    private fun getDislodgedTile(position: Position, direction: Direction): Tile {
+    private fun getDislodgedTile(position: Position, direction: Direction): GameTile {
         return when (direction) {
             HorizontalDirection.LEFT -> tiles[position.value][0]
             HorizontalDirection.RIGHT -> tiles[position.value][this.width - 1]
@@ -177,12 +165,12 @@ class Board(private val tiles: Array<Array<Tile>>,
     }
 
 
-    private fun setTile(position: Coordinates, tile: Tile) {
+    private fun setTile(position: Coordinates, tile: GameTile) {
         val row = tiles[position.row.value]
         row[position.col.value] = tile
     }
 
-    private fun getTile(position: Coordinates): Tile {
+    private fun getTile(position: Coordinates): GameTile {
         return tiles[position.row.value][position.col.value]
     }
 
