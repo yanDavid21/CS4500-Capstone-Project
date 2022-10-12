@@ -5,13 +5,13 @@ import java.util.*
 import kotlin.collections.HashSet
 
 class Board(private val tiles: Array<Array<Tile>>,
-            private var emptySlotPosition: Coordinates? = null) {
+            private var emptySlotPosition: Coordinates? = null): IBoard {
 
     private val height = tiles.size
     private val width = tiles[0].size
 
 
-    fun insertTileIntoEmptySlot(tile: Tile) {
+    override fun insertTileIntoEmptySlot(tile: Tile) {
         emptySlotPosition?.let { emptySlotPosition ->
             this.setTile(emptySlotPosition, tile)
             this.emptySlotPosition = null
@@ -19,7 +19,16 @@ class Board(private val tiles: Array<Array<Tile>>,
 
     }
 
-    fun slide(position: Position, direction: Direction): Tile {
+    override fun slide(rowPosition: RowPosition, direction: HorizontalDirection): Tile {
+        return doSlide(rowPosition, direction)
+    }
+
+    override fun slide(columnPosition: ColumnPosition, direction: VerticalDirection): Tile {
+        return doSlide(columnPosition, direction)
+    }
+
+    //TODO: rename
+    private fun doSlide(position: Position, direction: Direction): Tile {
         if (!isSlideable(position)) {
             throw IllegalArgumentException("Row/col ${position.value} is not slideable.")
         }
@@ -36,7 +45,11 @@ class Board(private val tiles: Array<Array<Tile>>,
         return dislodgedTile
     }
 
-    fun getReachableTiles(startingPosition: Coordinates): Set<Tile>  {
+    /**
+     * Performs a depth-first search of all reachable tiles starting from _position_, neighbors are determined
+     * by whether two adjacent tile's have connecting shapes.
+     */
+    override fun getReachableTiles(startingPosition: Coordinates): Set<Tile>  {
         val startingTile = getTile(startingPosition)
         val stack = Stack<Coordinates>()
         val visitedNodes = HashSet<Tile>()

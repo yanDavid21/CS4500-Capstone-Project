@@ -2,7 +2,7 @@ package Common
 
 import Common.board.Coordinates
 import Common.tile.Tile
-import Common.tile.Treasure
+import Common.tile.treasure.Treasure
 import java.util.*
 
 data class Player(val id: UUID,

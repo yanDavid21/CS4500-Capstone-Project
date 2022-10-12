@@ -1,5 +1,7 @@
 package Common.tile
 
+import Common.Player
+import Common.tile.treasure.Treasure
 import java.util.*
 
 interface Tile {
@@ -9,6 +11,13 @@ interface Tile {
 
     fun rotate(degree: Degree)
 
+    fun hasPlayer(): Boolean
+
+    fun addPlayerToTile(player: Player)
+
+    fun removePlayerFromTile(player: Player)
+
+    fun hasCertainPlayer(player:Player): Boolean
 
     fun canBeReachedFrom(incomingDirection: Direction): Boolean
 }
@@ -30,6 +39,22 @@ class EmptyTile : Tile {
         return false
     }
 
+    override fun hasPlayer(): Boolean {
+        return false
+    }
+
+    override fun hasCertainPlayer(player: Player): Boolean {
+        return false
+    }
+
+    override fun addPlayerToTile(player: Player) {
+        throw IllegalArgumentException("Can not add player to the empty tile.")
+    }
+
+    override fun removePlayerFromTile(player: Player) {
+        throw IllegalArgumentException("Can not remove player from the empty tile.")
+    }
+
     override fun hashCode(): Int {
         return 0
     }
@@ -40,6 +65,7 @@ class EmptyTile : Tile {
 }
 
 data class GameTile(val path: Path, var degree: Degree, val treasure: Treasure): Tile {
+    private var players  = mutableSetOf<Player>()
     private lateinit var incomingDirections: Set<Direction>
     private lateinit var outgoingDirections: Set<Direction>
 
@@ -68,6 +94,22 @@ data class GameTile(val path: Path, var degree: Degree, val treasure: Treasure):
 
     override fun canBeReachedFrom(incomingDirection: Direction): Boolean {
         return this.incomingDirections.contains(incomingDirection)
+    }
+
+    override fun hasPlayer(): Boolean {
+        return players.isNotEmpty()
+    }
+
+    override fun addPlayerToTile(player: Player) {
+        this.players.add(player)
+    }
+
+    override fun removePlayerFromTile(player: Player) {
+        this.players.remove(player)
+    }
+
+    override fun hasCertainPlayer(player: Player): Boolean {
+        return this.players.contains(player)
     }
 
     override fun toString(): String {

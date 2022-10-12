@@ -1,15 +1,19 @@
 package Common.board
 
 import Common.tile.*
+import Common.tile.treasure.Gem
 import org.junit.Assert
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
 import org.junit.jupiter.api.assertThrows
+import testing.TestUtils
 import kotlin.test.assertEquals
 
 
 @TestInstance(TestInstance.Lifecycle.PER_METHOD)
 internal class BoardTest {
+
+
 
     @Test
     fun testSlideHorizontal() {
@@ -57,7 +61,7 @@ internal class BoardTest {
         val board = createBoard()
 
         assertThrows<IllegalStateException>("must be non-null") {
-            board.insertSpareTile()
+            board.insertTileIntoEmptySlot()
         }
     }
 
@@ -67,10 +71,10 @@ internal class BoardTest {
         val board = createBoard()
 
         board.slide(RowPosition(0), HorizontalDirection.RIGHT)
-        board.insertSpareTile()
+        board.insertTileIntoEmptySlot()
 
         assertThrows<IllegalStateException>("must be non-null") {
-            board.insertSpareTile()
+            board.insertTileIntoEmptySlot()
         }
     }
 
@@ -79,11 +83,11 @@ internal class BoardTest {
         // ARRANGE
         val tiles = createTiles()
         val spareTile = createSpareTile()
-        val board = Referee(tiles, spareTile)
+        val board = Board(tiles)
 
         // ACT
         board.slide(RowPosition(0), HorizontalDirection.RIGHT)
-        board.insertSpareTile()
+        board.insertTileIntoEmptySlot(spareTile)
 
         // ASSERT
         Assert.assertArrayEquals(arrayOf(spareTile, GameTile(Path.VERTICAL, Degree.ZERO,  Gem(1)), GameTile(Path.CROSS, Degree.TWO_SEVENTY,  Gem(2))), tiles[0])
@@ -121,20 +125,38 @@ internal class BoardTest {
     }
 
     private fun createTiles(): Array<Array<Tile>> {
+        return TestUtils.getTilesFromConnectorsAndTreasures(board, treasures)
+        /*
         return arrayOf(
             arrayOf(GameTile(Path.VERTICAL, Degree.ZERO, Gem(1) ), GameTile(Path.CROSS, Degree.TWO_SEVENTY,  Gem(2)), GameTile(Path.T, Degree.NINETY,  Gem(3))),
             arrayOf(GameTile(Path.UP_RIGHT, Degree.ONE_EIGHTY,  Gem(4)), GameTile(Path.T, Degree.TWO_SEVENTY,  Gem(4)), GameTile(Path.CROSS, Degree.NINETY,  Gem(5))),
             arrayOf(GameTile(Path.VERTICAL, Degree.ZERO,  Gem(6)), GameTile(Path.CROSS, Degree.TWO_SEVENTY,  Gem(7)), GameTile(Path.T, Degree.NINETY,  Gem(8))))
+       */
     }
+
     private fun createSpareTile(): Tile {
         return GameTile(Path.T, Degree.ONE_EIGHTY, Gem(10))
     }
 
-    private fun createBoard(tiles: Array<Array<Tile>>): Referee {
-        return Referee(tiles, createSpareTile())
+
+    private fun createBoard(tiles: Array<Array<Tile>>): IBoard {
+        return Board(tiles)
     }
 
-    private fun createBoard(): PlayableBoard {
-        return Referee(createTiles(), createSpareTile())
+    private fun createBoard(): IBoard {
+        return Board(createTiles())
+    }
+
+    companion object {
+        val board = listOf(
+            listOf("│", "─", "┐", "└", "┌", "┘", "┬"),
+            listOf("┘", "│", "┌",  "─", "┐", "└", "┬"),
+            listOf("┘", "┌", "│",  "┐", "└", "─", "┬"),
+            listOf("┘", "│", "┌",  "─", "┐", "└", "┬"),
+            listOf("│", "─", "┐", "└", "┌", "┘", "┬"),
+            listOf("┘", "┌", "│",  "┐", "└", "─", "┬")
+        )
+
+        val treasures =
     }
 }

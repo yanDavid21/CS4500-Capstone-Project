@@ -1,5 +1,6 @@
 package Common.tile
 
+import Common.tile.treasure.Gem
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse

@@ -1,4 +1,4 @@
-package Common.tile
+package Common.tile.treasure
 
 data class Treasure(val gem1: Gem, val gem2: Gem) {
 

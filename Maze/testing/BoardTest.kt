@@ -1,10 +1,11 @@
 package testing
 
-import Common.board.Referee
+import Common.board.Board
 import Common.board.ColumnPosition
 import Common.board.Coordinates
 import Common.board.RowPosition
-import Common.tile.*
+import Common.tile.treasure.Gem
+import Common.tile.treasure.Treasure
 import com.google.gson.Gson
 import com.google.gson.stream.JsonReader
 import java.io.InputStreamReader
@@ -12,10 +13,6 @@ import java.io.Reader
 import java.io.Writer
 
 
-data class MazeInitData(
-   val board: TileMatrix,
-   //val coordinates: Coordinates
-)
 
 
 data class TileMatrix(
@@ -27,43 +24,24 @@ data class TileMatrix(
 fun main() {
     val jsonReader = JsonReader(InputStreamReader(System.`in`))
     val gson = Gson()
+
     val testBoard = gson.fromJson<TileMatrix>(jsonReader, TileMatrix::class.java)
-    println("found board")
     val coordinates = gson.fromJson<List<Int>>(jsonReader, List::class.java)
 
-    val tiles = testBoard.connectors.mapIndexed { rowIndex, row ->
-        row.mapIndexed { index, tile ->
-            getTileFromStringAndTreasure(tile, testBoard.treasures[rowIndex][index])
-        }.toTypedArray()
-    }.toTypedArray()
+    val treasures = testBoard.treasures.map { it.map { pair ->
+        val gem1 = Gem.valueOf(pair[0].toUpperCase())
+        val gem2 = Gem.valueOf(pair[1].toUpperCase())
+        Treasure(gem1, gem2)
+    } }
 
-    val board = Referee(tiles, EmptyTile()) // TODO: will not need spare tile after refactoring
+    val tiles = TestUtils.getTilesFromConnectorsAndTreasures(testBoard.connectors, treasures)
+
+    val board = Board(tiles)
 
     val reachableTiles = board.getReachableTiles(Coordinates(RowPosition(coordinates[0]), ColumnPosition(coordinates[1])))
 
     println(reachableTiles)
-
 }
-
-fun getTileFromStringAndTreasure(string: String, treasure: List<String>): Tile {
-    val gems = Pair(Gem(treasure[0]), Gem(treasure[1]))
-    return when(string) {
-        "│" -> GameTile(Path.VERTICAL, Degree.ZERO, gems)
-        "─" -> GameTile(Path.VERTICAL, Degree.NINETY, gems)
-        "┐" -> GameTile(Path.UP_RIGHT, Degree.ONE_EIGHTY, gems)
-        "└" -> GameTile(Path.UP_RIGHT, Degree.ZERO, gems)
-        "┌" -> GameTile(Path.UP_RIGHT, Degree.TWO_SEVENTY, gems)
-        "┘" -> GameTile(Path.UP_RIGHT, Degree.NINETY, gems)
-        "┬" -> GameTile(Path.T, Degree.ZERO, gems)
-        "├" -> GameTile(Path.T, Degree.NINETY, gems)
-        "┴" -> GameTile(Path.T, Degree.ONE_EIGHTY, gems)
-        "┤" -> GameTile(Path.T, Degree.TWO_SEVENTY, gems)
-        "┼" -> GameTile(Path.CROSS, Degree.ZERO, gems)
-        else -> throw IllegalArgumentException("$string is not a valid connector")
-    }
-}
-
-
 
 fun decodeJSONFromStream(reader: Reader, writer: Writer) {
    val jsonReader = JsonReader(reader)

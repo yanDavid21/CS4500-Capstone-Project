@@ -1,4 +1,4 @@
-package Common.tile
+package Common.tile.treasure
 
 /**
  * A Gem, identified by its name
