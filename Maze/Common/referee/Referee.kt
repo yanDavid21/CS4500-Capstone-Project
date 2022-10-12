@@ -23,7 +23,26 @@ class Referee(
 
     override fun activePlayerCanReachTile(tile: Tile): Boolean {
         val currentPlayer = playerQueue.getCurrentPlayer()
-        return board.getReachableTiles(currentPlayer.location).contains(tile)
+        val playerLocation = board.findPlayerLocation(currentPlayer)
+        return board.getReachableTiles(playerLocation).contains(tile)
+    }
+
+    override fun moveActivePlayer(tile: Tile) {
+        if (!activePlayerCanReachTile(tile)) {
+            throw IllegalArgumentException("Can not move active player to $tile.")
+        }
+        val activePlayer = playerQueue.getCurrentPlayer()
+
+        board.removePlayerFromTiles(activePlayer)
+        tile.addPlayerToTile(activePlayer)
+
+        // TODO: add check treasure method to tile
+
+        // checkWinConditions
+    }
+
+    override fun hasActivePlayerReachedGoal(): Boolean {
+        return playerQueue.getCurrentPlayer().treasureFound
     }
 
     override fun slideRow(rowPosition: RowPosition, direction: HorizontalDirection) {
@@ -69,6 +88,13 @@ class Referee(
     private fun ensureStateIs(state: GameState) {
         if (nextAction != state) {
             throw java.lang.IllegalStateException("This is the incorrect state of the game.")
+        }
+    }
+
+    private fun moveAmnestiedPlayersIfAny(fromTile: Tile) {
+        fromTile.getPlayers().forEach {
+            fromTile.removePlayerFromTile(it)
+            this.spareTile.addPlayerToTile(it)
         }
     }
 }
