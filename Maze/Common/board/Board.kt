@@ -30,8 +30,8 @@ class Board(private val tiles: Array<Array<GameTile>>) {
 
         shiftByDirection(position,direction)
 
-        val newEmptySlot = getEmptySlotPositionAfterSliding(position, direction)
-        setTile(newEmptySlot, spareTile)
+        val emptySlotPosition = getEmptySlotPositionAfterSliding(position, direction)
+        setTile(emptySlotPosition, spareTile)
 
         return dislodgedTile
     }
@@ -163,7 +163,6 @@ class Board(private val tiles: Array<Array<GameTile>>) {
             null
         }
     }
-
 
     private fun setTile(position: Coordinates, tile: GameTile) {
         val row = tiles[position.row.value]

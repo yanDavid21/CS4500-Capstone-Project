@@ -1,6 +1,6 @@
 package Common
 
-import Common.tile.Tile
+import Common.tile.git Tile
 import Common.tile.treasure.Treasure
 import java.util.*
 

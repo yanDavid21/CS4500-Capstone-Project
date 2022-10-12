@@ -3,13 +3,12 @@ package testing
 import Common.tile.Degree
 import Common.tile.GameTile
 import Common.tile.Path
-import Common.tile.Tile
 import Common.tile.treasure.Treasure
 
 object TestUtils {
 
     fun getTilesFromConnectorsAndTreasures(connectors: List<List<String>>,
-                                           treasures: List<List<Treasure>>): Array<Array<Tile>> {
+                                           treasures: List<List<Treasure>>): Array<Array<GameTile>> {
         return connectors.mapIndexed { rowIndex, row ->
             row.mapIndexed { index, tile ->
                 getTileFromStringAndTreasure(tile, treasures[rowIndex][index])
@@ -17,7 +16,7 @@ object TestUtils {
         }.toTypedArray()
     }
 
-    fun getTileFromStringAndTreasure(string: String, treasure: Treasure): Tile {
+    fun getTileFromStringAndTreasure(string: String, treasure: Treasure): GameTile {
         return when(string) {
             "│" -> GameTile(Path.VERTICAL, Degree.ZERO, treasure)
             "─" -> GameTile(Path.VERTICAL, Degree.NINETY, treasure)

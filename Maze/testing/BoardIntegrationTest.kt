@@ -12,9 +12,6 @@ import java.io.InputStreamReader
 import java.io.Reader
 import java.io.Writer
 
-
-
-
 data class TileMatrix(
    val connectors: List<List<String>>,
    val treasures: List<List<List<String>>>

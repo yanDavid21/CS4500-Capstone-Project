@@ -54,7 +54,7 @@ tasks.test {
 tasks.jar {
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
     manifest {
-        attributes["Main-Class"] = "Common.MainKt"
+        attributes["Main-Class"] = "testing.BoardTestKt"
     }
 
     from(configurations.compileClasspath.get().map { if (it.isDirectory()) it else zipTree(it) })
