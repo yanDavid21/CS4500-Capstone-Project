@@ -20,6 +20,8 @@ interface Tile {
     fun hasCertainPlayer(player:Player): Boolean
 
     fun canBeReachedFrom(incomingDirection: Direction): Boolean
+
+    fun getPlayers(): Set<Player>
 }
 
 class EmptyTile : Tile {
@@ -61,6 +63,10 @@ class EmptyTile : Tile {
 
     override fun equals(other: Any?): Boolean {
         return other is EmptyTile
+    }
+
+    override fun getPlayers(): Set<Player> {
+        return setOf()
     }
 }
 
@@ -120,11 +126,17 @@ data class GameTile(val path: Path, var degree: Degree, val treasure: Treasure):
         return Objects.hash(this.treasure, this.path, this.degree)
     }
 
+    override fun getPlayers(): Set<Player> {
+        return this.players
+    }
+
     override fun equals(other: Any?): Boolean {
         if (other is GameTile) {
             return (this.treasure.equals(other.treasure) && this.path == other.path && this.degree == other.degree)
         }
         return false
     }
+
+
 }
 
