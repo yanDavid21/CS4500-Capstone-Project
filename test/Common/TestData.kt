@@ -11,12 +11,30 @@ import java.util.*
 
 object TestData {
 
-    fun createReferee(): Referee {
-        val board = createBoard()
-        // TODO: set player home tiles
-        //board.getTile(Coordinates.fromRowAndValue())
-        return Referee(createBoard(), createSpareTile(), listOf(player1, player2, player3))
+    fun createReferee(tiles: Array<Array<GameTile>>): Referee {
+        val player1 = Player(
+            UUID.fromString("f9728f95-96db-4cf4-a9c1-13113635d312"),
+            Treasure(Gem.APLITE, Gem.AMETHYST),
+            tiles[0][0])
+        tiles[0][0].addPlayerToTile(player1)
 
+        val player2 = Player(UUID.fromString("f9728f95-96db-4cf4-a9c1-13113635d312"),
+            Treasure(Gem.HEMATITE, Gem.HACKMANITE),
+            tiles[0][2])
+        tiles[0][2].addPlayerToTile(player2)
+
+        val player3 = Player(UUID.fromString("f25bc452-5ccc-4d29-8ad1-a76f89f42c24"),
+            Treasure(Gem.ALEXANDRITE, Gem.ZIRCON),
+            tiles[6][6])
+        tiles[6][6].addPlayerToTile(player3)
+
+        val board = createBoard(tiles)
+        return Referee(board, createSpareTile(), listOf(player1, player2, player3))
+    }
+
+    fun createReferee(): Referee {
+        val tiles = createTiles()
+        return createReferee(tiles)
     }
 
     fun createTiles(): Array<Array<GameTile>> {
@@ -69,18 +87,18 @@ object TestData {
     val player1 = Player(
         UUID.fromString("f9728f95-96db-4cf4-a9c1-13113635d312"),
         Treasure(Gem.APLITE, Gem.AMETHYST),
-        createTiles()[1][1])
+        createTiles()[0][0])
 
     val player2 = Player(
         UUID.fromString("f9728f95-96db-4cf4-a9c1-13113635d312"),
         Treasure(Gem.HEMATITE, Gem.HACKMANITE),
-        GameTile(Path.CROSS, Degree.ONE_EIGHTY, Treasure(Gem.APLITE, Gem.AMETHYST))
+        createTiles()[0][2]
     )
 
     val player3 = Player(
         UUID.fromString("f25bc452-5ccc-4d29-8ad1-a76f89f42c24"),
         Treasure(Gem.ALEXANDRITE, Gem.ZIRCON),
-        GameTile(Path.VERTICAL, Degree.ONE_EIGHTY, Treasure(Gem.ALEXANDRITE, Gem.ZIRCON))
+        createTiles()[6][6]
     )
 
 }

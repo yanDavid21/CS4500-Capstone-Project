@@ -40,7 +40,9 @@ data class ColumnPosition(override val value: Int): Position {
     override val max: Int
         get() = Position.MAX_COL_INDEX
 
-
+    override fun toString(): String {
+        return value.toString()
+    }
 }
 
 /**
@@ -53,4 +55,8 @@ data class RowPosition(override val value: Int): Position {
         get() = Position.MIN_ROW_INDEX
     override val max: Int
         get() = Position.MAX_ROW_INDEX
+
+    override fun toString(): String {
+        return value.toString()
+    }
 }

@@ -28,23 +28,10 @@ class Referee(
 
         checkActiveMovePlayer(activePlayer, currentPlayerPosition, to)
         movePlayerAcrossBoard(activePlayer, currentPlayerPosition, to)
+
+        playerQueue.nextPlayer()
     }
 
-    /**
-     *
-     */
-    private fun findPlayerPosition(player: Player): Coordinates {
-        for (rowPos in Position.MIN_ROW_INDEX until Position.MAX_ROW_INDEX) {
-            for (colPos in Position.MIN_COL_INDEX until Position.MAX_COL_INDEX) {
-                val pos = Coordinates.fromRowAndValue(rowPos, colPos)
-                val tileAtPos = board.getTile(pos)
-                if (tileAtPos.hasCertainPlayer(player)) {
-                    return pos
-                }
-            }
-        }
-        throw  java.lang.IllegalStateException("A Player should always be on the board, could not find $player")
-    }
 
     /**
      * Returns whether the active player reached its goal.
@@ -75,6 +62,22 @@ class Referee(
         val activePlayer = playerQueue.removeCurrentPlayer()
         val playerPosition = findPlayerPosition(activePlayer)
         board.getTile(playerPosition).removePlayerFromTile(activePlayer)
+    }
+
+    /**
+     * Looks for the player in the board, if not found throws exception.
+     */
+    private fun findPlayerPosition(player: Player): Coordinates {
+        for (rowPos in Position.MIN_ROW_INDEX until Position.MAX_ROW_INDEX) {
+            for (colPos in Position.MIN_COL_INDEX until Position.MAX_COL_INDEX) {
+                val pos = Coordinates.fromRowAndValue(rowPos, colPos)
+                val tileAtPos = board.getTile(pos)
+                if (tileAtPos.hasCertainPlayer(player)) {
+                    return pos
+                }
+            }
+        }
+        throw  java.lang.IllegalStateException("A Player should always be on the board, could not find $player")
     }
 
     /**

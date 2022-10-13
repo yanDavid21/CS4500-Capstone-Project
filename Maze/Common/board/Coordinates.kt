@@ -23,6 +23,9 @@ data class Coordinates(
         return this.copy(col = ColumnPosition(colValue))
     }
 
+    override fun toString(): String {
+        return "($row, $col)"
+    }
     companion object {
         /**
          * Utility function to construct a Coordinates object from a pair of Ints.
