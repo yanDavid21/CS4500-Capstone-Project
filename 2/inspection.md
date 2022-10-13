@@ -1,15 +1,17 @@
 Pair: yanda1928-josuma26 \
 Commit: [f5da4a5dd44055864b694ede57b38b69d9494b33](https://github.khoury.northeastern.edu/CS4500-F22/yanda1928-josuma26/tree/f5da4a5dd44055864b694ede57b38b69d9494b33) \
 Self-eval: https://github.khoury.northeastern.edu/CS4500-F22/yanda1928-josuma26/blob/1d30fac1724a327130e00e937a4cf7a8afcf3cd2/2/self-2.md \
-Score: 0/80 \
+Score: 61/80 \
 Grader: James Packard \
 
 Programming task:
 
-> I had to give the programming task a 0/80 because you used `null` to represent an empty space on the board without documenting it. You would get a 20/80 if you mentioned that the `Array<Array<Tile>>` field in `BoardTiles` could contain `null`s.  
-> The problem with using `null` is that it disguises the fact that tiles can either be present or removed, and prevents the type checker from preventing the kinds of mistakes that arise from this.  
-> But also, does it make sense for a Board to have an empty space? Or would it be better to think of the insertion of a tile as 'pushing' the new spare tile out?  
-> I marked the points for the rest of this assignment as if you did not make the `null` mistake, so that you can see what score you would have received.
+> ~~I had to give the programming task a 0/80 because you used `null` to represent an empty space on the board without documenting it. You would get a 20/80 if you mentioned that the `Array<Array<Tile>>` field in `BoardTiles` could contain `null`s.~~  
+> ~~The problem with using `null` is that it disguises the fact that tiles can either be present or removed, and prevents the type checker from preventing the kinds of mistakes that arise from this.~~  
+> ~~But also, does it make sense for a Board to have an empty space? Or would it be better to think of the insertion of a tile as 'pushing' the new spare tile out?~~
+> ~~I marked the points for the rest of this assignment as if you did not make the `null` mistake, so that you can see what score you would have received.~~
+
+**Sorry for misunderstanding your use of null! I've corrected your grade for this milestone.**
 
 [30/40] an operation that determines the reachable tiles from some spot
   1. [0/10] : missing data definition for coordinates
