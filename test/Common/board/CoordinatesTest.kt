@@ -6,10 +6,10 @@ import kotlin.test.assertEquals
 
 internal class CoordinatesTest {
 
-    private val minX = Position.MIN_X_INDEX
-    private val maxX = Position.MAX_X_INDEX
-    private val minY = Position.MIN_Y_INDEX
-    private val maxY = Position.MAX_Y_INDEX
+    private val minX = Position.MIN_COL_INDEX
+    private val maxX = Position.MAX_COL_INDEX
+    private val minY = Position.MIN_ROW_INDEX
+    private val maxY = Position.MAX_ROW_INDEX
 
     private val xInterval = "[$minX, $maxX]"
     private val yInterval = "[$minY, $maxY]"
@@ -27,11 +27,11 @@ internal class CoordinatesTest {
     @Test
     fun testCreateInvalidRowPosition() {
         assertThrows<IllegalArgumentException>("Position should be in the interval $yInterval, given ${maxY + 2}.") {
-            RowPosition(Position.MAX_Y_INDEX + 2)
+            RowPosition(Position.MAX_ROW_INDEX + 2)
         }
 
         assertThrows<IllegalArgumentException>("Position should be in the interval $yInterval, given ${minY - 2}.") {
-            RowPosition(Position.MIN_Y_INDEX - 2)
+            RowPosition(Position.MIN_ROW_INDEX - 2)
         }
     }
 
@@ -44,11 +44,11 @@ internal class CoordinatesTest {
     @Test
     fun testCreateInvalidColumn() {
         assertThrows<IllegalArgumentException>("Position should be in the interval $xInterval, given ${maxX + 2}.") {
-            RowPosition(Position.MAX_X_INDEX + 2)
+            RowPosition(Position.MAX_COL_INDEX + 2)
         }
 
         assertThrows<IllegalArgumentException>("Position should be in the interval $xInterval, given ${minX - 3}.") {
-            RowPosition(Position.MIN_X_INDEX - 3)
+            RowPosition(Position.MIN_COL_INDEX - 3)
         }
     }
 

@@ -18,15 +18,41 @@ data class GameTile(val path: Path, var degree: Degree, val treasure: Treasure) 
         recomputeDirections()
     }
 
+    /**
+     * The directions that one can go to from a tile.
+     *
+     * Example:
+     * │ can go UP and DOWN
+     * ┐ can go LEFT and DOWN
+     * └ can go UP and RIGHT
+     */
     fun getOutgoingDirections(): Set<Direction> {
         return outgoingDirections
     }
 
+    /**
+     * The directions that one can reach a tile from.
+     *
+     * Computed by taking the inverse of all outgoingDirections.
+     *
+     * Example:
+     * │ can be reached from UP and DOWN
+     * ┐ can be reached from RIGHT and UP
+     * └ can be reached from DOWN and LEFT
+     */
     fun getIncomingDirections(): Set<Direction> {
         return incomingDirections
     }
 
 
+    /**
+     * Looking from outside the tile, going in, can this tile be reached through this direction.
+     *
+     * Ex:
+     * │ can be reached from UP and DOWN
+     * ┐ can be reached from RIGHT and UP
+     * └ can be reached from DOWN and LEFT
+     */
     fun canBeReachedFrom(incomingDirection: Direction): Boolean {
         return this.incomingDirections.contains(incomingDirection)
     }
@@ -63,8 +89,10 @@ data class GameTile(val path: Path, var degree: Degree, val treasure: Treasure) 
     }
 
     private fun recomputeDirections() {
-        outgoingDirections = path.getDefaultOutgoingDirections().mapTo(mutableSetOf()) { it.rotateBy(degree) }
-        incomingDirections = outgoingDirections.mapTo(mutableSetOf()) { it.reverse() }
+        outgoingDirections = path.getDefaultOutgoingDirections().mapTo(mutableSetOf()) {
+                outGoingDirection -> outGoingDirection.rotateBy(degree)
+        }
+        incomingDirections = outgoingDirections.mapTo(mutableSetOf()) { outgoingDirection -> outgoingDirection.reverse() }
     }
 }
 

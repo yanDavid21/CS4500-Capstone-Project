@@ -78,7 +78,7 @@ internal class TileTest {
         assert(tile != tileButDiffTreasure)
     }
     @Test
-    fun testCanBeReachedFrom(incomingDirection: Direction) {
+    fun testCanBeReachedFrom() {
         assertEquals(true, GameTile(Path.VERTICAL, Degree.ZERO, treasure).canBeReachedFrom(VerticalDirection.DOWN))
         assertEquals(true, GameTile(Path.VERTICAL, Degree.ZERO, treasure).canBeReachedFrom(VerticalDirection.UP))
 
@@ -97,7 +97,7 @@ internal class TileTest {
     }
 
     @Test
-    fun testCanBeReachedFromRotation(incomingDirection: Direction) {
+    fun testCanBeReachedFromRotation() {
         assertEquals(true, GameTile(Path.VERTICAL, Degree.NINETY, treasure).canBeReachedFrom(HorizontalDirection.LEFT))
         assertEquals(true, GameTile(Path.VERTICAL, Degree.NINETY, treasure).canBeReachedFrom(HorizontalDirection.RIGHT))
         assertEquals(true, GameTile(Path.VERTICAL, Degree.TWO_SEVENTY, treasure).canBeReachedFrom(HorizontalDirection.LEFT))
@@ -113,22 +113,22 @@ internal class TileTest {
         assertEquals(true, GameTile(Path.T, Degree.NINETY, treasure).canBeReachedFrom(VerticalDirection.DOWN))
         assertEquals(true, GameTile(Path.T, Degree.NINETY, treasure).canBeReachedFrom(HorizontalDirection.LEFT))
         assertEquals(true, GameTile(Path.T, Degree.TWO_SEVENTY, treasure).canBeReachedFrom(VerticalDirection.UP))
-        assertEquals(true, GameTile(Path.T, Degree.TWO_SEVENTY, treasure).canBeReachedFrom(HorizontalDirection.LEFT))
+        assertEquals(true, GameTile(Path.T, Degree.TWO_SEVENTY, treasure).canBeReachedFrom(HorizontalDirection.RIGHT))
         assertEquals(true, GameTile(Path.T, Degree.TWO_SEVENTY, treasure).canBeReachedFrom(VerticalDirection.DOWN))
         assertEquals(true, GameTile(Path.T, Degree.ONE_EIGHTY, treasure).canBeReachedFrom(VerticalDirection.DOWN))
         assertEquals(true, GameTile(Path.T, Degree.ONE_EIGHTY, treasure).canBeReachedFrom(HorizontalDirection.LEFT))
         assertEquals(true, GameTile(Path.T, Degree.ONE_EIGHTY, treasure).canBeReachedFrom(HorizontalDirection.RIGHT))
 
         assertEquals(true, GameTile(Path.UP_RIGHT, Degree.NINETY, treasure).canBeReachedFrom(VerticalDirection.DOWN))
-        assertEquals(true, GameTile(Path.UP_RIGHT, Degree.NINETY, treasure).canBeReachedFrom(HorizontalDirection.LEFT))
-        assertEquals(true, GameTile(Path.UP_RIGHT, Degree.ONE_EIGHTY, treasure).canBeReachedFrom(VerticalDirection.DOWN))
-        assertEquals(true, GameTile(Path.UP_RIGHT, Degree.ONE_EIGHTY, treasure).canBeReachedFrom(HorizontalDirection.LEFT))
-        assertEquals(true, GameTile(Path.UP_RIGHT, Degree.TWO_SEVENTY, treasure).canBeReachedFrom(VerticalDirection.DOWN))
+        assertEquals(true, GameTile(Path.UP_RIGHT, Degree.NINETY, treasure).canBeReachedFrom(HorizontalDirection.RIGHT))
+        assertEquals(true, GameTile(Path.UP_RIGHT, Degree.ONE_EIGHTY, treasure).canBeReachedFrom(VerticalDirection.UP))
+        assertEquals(true, GameTile(Path.UP_RIGHT, Degree.ONE_EIGHTY, treasure).canBeReachedFrom(HorizontalDirection.RIGHT))
+        assertEquals(true, GameTile(Path.UP_RIGHT, Degree.TWO_SEVENTY, treasure).canBeReachedFrom(VerticalDirection.UP))
         assertEquals(true, GameTile(Path.UP_RIGHT, Degree.TWO_SEVENTY, treasure).canBeReachedFrom(HorizontalDirection.LEFT))
     }
 
     @Test
-    fun testCannotBeReachedFrom(incomingDirection: Direction) {
+    fun testCannotBeReachedFrom() {
         assertEquals(false, GameTile(Path.VERTICAL, Degree.ZERO, treasure).canBeReachedFrom(HorizontalDirection.LEFT))
         assertEquals(false, GameTile(Path.VERTICAL, Degree.ZERO, treasure).canBeReachedFrom(HorizontalDirection.RIGHT))
 
@@ -139,7 +139,7 @@ internal class TileTest {
     }
 
     @Test
-    fun testCannotBeReachedFromRotation(incomingDirection: Direction) {
+    fun testCannotBeReachedFromRotation() {
         assertEquals(false, GameTile(Path.VERTICAL, Degree.NINETY, treasure).canBeReachedFrom(VerticalDirection.DOWN))
         assertEquals(false, GameTile(Path.VERTICAL, Degree.NINETY, treasure).canBeReachedFrom(VerticalDirection.UP))
         assertEquals(false, GameTile(Path.VERTICAL, Degree.TWO_SEVENTY, treasure).canBeReachedFrom(VerticalDirection.DOWN))
@@ -147,31 +147,32 @@ internal class TileTest {
         assertEquals(false, GameTile(Path.VERTICAL, Degree.ONE_EIGHTY, treasure).canBeReachedFrom(HorizontalDirection.LEFT))
         assertEquals(false, GameTile(Path.VERTICAL, Degree.ONE_EIGHTY, treasure).canBeReachedFrom(HorizontalDirection.RIGHT))
 
-        assertEquals(false, GameTile(Path.T, Degree.NINETY, treasure).canBeReachedFrom(HorizontalDirection.LEFT))
-        assertEquals(false, GameTile(Path.T, Degree.TWO_SEVENTY, treasure).canBeReachedFrom(HorizontalDirection.RIGHT))
-        assertEquals(false, GameTile(Path.T, Degree.ONE_EIGHTY, treasure).canBeReachedFrom(VerticalDirection.DOWN))
 
-        assertEquals(false, GameTile(Path.UP_RIGHT, Degree.NINETY, treasure).canBeReachedFrom(HorizontalDirection.RIGHT))
-        assertEquals(false, GameTile(Path.UP_RIGHT, Degree.TWO_SEVENTY, treasure).canBeReachedFrom(HorizontalDirection.LEFT))
+        assertEquals(false, GameTile(Path.T, Degree.NINETY, treasure).canBeReachedFrom(HorizontalDirection.RIGHT))
+        assertEquals(false, GameTile(Path.T, Degree.TWO_SEVENTY, treasure).canBeReachedFrom(HorizontalDirection.LEFT))
+        assertEquals(false, GameTile(Path.T, Degree.ONE_EIGHTY, treasure).canBeReachedFrom(VerticalDirection.UP))
+
+        assertEquals(false, GameTile(Path.UP_RIGHT, Degree.NINETY, treasure).canBeReachedFrom(HorizontalDirection.LEFT))
+        assertEquals(false, GameTile(Path.UP_RIGHT, Degree.TWO_SEVENTY, treasure).canBeReachedFrom(HorizontalDirection.RIGHT))
         assertEquals(false, GameTile(Path.UP_RIGHT, Degree.ONE_EIGHTY, treasure).canBeReachedFrom(HorizontalDirection.LEFT))
-        assertEquals(false, GameTile(Path.UP_RIGHT, Degree.NINETY, treasure).canBeReachedFrom(VerticalDirection.DOWN))
-        assertEquals(false, GameTile(Path.UP_RIGHT, Degree.TWO_SEVENTY, treasure).canBeReachedFrom(VerticalDirection.UP))
+        assertEquals(false, GameTile(Path.UP_RIGHT, Degree.NINETY, treasure).canBeReachedFrom(VerticalDirection.UP))
+        assertEquals(false, GameTile(Path.UP_RIGHT, Degree.TWO_SEVENTY, treasure).canBeReachedFrom(VerticalDirection.DOWN))
         assertEquals(false, GameTile(Path.UP_RIGHT, Degree.ONE_EIGHTY, treasure).canBeReachedFrom(VerticalDirection.DOWN))
     }
 
 
     @Test
-    fun testAddPlayerToTile(player: Player) {
+    fun testAddPlayerToTile() {
         val gameTile = GameTile(Path.UP_RIGHT, Degree.ZERO, treasure)
         assertEquals(gameTile.getPlayers().size, 0)
         assertEquals(gameTile.hasCertainPlayer(testPlayer), false)
         gameTile.addPlayerToTile(testPlayer)
-        assertEquals(gameTile.getPlayers().size, 0)
+        assertEquals(gameTile.getPlayers().size, 1)
         assertEquals(gameTile.hasCertainPlayer(testPlayer), true)
     }
 
     @Test
-    fun removePlayerFromTile(player: Player) {
+    fun removePlayerFromTile() {
         val gameTile = GameTile(Path.UP_RIGHT, Degree.ZERO, treasure)
         assertEquals(gameTile.hasCertainPlayer(testPlayer), false)
         gameTile.addPlayerToTile(testPlayer)
@@ -181,7 +182,7 @@ internal class TileTest {
     }
 
     @Test
-    fun hasCertainPlayer(player: Player) {
+    fun hasCertainPlayer() {
         val gameTile = GameTile(Path.UP_RIGHT, Degree.ZERO, treasure)
         assertEquals(gameTile.hasCertainPlayer(testPlayer), false)
         gameTile.addPlayerToTile(testPlayer)

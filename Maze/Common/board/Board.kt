@@ -9,23 +9,31 @@ import java.util.*
 import kotlin.collections.HashSet
 
 /**
- * A Maze board that supports player operations.
+ * A Maze board that supports player operations on 2d representation of Maze game tiles.
  */
 class Board(private val tiles: Array<Array<GameTile>>) {
 
     private val height = tiles.size
     private val width = tiles[0].size
 
+    /**
+     * Slides the row at the given row index in a certain horizontal direction. Inserts a spare tile into the empty slot
+     * generated from the slide. Returns the tile that is dislodged from board as a result of the slide.
+     */
     fun slideRowAndInsert(rowPosition: RowPosition, direction: HorizontalDirection, spareTile: GameTile): GameTile {
         return slideAndInsertSpare(rowPosition, direction, spareTile)
     }
 
+    /**
+     * Slides the col at the given column index in a certain vertical direction. Inserts a spare tile into the empty slot
+     * generated from the slide. Returns the tile that is dislodged from board as a result of the slide.
+     */
     fun slideColAndInsert(columnPosition: ColumnPosition, direction: VerticalDirection, spareTile: GameTile): GameTile {
         return slideAndInsertSpare(columnPosition, direction, spareTile)
     }
 
     /**
-     * Performs a depth-first search of all reachable tiles starting from _position_, neighbors are determined
+     * Performs a search of all reachable tiles starting from _position_, neighbors are determined
      * by whether two adjacent tile's have connecting shapes.
      */
     fun getReachableTiles(startingPosition: Coordinates): Set<Coordinates>  {
@@ -36,9 +44,8 @@ class Board(private val tiles: Array<Array<GameTile>>) {
         while (stack.isNotEmpty()) {
             val currentPosition = stack.pop()
             if (!visitedNodes.contains(currentPosition)) {
-                getTile(currentPosition).getOutgoingDirections().forEach { outgoingDirection ->
-                    addReachableNeighborToPath(currentPosition, outgoingDirection, stack)
-                }
+                getTile(currentPosition).getOutgoingDirections().forEach {
+                    addReachableNeighborToPath(currentPosition, it, stack) }
                 visitedNodes.add(currentPosition)
             }
         }
@@ -53,6 +60,12 @@ class Board(private val tiles: Array<Array<GameTile>>) {
     }
 
 
+    /**
+     * Locates a player on the board by looking at all tiles until the player is found.
+     *
+     * Throws IllegalStateException if the player is not found, all players in the game
+     * should be on the board.
+     */
     fun findPlayerLocation(player: Player): Coordinates {
         for (rowIndex in 0 until this.height) {
             for (colIndex in 0 until this.width) {
@@ -66,6 +79,7 @@ class Board(private val tiles: Array<Array<GameTile>>) {
         throw IllegalStateException("$player not found. Player should always be in the board.")
     }
 
+    // checks if slideable, throws Exception if not, slides a row or column, then inserts, returning the dislodged tile
     private fun slideAndInsertSpare(position: Position, direction: Direction, spareTile: GameTile): GameTile {
         checkSlideable(position)
         val dislodgedTile = getDislodgedTile(position, direction)
@@ -79,32 +93,36 @@ class Board(private val tiles: Array<Array<GameTile>>) {
     }
 
 
+    //get the tile to be dislodged if a slide was performed at the given position (row/col index)
     private fun getDislodgedTile(position: Position, direction: Direction): GameTile {
         return when (direction) {
             HorizontalDirection.LEFT -> tiles[position.value][0]
             HorizontalDirection.RIGHT -> tiles[position.value][this.width - 1]
             VerticalDirection.UP -> tiles[0][position.value]
             VerticalDirection.DOWN -> tiles[this.height - 1][position.value]
-            else -> throw java.lang.IllegalArgumentException("LEFT,RIGHT,UP,DOWN are the only possible directions.")
+            else -> throw IllegalArgumentException("LEFT,RIGHT,UP,DOWN are the only possible directions.")
         }
     }
 
+    // get the position of the empty slot after making a slide in a given direction
     private fun getEmptySlotPositionAfterSliding(position: Position, direction: Direction): Coordinates {
         return when(direction) {
             HorizontalDirection.LEFT -> Coordinates(RowPosition(position.value), ColumnPosition(width - 1))
             HorizontalDirection.RIGHT -> Coordinates(RowPosition(position.value), ColumnPosition(0))
             VerticalDirection.UP -> Coordinates(RowPosition(height-1), ColumnPosition(position.value))
             VerticalDirection.DOWN -> Coordinates(RowPosition(0), ColumnPosition(position.value))
-            else -> throw java.lang.IllegalArgumentException("LEFT,RIGHT,UP,DOWN are the only possible directions.")
+            else -> throw IllegalArgumentException("LEFT,RIGHT,UP,DOWN are the only possible directions.")
         }
     }
 
+    // shifts a row/col in a certain direction
     private fun shiftByDirection(position: Position, direction: Direction) {
         for (index in getIterationRange(direction)) {
             setTileFromNextTile(index, position, direction)
         }
     }
 
+    // gets the indices to be shifted in a given direction
     private fun getIterationRange(direction: Direction): Iterable<Int> {
         return when(direction) {
             HorizontalDirection.RIGHT -> width - 1  downTo 1
@@ -115,6 +133,7 @@ class Board(private val tiles: Array<Array<GameTile>>) {
         }
     }
 
+    // if sliding in certain directions, this function returns the index difference for shifting elements in an array
     private fun getDifference(direction: Direction): Int {
         return when(direction) {
             HorizontalDirection.LEFT, VerticalDirection.UP -> 1
@@ -123,22 +142,34 @@ class Board(private val tiles: Array<Array<GameTile>>) {
         }
     }
 
+    // sets the current tile of the array to the next tile, given the direction
     private fun setTileFromNextTile(index: Int,  position: Position, direction: Direction) {
         val difference = getDifference(direction)
-        val currentTilePosition: Coordinates = when (direction) {
+        val currentTilePosition: Coordinates = getCurrentTilePositionInShift(direction, position, index)
+        val nextTilePosition: Coordinates = getNextTilePositionInShift(direction, position, index, difference)
+        setTile(currentTilePosition, getTile(nextTilePosition))
+    }
+
+    // gets the current tile position based on current row/col index and the current step index) of the shift
+    private fun getCurrentTilePositionInShift(direction: Direction, position: Position, index: Int): Coordinates {
+        return when (direction) {
             is HorizontalDirection -> Coordinates(RowPosition(position.value), ColumnPosition(index))
             is VerticalDirection -> Coordinates(RowPosition(index), ColumnPosition(position.value))
             else -> throw IllegalArgumentException("Direction must be horizontal and vertical.")
         }
-        val nextTilePosition: Coordinates = when (direction) {
+    }
+
+    // get the immediately adjacent tile during a shift, based on direction and position (row/col index).
+    private fun getNextTilePositionInShift(direction: Direction, position: Position, index: Int, difference: Int): Coordinates {
+        return when (direction) {
             is HorizontalDirection -> Coordinates(RowPosition(position.value ), ColumnPosition(index + difference))
             is VerticalDirection -> Coordinates(RowPosition(index + difference), ColumnPosition(position.value))
             else -> throw IllegalArgumentException("Direction must be horizontal and vertical.")
         }
-        setTile(currentTilePosition, getTile(nextTilePosition))
     }
 
-
+    // checks all of a tiles adjacent to a position, if they are reachable, adds them to
+    // the stack
     private fun addReachableNeighborToPath(currentPosition: Coordinates, outgoingDirection: Direction,
                                            stack: Stack<Coordinates>) {
         getPositionAdjacentTo(currentPosition, outgoingDirection)?.let { neighborPosition ->
@@ -149,6 +180,9 @@ class Board(private val tiles: Array<Array<GameTile>>) {
         }
     }
 
+    // gets the coordinates adjacent to a position in the provided direction. If the new position is out of bounds,
+    // will return null. This is safe because the kotlin typechecker will force us to check if the
+    // return type of this function is null.
     private fun getPositionAdjacentTo(position: Coordinates, outgoingDirection: Direction): Coordinates? {
         val rowValue = position.row.value
         val colValue = position.col.value
@@ -166,15 +200,16 @@ class Board(private val tiles: Array<Array<GameTile>>) {
         }
     }
 
+    // sets the given tile at the given coordinates
     private fun setTile(position: Coordinates, tile: GameTile) {
         val row = tiles[position.row.value]
         row[position.col.value] = tile
     }
 
-    private fun checkSlideable(position: Position) {
-        if ((position.value % 2 != 0)) {
-            throw IllegalArgumentException("Row/col ${position.value} is not slideable.")
+    // throws an illegal argument exception if the given position noting the row/col is not slideable
+    private fun checkSlideable(positionToBeSlid: Position) {
+        if ((positionToBeSlid.value % 2 != 0)) {
+            throw IllegalArgumentException("Row/col ${positionToBeSlid.value} is not slideable.")
         }
-
     }
 }
