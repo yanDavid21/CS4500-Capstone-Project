@@ -14,7 +14,13 @@ import kotlin.test.assertEquals
 @TestInstance(TestInstance.Lifecycle.PER_METHOD)
 internal class BoardTest {
 
-
+    /**
+     * Remove players from tile
+     *
+     * Find player location
+     *
+     * Get tile
+     */
 
     @Test
     fun testSlideHorizontal() {
@@ -41,8 +47,27 @@ internal class BoardTest {
     }
 
     @Test
-    fun testSlideVertical() {
+    fun testSlideVerticalUP() {
+        val tiles = createTiles()
+        val board = createBoard(tiles)
+        val spareTile = GameTile(Path.T, Degree.ZERO, Treasure(Gem.AMETRINE, Gem.AMETHYST))
 
+        board.slideColAndInsert(ColumnPosition(0), VerticalDirection.UP, spareTile)
+        val newFirstCol = tiles.map { it[0] }.toTypedArray()
+        val expectedTiles = getArrayWithElementInIndex(newFirstCol, 6, spareTile)
+        Assert.assertArrayEquals(expectedTiles, newFirstCol)
+
+    }
+
+    @Test
+    fun testSlideVerticalDown() {
+        val tiles = createTiles()
+        val board = createBoard(tiles)
+        val spareTile2 = GameTile(Path.CROSS, Degree.NINETY, Treasure(Gem.AMETRINE, Gem.AMETHYST))
+
+        board.slideColAndInsert(ColumnPosition(6), VerticalDirection.DOWN, spareTile2)
+        val newLastCol = tiles.map { it[6] }.toTypedArray()
+        Assert.assertArrayEquals(getArrayWithElementInIndex(newLastCol, 0, spareTile2), newLastCol)
     }
 
 
@@ -73,7 +98,7 @@ internal class BoardTest {
         val reachableFromTopLeft = board.getReachableTiles(Coordinates(RowPosition(1), ColumnPosition(1)))
 
         // ASSERT
-        assertEquals(setOf(), reachableFromTopLeft)
+        assertEquals(setOf(Coordinates.fromRowAndValue(1, 1)), reachableFromTopLeft)
     }
 
     @Test
@@ -83,8 +108,10 @@ internal class BoardTest {
         val board = createBoard(tiles)
 
         // ASSERT
-        val reachableFromTopRight = board.getReachableTiles(Coordinates(RowPosition(6), ColumnPosition(6)))
-        assertEquals(setOf(tiles[5][4], tiles[5][5], tiles[6][4], tiles[6][5]), reachableFromTopRight)
+        val reachableFromTopRight = board.getReachableTiles(Coordinates.fromRowAndValue(6, 6))
+        assertEquals(setOf(Coordinates.fromRowAndValue(5, 4), Coordinates.fromRowAndValue(5,5),
+            Coordinates.fromRowAndValue(6, 4), Coordinates.fromRowAndValue(6,5),
+        Coordinates.fromRowAndValue(6,6)), reachableFromTopRight)
     }
 
 

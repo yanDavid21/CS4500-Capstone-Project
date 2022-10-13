@@ -1,22 +1,8 @@
 package Common.tile.treasure
 
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.assertDoesNotThrow
-import org.junit.jupiter.api.assertThrows
 
 internal class TreasureTest {
-
-    @Test
-    fun testTreasureHasUniquePair() {
-        assertThrows<IllegalArgumentException>("Treasures must be a pair of unique gems.") {
-            Treasure(Gem.APATITE, Gem.APATITE)
-        }
-        assertThrows<IllegalArgumentException>("Treasures must be a pair of unique gems.") {
-            Treasure(Gem.HEMATITE, Gem.HEMATITE)
-        }
-
-        assertDoesNotThrow { Treasure(Gem.APATITE, Gem.HEMATITE) }
-    }
 
     @Test
     fun testTreasureUnordered() {

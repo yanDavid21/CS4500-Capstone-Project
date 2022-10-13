@@ -24,48 +24,34 @@ class Board(private val tiles: Array<Array<GameTile>>) {
         return slideAndInsertSpare(columnPosition, direction, spareTile)
     }
 
-    private fun slideAndInsertSpare(position: Position, direction: Direction, spareTile: GameTile): GameTile {
-        if (!isSlideable(position)) {
-            throw IllegalArgumentException("Row/col ${position.value} is not slideable.")
-        }
-
-        val dislodgedTile = getDislodgedTile(position, direction)
-
-        shiftByDirection(position,direction)
-
-        val emptySlotPosition = getEmptySlotPositionAfterSliding(position, direction)
-        setTile(emptySlotPosition, spareTile)
-
-        return dislodgedTile
-    }
-
     /**
      * Performs a depth-first search of all reachable tiles starting from _position_, neighbors are determined
      * by whether two adjacent tile's have connecting shapes.
      */
-    fun getReachableTiles(startingPosition: Coordinates): Set<GameTile>  {
-        val startingTile = getTile(startingPosition)
+    fun getReachableTiles(startingPosition: Coordinates): Set<Coordinates>  {
         val stack = Stack<Coordinates>()
-        val visitedNodes = HashSet<GameTile>()
+        val visitedNodes = HashSet<Coordinates>()
         stack.add(startingPosition)
 
         while (stack.isNotEmpty()) {
             val currentPosition = stack.pop()
-            val currentTile = getTile(currentPosition)
-            if (!visitedNodes.contains(currentTile)) {
-                currentTile.getOutgoingDirections().forEach { outgoingDirection ->
+            if (!visitedNodes.contains(currentPosition)) {
+                getTile(currentPosition).getOutgoingDirections().forEach { outgoingDirection ->
                     addReachableNeighborToPath(currentPosition, outgoingDirection, stack)
                 }
-                visitedNodes.add(currentTile)
+                visitedNodes.add(currentPosition)
             }
         }
-        visitedNodes.remove(startingTile)
         return visitedNodes
     }
 
-    fun removePlayerFromTiles(player: Player) {
-        this.tiles.forEach { row -> row.forEach { tile -> tile.removePlayerFromTile(player) }}
+    /**
+     * Gets the tile at the specified position.
+     */
+    fun getTile(position: Coordinates): GameTile {
+        return tiles[position.row.value][position.col.value]
     }
+
 
     fun findPlayerLocation(player: Player): Coordinates {
         for (rowIndex in 0 until this.height) {
@@ -79,6 +65,19 @@ class Board(private val tiles: Array<Array<GameTile>>) {
         }
         throw IllegalStateException("$player not found. Player should always be in the board.")
     }
+
+    private fun slideAndInsertSpare(position: Position, direction: Direction, spareTile: GameTile): GameTile {
+        checkSlideable(position)
+        val dislodgedTile = getDislodgedTile(position, direction)
+
+        shiftByDirection(position,direction)
+
+        val emptySlotPosition = getEmptySlotPositionAfterSliding(position, direction)
+        setTile(emptySlotPosition, spareTile)
+
+        return dislodgedTile
+    }
+
 
     private fun getDislodgedTile(position: Position, direction: Direction): GameTile {
         return when (direction) {
@@ -94,8 +93,8 @@ class Board(private val tiles: Array<Array<GameTile>>) {
         return when(direction) {
             HorizontalDirection.LEFT -> Coordinates(RowPosition(position.value), ColumnPosition(width - 1))
             HorizontalDirection.RIGHT -> Coordinates(RowPosition(position.value), ColumnPosition(0))
-            VerticalDirection.UP -> Coordinates(RowPosition(0), ColumnPosition(position.value))
-            VerticalDirection.DOWN -> Coordinates(RowPosition(height - 1), ColumnPosition(0))
+            VerticalDirection.UP -> Coordinates(RowPosition(height-1), ColumnPosition(position.value))
+            VerticalDirection.DOWN -> Coordinates(RowPosition(0), ColumnPosition(position.value))
             else -> throw java.lang.IllegalArgumentException("LEFT,RIGHT,UP,DOWN are the only possible directions.")
         }
     }
@@ -118,8 +117,8 @@ class Board(private val tiles: Array<Array<GameTile>>) {
 
     private fun getDifference(direction: Direction): Int {
         return when(direction) {
-            HorizontalDirection.LEFT, VerticalDirection.DOWN -> 1
-            HorizontalDirection.RIGHT, VerticalDirection.UP -> -1
+            HorizontalDirection.LEFT, VerticalDirection.UP -> 1
+            HorizontalDirection.RIGHT, VerticalDirection.DOWN -> -1
             else -> throw IllegalArgumentException("")
         }
     }
@@ -172,23 +171,7 @@ class Board(private val tiles: Array<Array<GameTile>>) {
         row[position.col.value] = tile
     }
 
-    private fun getTile(position: Coordinates): GameTile {
-        return tiles[position.row.value][position.col.value]
-    }
-
     private fun isSlideable(position: Position): Boolean {
         return position.value % 2 == 0
-    }
-
-    fun getTilePosition(tile: GameTile): Coordinates? {
-        for (rowIndex in 0 until height) {
-            for (colIndex in 0 until width) {
-                val coordinate = Coordinates(RowPosition(rowIndex), ColumnPosition(colIndex))
-                if (getTile(coordinate) == tile) {
-                    return coordinate
-                }
-            }
-        }
-        return null
     }
 }

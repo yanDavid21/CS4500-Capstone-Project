@@ -1,9 +1,7 @@
 package testing
 
 import Common.board.Board
-import Common.board.ColumnPosition
 import Common.board.Coordinates
-import Common.board.RowPosition
 import com.google.gson.Gson
 import com.google.gson.stream.JsonReader
 import java.io.InputStreamReader
@@ -36,11 +34,10 @@ fun main() {
 
     val board = Board(tiles)
 
-    val reachableTiles = board.getReachableTiles(Coordinates(RowPosition(coordinates.`row#`),
-        ColumnPosition(coordinates.`col#`)))
+    val testCoordinate = Coordinates.fromRowAndValue(coordinates.`row#`, coordinates.`col#`)
+    val reachablePositions = board.getReachableTiles(testCoordinate).map { TestCoordinate.fromCoordinates(it) }
 
-    val reachablePosition = reachableTiles.map { TestCoordinate.fromCoordinates(board.getTilePosition(it)!!) }
     val comp = compareBy<TestCoordinate>({ it.`row#`}, {it.`col#`})
 
-    println(reachablePosition.sortedWith(comp).map { gson.toJson(it, TestCoordinate::class.java) })
+    println(reachablePositions.sortedWith(comp).map { gson.toJson(it, TestCoordinate::class.java) })
 }
