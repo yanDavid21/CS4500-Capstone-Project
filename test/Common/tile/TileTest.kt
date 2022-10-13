@@ -4,6 +4,7 @@ import Common.Player
 import Common.tile.treasure.Gem
 import Common.tile.treasure.Treasure
 import org.junit.jupiter.api.Test
+import java.util.*
 import kotlin.test.assertEquals
 
 
@@ -15,6 +16,9 @@ internal class TileTest {
     private val D = VerticalDirection.DOWN
 
     private val treasure = Treasure(Gem.AMETHYST, Gem.AMETRINE)
+    private val homeTile = GameTile(Path.CROSS, Degree.NINETY, Treasure(Gem.ZIRCON, Gem.RAW_BERYL))
+    private val testPlayer = Player(UUID.randomUUID(),treasure,homeTile,false)
+
     @Test
     fun testGetOutComingDirectionsNoRotation() {
         assertEquals(setOf(U, D), GameTile(Path.VERTICAL, Degree.ZERO, treasure).getOutgoingDirections())
@@ -73,21 +77,115 @@ internal class TileTest {
         assert(tile != tileButDiffPath)
         assert(tile != tileButDiffTreasure)
     }
+    @Test
+    fun testCanBeReachedFrom(incomingDirection: Direction) {
+        assertEquals(true, GameTile(Path.VERTICAL, Degree.ZERO, treasure).canBeReachedFrom(VerticalDirection.DOWN))
+        assertEquals(true, GameTile(Path.VERTICAL, Degree.ZERO, treasure).canBeReachedFrom(VerticalDirection.UP))
 
-    fun canBeReachedFrom(incomingDirection: Direction): Boolean {
-        return this.incomingDirections.contains(incomingDirection)
+        assertEquals(true, GameTile(Path.CROSS, Degree.ZERO, treasure).canBeReachedFrom(VerticalDirection.DOWN))
+        assertEquals(true, GameTile(Path.CROSS, Degree.ZERO, treasure).canBeReachedFrom(VerticalDirection.UP))
+        assertEquals(true, GameTile(Path.CROSS, Degree.ZERO, treasure).canBeReachedFrom(HorizontalDirection.LEFT))
+        assertEquals(true, GameTile(Path.CROSS, Degree.ZERO, treasure).canBeReachedFrom(HorizontalDirection.RIGHT))
+
+        assertEquals(true, GameTile(Path.T, Degree.ZERO, treasure).canBeReachedFrom(VerticalDirection.UP))
+        assertEquals(true, GameTile(Path.T, Degree.ZERO, treasure).canBeReachedFrom(HorizontalDirection.LEFT))
+        assertEquals(true, GameTile(Path.T, Degree.ZERO, treasure).canBeReachedFrom(HorizontalDirection.RIGHT))
+
+        assertEquals(true, GameTile(Path.UP_RIGHT, Degree.ZERO, treasure).canBeReachedFrom(VerticalDirection.DOWN))
+        assertEquals(true, GameTile(Path.UP_RIGHT, Degree.ZERO, treasure).canBeReachedFrom(HorizontalDirection.LEFT))
+
     }
 
-    fun addPlayerToTile(player: Player) {
-        this.players.add(player)
+    @Test
+    fun testCanBeReachedFromRotation(incomingDirection: Direction) {
+        assertEquals(true, GameTile(Path.VERTICAL, Degree.NINETY, treasure).canBeReachedFrom(HorizontalDirection.LEFT))
+        assertEquals(true, GameTile(Path.VERTICAL, Degree.NINETY, treasure).canBeReachedFrom(HorizontalDirection.RIGHT))
+        assertEquals(true, GameTile(Path.VERTICAL, Degree.TWO_SEVENTY, treasure).canBeReachedFrom(HorizontalDirection.LEFT))
+        assertEquals(true, GameTile(Path.VERTICAL, Degree.TWO_SEVENTY, treasure).canBeReachedFrom(HorizontalDirection.RIGHT))
+        assertEquals(true, GameTile(Path.VERTICAL, Degree.ONE_EIGHTY, treasure).canBeReachedFrom(VerticalDirection.DOWN))
+        assertEquals(true, GameTile(Path.VERTICAL, Degree.ONE_EIGHTY, treasure).canBeReachedFrom(VerticalDirection.UP))
+
+        assertEquals(true, GameTile(Path.CROSS, Degree.ZERO, treasure).canBeReachedFrom(VerticalDirection.DOWN))
+        assertEquals(true, GameTile(Path.CROSS, Degree.ZERO, treasure).canBeReachedFrom(VerticalDirection.UP))
+        assertEquals(true, GameTile(Path.CROSS, Degree.ZERO, treasure).canBeReachedFrom(HorizontalDirection.LEFT))
+
+        assertEquals(true, GameTile(Path.T, Degree.NINETY, treasure).canBeReachedFrom(VerticalDirection.UP))
+        assertEquals(true, GameTile(Path.T, Degree.NINETY, treasure).canBeReachedFrom(VerticalDirection.DOWN))
+        assertEquals(true, GameTile(Path.T, Degree.NINETY, treasure).canBeReachedFrom(HorizontalDirection.LEFT))
+        assertEquals(true, GameTile(Path.T, Degree.TWO_SEVENTY, treasure).canBeReachedFrom(VerticalDirection.UP))
+        assertEquals(true, GameTile(Path.T, Degree.TWO_SEVENTY, treasure).canBeReachedFrom(HorizontalDirection.LEFT))
+        assertEquals(true, GameTile(Path.T, Degree.TWO_SEVENTY, treasure).canBeReachedFrom(VerticalDirection.DOWN))
+        assertEquals(true, GameTile(Path.T, Degree.ONE_EIGHTY, treasure).canBeReachedFrom(VerticalDirection.DOWN))
+        assertEquals(true, GameTile(Path.T, Degree.ONE_EIGHTY, treasure).canBeReachedFrom(HorizontalDirection.LEFT))
+        assertEquals(true, GameTile(Path.T, Degree.ONE_EIGHTY, treasure).canBeReachedFrom(HorizontalDirection.RIGHT))
+
+        assertEquals(true, GameTile(Path.UP_RIGHT, Degree.NINETY, treasure).canBeReachedFrom(VerticalDirection.DOWN))
+        assertEquals(true, GameTile(Path.UP_RIGHT, Degree.NINETY, treasure).canBeReachedFrom(HorizontalDirection.LEFT))
+        assertEquals(true, GameTile(Path.UP_RIGHT, Degree.ONE_EIGHTY, treasure).canBeReachedFrom(VerticalDirection.DOWN))
+        assertEquals(true, GameTile(Path.UP_RIGHT, Degree.ONE_EIGHTY, treasure).canBeReachedFrom(HorizontalDirection.LEFT))
+        assertEquals(true, GameTile(Path.UP_RIGHT, Degree.TWO_SEVENTY, treasure).canBeReachedFrom(VerticalDirection.DOWN))
+        assertEquals(true, GameTile(Path.UP_RIGHT, Degree.TWO_SEVENTY, treasure).canBeReachedFrom(HorizontalDirection.LEFT))
     }
 
+    @Test
+    fun testCannotBeReachedFrom(incomingDirection: Direction) {
+        assertEquals(false, GameTile(Path.VERTICAL, Degree.ZERO, treasure).canBeReachedFrom(HorizontalDirection.LEFT))
+        assertEquals(false, GameTile(Path.VERTICAL, Degree.ZERO, treasure).canBeReachedFrom(HorizontalDirection.RIGHT))
+
+        assertEquals(false, GameTile(Path.T, Degree.ZERO, treasure).canBeReachedFrom(VerticalDirection.DOWN))
+
+        assertEquals(false, GameTile(Path.UP_RIGHT, Degree.ZERO, treasure).canBeReachedFrom(VerticalDirection.UP))
+        assertEquals(false, GameTile(Path.UP_RIGHT, Degree.ZERO, treasure).canBeReachedFrom(HorizontalDirection.RIGHT))
+    }
+
+    @Test
+    fun testCannotBeReachedFromRotation(incomingDirection: Direction) {
+        assertEquals(false, GameTile(Path.VERTICAL, Degree.NINETY, treasure).canBeReachedFrom(VerticalDirection.DOWN))
+        assertEquals(false, GameTile(Path.VERTICAL, Degree.NINETY, treasure).canBeReachedFrom(VerticalDirection.UP))
+        assertEquals(false, GameTile(Path.VERTICAL, Degree.TWO_SEVENTY, treasure).canBeReachedFrom(VerticalDirection.DOWN))
+        assertEquals(false, GameTile(Path.VERTICAL, Degree.TWO_SEVENTY, treasure).canBeReachedFrom(VerticalDirection.UP))
+        assertEquals(false, GameTile(Path.VERTICAL, Degree.ONE_EIGHTY, treasure).canBeReachedFrom(HorizontalDirection.LEFT))
+        assertEquals(false, GameTile(Path.VERTICAL, Degree.ONE_EIGHTY, treasure).canBeReachedFrom(HorizontalDirection.RIGHT))
+
+        assertEquals(false, GameTile(Path.T, Degree.NINETY, treasure).canBeReachedFrom(HorizontalDirection.LEFT))
+        assertEquals(false, GameTile(Path.T, Degree.TWO_SEVENTY, treasure).canBeReachedFrom(HorizontalDirection.RIGHT))
+        assertEquals(false, GameTile(Path.T, Degree.ONE_EIGHTY, treasure).canBeReachedFrom(VerticalDirection.DOWN))
+
+        assertEquals(false, GameTile(Path.UP_RIGHT, Degree.NINETY, treasure).canBeReachedFrom(HorizontalDirection.RIGHT))
+        assertEquals(false, GameTile(Path.UP_RIGHT, Degree.TWO_SEVENTY, treasure).canBeReachedFrom(HorizontalDirection.LEFT))
+        assertEquals(false, GameTile(Path.UP_RIGHT, Degree.ONE_EIGHTY, treasure).canBeReachedFrom(HorizontalDirection.LEFT))
+        assertEquals(false, GameTile(Path.UP_RIGHT, Degree.NINETY, treasure).canBeReachedFrom(VerticalDirection.DOWN))
+        assertEquals(false, GameTile(Path.UP_RIGHT, Degree.TWO_SEVENTY, treasure).canBeReachedFrom(VerticalDirection.UP))
+        assertEquals(false, GameTile(Path.UP_RIGHT, Degree.ONE_EIGHTY, treasure).canBeReachedFrom(VerticalDirection.DOWN))
+    }
+
+
+    @Test
+    fun testAddPlayerToTile(player: Player) {
+        val gameTile = GameTile(Path.UP_RIGHT, Degree.ZERO, treasure)
+        assertEquals(gameTile.getPlayers().size, 0)
+        assertEquals(gameTile.hasCertainPlayer(testPlayer), false)
+        gameTile.addPlayerToTile(testPlayer)
+        assertEquals(gameTile.getPlayers().size, 0)
+        assertEquals(gameTile.hasCertainPlayer(testPlayer), true)
+    }
+
+    @Test
     fun removePlayerFromTile(player: Player) {
-        this.players.remove(player)
+        val gameTile = GameTile(Path.UP_RIGHT, Degree.ZERO, treasure)
+        assertEquals(gameTile.hasCertainPlayer(testPlayer), false)
+        gameTile.addPlayerToTile(testPlayer)
+        assertEquals(gameTile.hasCertainPlayer(testPlayer), true)
+        gameTile.removePlayerFromTile(testPlayer)
+        assertEquals(gameTile.hasCertainPlayer(testPlayer), false)
     }
 
-    fun hasCertainPlayer(player: Player): Boolean {
-        return this.players.contains(player)
+    @Test
+    fun hasCertainPlayer(player: Player) {
+        val gameTile = GameTile(Path.UP_RIGHT, Degree.ZERO, treasure)
+        assertEquals(gameTile.hasCertainPlayer(testPlayer), false)
+        gameTile.addPlayerToTile(testPlayer)
+        assertEquals(gameTile.hasCertainPlayer(testPlayer), true)
     }
 }
 
