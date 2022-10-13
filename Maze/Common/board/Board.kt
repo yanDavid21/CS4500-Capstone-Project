@@ -1,7 +1,10 @@
 package Common.board
 
 import Common.Player
-import Common.tile.*
+import Common.tile.Direction
+import Common.tile.GameTile
+import Common.tile.HorizontalDirection
+import Common.tile.VerticalDirection
 import java.util.*
 import kotlin.collections.HashSet
 
@@ -175,5 +178,17 @@ class Board(private val tiles: Array<Array<GameTile>>) {
 
     private fun isSlideable(position: Position): Boolean {
         return position.value % 2 == 0
+    }
+
+    fun getTilePosition(tile: GameTile): Coordinates? {
+        for (rowIndex in 0 until height) {
+            for (colIndex in 0 until width) {
+                val coordinate = Coordinates(RowPosition(rowIndex), ColumnPosition(colIndex))
+                if (getTile(coordinate) == tile) {
+                    return coordinate
+                }
+            }
+        }
+        return null
     }
 }

@@ -1,9 +1,11 @@
-[["│", "─", "┐", "└", "┌", "┘", "┬"],
+{"connectors":  [["│", "─", "┐", "└", "┌", "┘", "┬"],
 ["┘", "│", "┌",  "─", "┐", "└", "┬"],
 ["┘", "┌", "│",  "┐", "└", "─", "┬"],
 ["┘", "│", "┌",  "─", "┐", "└", "┬"],
 ["│", "─", "┐", "└", "┌", "┘", "┬"],
-["┘", "┌", "│",  "┐", "└", "─", "┬"]]]
+["┘", "┌", "│",  "┐", "└", "─", "┬"]],
+
+  "treasures":
 
 [[["grossular-garnet", "black-obsidian"], ["tigers-eye", "yellow-beryl-oval"],
 ["chrysoberyl-cushion", "color-change-oval"], ["sunstone", "prasiolite"],
@@ -22,4 +24,8 @@
 ["golden-diamond-cut", "grossular-garnet"], ["tourmaline-laser-cut", "blue-pear-shape"], ["magnesite", "chrysolite"],
 ["purple-cabochon", "moss-agate"]], [["spinel", "sunstone"], ["pink-spinel-cushion", "carnelian"],
 ["apricot-square-radiant", "jaspilite"], ["magnesite", "moonstone"], ["ametrine", "ruby"], ["citrine", "diamond"],
-["blue-ceylon-sapphire", "chrysoberyl-cushion"]]]
+["blue-ceylon-sapphire", "chrysoberyl-cushion"]]]}
+
+{
+  "row#": 0, "col#": 0
+}

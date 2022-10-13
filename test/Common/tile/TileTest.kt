@@ -4,7 +4,7 @@ import Common.tile.treasure.Gem
 import Common.tile.treasure.Treasure
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
-import kotlin.test.assertFalse
+
 
 internal class TileTest {
 
@@ -51,31 +51,5 @@ internal class TileTest {
 
         tile.rotate(Degree.NINETY)
     }
-
-    @Test
-    fun testEmptyTileHasNoOutgoingDirections() {
-        assertEquals(setOf(), EmptyTile().getOutgoingDirections())
-    }
-
-    @Test
-    fun testEmptyTileHasNoIncomingDirections() {
-        assertEquals(setOf(), EmptyTile().getIncomingDirections())
-    }
-
-    @Test
-    fun testEmptyTileIsUnreachable() {
-        val empty = EmptyTile()
-
-        HorizontalDirection.values().forEach { assertFalse { empty.canBeReachedFrom(it) } }
-        VerticalDirection.values().forEach { assertFalse { empty.canBeReachedFrom(it) } }
-    }
-
-    @Test
-    fun testEmptyTileEqualsEmptyTile() {
-        assertEquals(EmptyTile(), EmptyTile())
-
-        val emptyTile = EmptyTile()
-        assertEquals(emptyTile, emptyTile)
-    }
-
 }
+

@@ -3,9 +3,18 @@ package testing
 import Common.tile.Degree
 import Common.tile.GameTile
 import Common.tile.Path
+import Common.tile.treasure.Gem
 import Common.tile.treasure.Treasure
 
 object TestUtils {
+
+    fun getTreasuresFromStrings(treasures: List<List<List<String>>>): List<List<Treasure>> {
+        return treasures.map { it.map { pair ->
+            val gem1 = Gem.valueOf(pair[0].toUpperCase().replace("-","_"))
+            val gem2 = Gem.valueOf(pair[1].toUpperCase().replace("-","_"))
+            Treasure(gem1, gem2)
+        } }
+    }
 
     fun getTilesFromConnectorsAndTreasures(connectors: List<List<String>>,
                                            treasures: List<List<Treasure>>): Array<Array<GameTile>> {
