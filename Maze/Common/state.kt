@@ -31,11 +31,11 @@ class Referee(
     }
 
     /**
-     * Looks for a player
+     *
      */
     private fun findPlayerPosition(player: Player): Coordinates {
-        for (rowPos in 0 until 7) {
-            for (colPos in 0 until 7) {
+        for (rowPos in Position.MIN_ROW_INDEX until Position.MAX_ROW_INDEX) {
+            for (colPos in Position.MIN_COL_INDEX until Position.MAX_COL_INDEX) {
                 val pos = Coordinates.fromRowAndValue(rowPos, colPos)
                 val tileAtPos = board.getTile(pos)
                 if (tileAtPos.hasCertainPlayer(player)) {
@@ -47,7 +47,7 @@ class Referee(
     }
 
     /**
-     * Has the active player reached it goal?
+     * Returns whether the active player reached its goal.
      */
     fun hasActivePlayerReachedGoal(): Boolean {
         return playerQueue.getCurrentPlayer().treasureFound

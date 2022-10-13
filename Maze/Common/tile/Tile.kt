@@ -89,8 +89,10 @@ data class GameTile(val path: Path, var degree: Degree, val treasure: Treasure) 
     }
 
     private fun recomputeDirections() {
-        outgoingDirections = path.getDefaultOutgoingDirections().mapTo(mutableSetOf()) { it.rotateBy(degree) }
-        incomingDirections = outgoingDirections.mapTo(mutableSetOf()) { it.reverse() }
+        outgoingDirections = path.getDefaultOutgoingDirections().mapTo(mutableSetOf()) {
+                outGoingDirection -> outGoingDirection.rotateBy(degree)
+        }
+        incomingDirections = outgoingDirections.mapTo(mutableSetOf()) { outgoingDirection -> outgoingDirection.reverse() }
     }
 }
 
