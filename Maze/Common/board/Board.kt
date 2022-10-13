@@ -53,6 +53,12 @@ class Board(private val tiles: Array<Array<GameTile>>) {
     }
 
 
+    /**
+     * Locates a player on the board by looking at all tiles until the player is found.
+     *
+     * Throws IllegalStateException if the player is not found, all players in the game
+     * should be on the board.
+     */
     fun findPlayerLocation(player: Player): Coordinates {
         for (rowIndex in 0 until this.height) {
             for (colIndex in 0 until this.width) {
@@ -85,7 +91,7 @@ class Board(private val tiles: Array<Array<GameTile>>) {
             HorizontalDirection.RIGHT -> tiles[position.value][this.width - 1]
             VerticalDirection.UP -> tiles[0][position.value]
             VerticalDirection.DOWN -> tiles[this.height - 1][position.value]
-            else -> throw java.lang.IllegalArgumentException("LEFT,RIGHT,UP,DOWN are the only possible directions.")
+            else -> throw IllegalArgumentException("LEFT,RIGHT,UP,DOWN are the only possible directions.")
         }
     }
 
@@ -95,7 +101,7 @@ class Board(private val tiles: Array<Array<GameTile>>) {
             HorizontalDirection.RIGHT -> Coordinates(RowPosition(position.value), ColumnPosition(0))
             VerticalDirection.UP -> Coordinates(RowPosition(height-1), ColumnPosition(position.value))
             VerticalDirection.DOWN -> Coordinates(RowPosition(0), ColumnPosition(position.value))
-            else -> throw java.lang.IllegalArgumentException("LEFT,RIGHT,UP,DOWN are the only possible directions.")
+            else -> throw IllegalArgumentException("LEFT,RIGHT,UP,DOWN are the only possible directions.")
         }
     }
 
@@ -139,6 +145,8 @@ class Board(private val tiles: Array<Array<GameTile>>) {
     }
 
 
+    // checks all of a tiles adjacent to a position, if they are reachable, adds them to
+    // the stack
     private fun addReachableNeighborToPath(currentPosition: Coordinates, outgoingDirection: Direction,
                                            stack: Stack<Coordinates>) {
         getPositionAdjacentTo(currentPosition, outgoingDirection)?.let { neighborPosition ->

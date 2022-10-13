@@ -1,11 +1,14 @@
 package Common.referee
 
+import Common.TestData
 import org.junit.jupiter.api.Test
 
 internal class RefereeTest {
 
     @Test
     fun testMovePlayerToUnreachabletile() {
+        val referee = TestData.createReferee()
+
 
     }
 
@@ -43,4 +46,5 @@ internal class RefereeTest {
     fun testKickoutActivePlayer() {
 
     }
+
 }
