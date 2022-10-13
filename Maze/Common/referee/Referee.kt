@@ -4,9 +4,10 @@ import Common.Player
 import Common.PlayerQueue
 import Common.board.Board
 import Common.board.ColumnPosition
-import Common.board.Position
 import Common.board.RowPosition
-import Common.tile.*
+import Common.tile.GameTile
+import Common.tile.HorizontalDirection
+import Common.tile.VerticalDirection
 
 class Referee(
     private val board: Board,
@@ -74,9 +75,5 @@ class Referee(
         if (activePlayer.homeTile == targetTile && activePlayer.treasureFound) {
             winner = activePlayer
         }
-    }
-
-    private fun endGame() {
-        TODO("TO BE IMPLEMENTED")
     }
 }

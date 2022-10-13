@@ -7,4 +7,4 @@ import java.util.*
 data class Player(val id: UUID,
                   val goal: Treasure,
                   val homeTile: GameTile,
-                  var treasureFound: Boolean)
+                  var treasureFound: Boolean = false)

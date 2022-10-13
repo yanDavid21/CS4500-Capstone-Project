@@ -4,7 +4,7 @@ data class Treasure(val gem1: Gem, val gem2: Gem) {
 
     init {
         if (gem1 == gem2) {
-            throw IllegalStateException("Treasures must be a pair of unique gems.")
+            throw IllegalArgumentException("Treasures must be a pair of unique gems.")
         }
     }
 
@@ -18,5 +18,4 @@ data class Treasure(val gem1: Gem, val gem2: Gem) {
     override fun hashCode(): Int {
         return gem1.hashCode() + gem2.hashCode()
     }
-
 }
