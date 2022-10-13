@@ -171,7 +171,10 @@ class Board(private val tiles: Array<Array<GameTile>>) {
         row[position.col.value] = tile
     }
 
-    private fun isSlideable(position: Position): Boolean {
-        return position.value % 2 == 0
+    private fun checkSlideable(position: Position) {
+        if ((position.value % 2 != 0)) {
+            throw IllegalArgumentException("Row/col ${position.value} is not slideable.")
+        }
+
     }
 }

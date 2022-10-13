@@ -117,4 +117,10 @@ class Referee(
             winner = activePlayer
         }
     }
+
+    private fun checkActiveMovePlayer(activePlayer: Player, currentPosition: Coordinates,  to: Coordinates) {
+        if (!canPlayerReachTile(activePlayer, to) || currentPosition == to) {
+            throw IllegalArgumentException("Can not move active player to $to.")
+        }
+    }
 }

@@ -18,11 +18,6 @@ data class GameTile(val path: Path, var degree: Degree, val treasure: Treasure) 
         recomputeDirections()
     }
 
-    private fun recomputeDirections() {
-        outgoingDirections = path.getDefaultOutgoingDirections().mapTo(mutableSetOf()) { it.rotateBy(degree) }
-        incomingDirections = outgoingDirections.mapTo(mutableSetOf()) { it.reverse() }
-    }
-
     fun getOutgoingDirections(): Set<Direction> {
         return outgoingDirections
     }
@@ -34,10 +29,6 @@ data class GameTile(val path: Path, var degree: Degree, val treasure: Treasure) 
 
     fun canBeReachedFrom(incomingDirection: Direction): Boolean {
         return this.incomingDirections.contains(incomingDirection)
-    }
-
-    fun hasPlayer(): Boolean {
-        return players.isNotEmpty()
     }
 
     fun addPlayerToTile(player: Player) {
@@ -52,23 +43,28 @@ data class GameTile(val path: Path, var degree: Degree, val treasure: Treasure) 
         return this.players.contains(player)
     }
 
+    fun getPlayers(): Set<Player> {
+        return this.players.toSet()
+    }
+
     override fun toString(): String {
         return "($path, $degree)"
     }
 
     override fun hashCode(): Int {
-        return Objects.hash(this.treasure, this.path, this.degree)
-    }
-
-    fun getPlayers(): Set<Player> {
-        return this.players.toSet()
+        return Objects.hash(this.treasure, this.path)
     }
 
     override fun equals(other: Any?): Boolean {
         if (other is GameTile) {
-            return (this.treasure.equals(other.treasure) && this.path == other.path && this.degree == other.degree)
+            return this.treasure.equals(other.treasure) && this.path.equals(other.path)
         }
         return false
+    }
+
+    private fun recomputeDirections() {
+        outgoingDirections = path.getDefaultOutgoingDirections().mapTo(mutableSetOf()) { it.rotateBy(degree) }
+        incomingDirections = outgoingDirections.mapTo(mutableSetOf()) { it.reverse() }
     }
 }
 

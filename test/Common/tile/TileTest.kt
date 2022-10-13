@@ -1,5 +1,6 @@
 package Common.tile
 
+import Common.Player
 import Common.tile.treasure.Gem
 import Common.tile.treasure.Treasure
 import org.junit.jupiter.api.Test
@@ -50,6 +51,43 @@ internal class TileTest {
         assertEquals(setOf(R, D), tile.getIncomingDirections())
 
         tile.rotate(Degree.NINETY)
+    }
+
+    @Test
+    fun testEquals() {
+        val tile = GameTile(Path.UP_RIGHT, Degree.ONE_EIGHTY, treasure)
+        val tileButTurned = GameTile(Path.UP_RIGHT, Degree.NINETY, treasure)
+        val tileButTurnedAgain = GameTile(Path.UP_RIGHT, Degree.NINETY, treasure)
+        assert(tile == tileButTurned)
+        assert(tile == tileButTurnedAgain)
+    }
+
+
+    @Test
+    fun testNotEquals() {
+        val tile = GameTile(Path.UP_RIGHT, Degree.ONE_EIGHTY, treasure)
+
+        val tileButDiffPath = GameTile(Path.CROSS, Degree.NINETY, treasure)
+        val tileButDiffTreasure = GameTile(Path.CROSS, Degree.NINETY, Treasure(Gem.AMETHYST, Gem.HACKMANITE))
+
+        assert(tile != tileButDiffPath)
+        assert(tile != tileButDiffTreasure)
+    }
+
+    fun canBeReachedFrom(incomingDirection: Direction): Boolean {
+        return this.incomingDirections.contains(incomingDirection)
+    }
+
+    fun addPlayerToTile(player: Player) {
+        this.players.add(player)
+    }
+
+    fun removePlayerFromTile(player: Player) {
+        this.players.remove(player)
+    }
+
+    fun hasCertainPlayer(player: Player): Boolean {
+        return this.players.contains(player)
     }
 }
 
