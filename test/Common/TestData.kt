@@ -1,6 +1,7 @@
 package Common
 
 import Common.board.Board
+import Common.board.Coordinates
 import Common.tile.Degree
 import Common.tile.GameTile
 import Common.tile.Path
@@ -11,21 +12,22 @@ import java.util.*
 
 object TestData {
 
-    fun createReferee(tiles: Array<Array<GameTile>>): Referee {
-        val player1 = Player(
-            UUID.fromString("f9728f95-96db-4cf4-a9c1-13113635d312"),
-            Treasure(Gem.APLITE, Gem.AMETHYST),
-            tiles[0][0])
-        tiles[0][0].addPlayerToTile(player1)
+    fun createRefereeWithOnePlayer(player: Player, player1Pos: Coordinates): Referee {
+        val tiles = createTiles()
+        val board = createBoard(tiles)
+        board.getTile(player1Pos).addPlayerToTile(player)
 
-        val player2 = Player(UUID.fromString("f9728f95-96db-4cf4-a9c1-13113635d312"),
-            Treasure(Gem.HEMATITE, Gem.HACKMANITE),
-            tiles[0][2])
+        return Referee(board, createSpareTile(), listOf(player))
+    }
+
+    fun createReferee(tiles: Array<Array<GameTile>>): Referee {
+        val player1 = createPlayer1()
+        tiles[0][0].addPlayerToTile(createPlayer1())
+
+        val player2 = createPlayer2()
         tiles[0][2].addPlayerToTile(player2)
 
-        val player3 = Player(UUID.fromString("f25bc452-5ccc-4d29-8ad1-a76f89f42c24"),
-            Treasure(Gem.ALEXANDRITE, Gem.ZIRCON),
-            tiles[6][6])
+        val player3 = createPlayer3()
         tiles[6][6].addPlayerToTile(player3)
 
         val board = createBoard(tiles)
@@ -84,21 +86,28 @@ object TestData {
                 listOf("apricot-square-radiant", "jaspilite"), listOf("magnesite", "moonstone"), listOf("ametrine", "ruby"), listOf("citrine", "diamond"),
                 listOf("blue-ceylon-sapphire", "chrysoberyl-cushion")))
 
-    val player1 = Player(
-        UUID.fromString("f9728f95-96db-4cf4-a9c1-13113635d312"),
-        Treasure(Gem.APLITE, Gem.AMETHYST),
-        createTiles()[0][0])
+    fun createPlayer1(): Player {
+        return Player(
+            UUID.fromString("f9728f95-96db-4cf4-a9c1-13113635d312"),
+            Treasure(Gem.BLACK_OBSIDIAN, Gem.GROSSULAR_GARNET),
+            createTiles()[0][0]
+        )
+    }
 
-    val player2 = Player(
-        UUID.fromString("f9728f95-96db-4cf4-a9c1-13113635d312"),
-        Treasure(Gem.HEMATITE, Gem.HACKMANITE),
-        createTiles()[0][2]
-    )
+    fun createPlayer2(): Player {
+        return Player(
+            UUID.fromString("f9728f95-96db-4cf4-a9c1-13113635d312"),
+            Treasure(Gem.HEMATITE, Gem.HACKMANITE),
+            createTiles()[0][2]
+        )
+    }
 
-    val player3 = Player(
-        UUID.fromString("f25bc452-5ccc-4d29-8ad1-a76f89f42c24"),
-        Treasure(Gem.ALEXANDRITE, Gem.ZIRCON),
-        createTiles()[6][6]
-    )
+    fun createPlayer3(): Player {
+        return Player(
+            UUID.fromString("f25bc452-5ccc-4d29-8ad1-a76f89f42c24"),
+            Treasure(Gem.ALEXANDRITE, Gem.ZIRCON),
+            createTiles()[6][6]
+        )
+    }
 
 }
