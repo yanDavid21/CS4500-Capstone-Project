@@ -22,7 +22,7 @@ data class TestCoordinate(
 }
 
 fun main() {
-    val jsonReader = JsonReader(InputStreamReader(System.`in`))
+    val jsonReader = JsonReader(InputStreamReader(System.`in`, "UTF-8"))
     val gson = Gson()
 
     val testBoard = gson.fromJson<TileMatrix>(jsonReader, TileMatrix::class.java)
