@@ -3,7 +3,8 @@
 Indicate below each bullet which file/unit takes care of each task:
 
 1. rotate the spare tile by some number of degrees
-
+We did forgot to include a degree to rotate the spare tile when shifting and inserting. The functionality exists and it is a matter of making a call
+to `this.spareTile.rotate(degrees)` in `Referee:slideInsertAndDealWithPlayers`
 https://github.khoury.northeastern.edu/CS4500-F22/yanda1928-josuma26/blob/12e1085f53960be3c8bd8e37dc241cfbc098808b/Maze/Common/tile/Tile.kt#L16
 
 2. shift a row/column and insert the spare tile
