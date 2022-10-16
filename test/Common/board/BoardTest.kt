@@ -32,11 +32,12 @@ internal class BoardTest {
         val spareTile2 = GameTile(Path.CROSS, Degree.NINETY, Treasure(Gem.AMETRINE, Gem.AMETHYST))
 
         // ACT
-        board.slideRowAndInsert(RowPosition(0), HorizontalDirection.RIGHT, spareTile)
+        val newBoard = board.slideRowAndInsert(RowPosition(0), HorizontalDirection.RIGHT, spareTile)
         val newFirstRow = tiles[0]
         val expectedTiles = getArrayWithElementInIndex(newFirstRow,0,  spareTile)
 
         // ASSERT
+
         Assert.assertArrayEquals(expectedTiles, newFirstRow)
 
         // ACT

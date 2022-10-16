@@ -1,6 +1,6 @@
 package Common.tile
 
-import Common.Player
+import Common.player.Player
 import Common.tile.treasure.Gem
 import Common.tile.treasure.Treasure
 import org.junit.jupiter.api.Test
@@ -175,18 +175,18 @@ internal class TileTest {
     fun removePlayerFromTile() {
         val gameTile = GameTile(Path.UP_RIGHT, Degree.ZERO, treasure)
         assertEquals(gameTile.hasCertainPlayer(testPlayer), false)
-        gameTile.addPlayerToTile(testPlayer)
-        assertEquals(gameTile.hasCertainPlayer(testPlayer), true)
-        gameTile.removePlayerFromTile(testPlayer)
-        assertEquals(gameTile.hasCertainPlayer(testPlayer), false)
+        val tile2 = gameTile.addPlayerToTile(testPlayer)
+        assertEquals(tile2.hasCertainPlayer(testPlayer), true)
+        val tile3 = gameTile.removePlayerFromTile(testPlayer)
+        assertEquals(tile3.hasCertainPlayer(testPlayer), false)
     }
 
     @Test
     fun hasCertainPlayer() {
         val gameTile = GameTile(Path.UP_RIGHT, Degree.ZERO, treasure)
         assertEquals(gameTile.hasCertainPlayer(testPlayer), false)
-        gameTile.addPlayerToTile(testPlayer)
-        assertEquals(gameTile.hasCertainPlayer(testPlayer), true)
+        val newTile = gameTile.addPlayerToTile(testPlayer)
+        assertEquals(newTile.hasCertainPlayer(testPlayer), true)
     }
 }
 

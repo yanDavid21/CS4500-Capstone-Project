@@ -1,7 +1,10 @@
 package Common.board
 
-import Common.Player
-import Common.tile.*
+import Common.player.Player
+import Common.tile.Direction
+import Common.tile.GameTile
+import Common.tile.HorizontalDirection
+import Common.tile.VerticalDirection
 import java.util.*
 import kotlin.collections.HashSet
 
@@ -82,14 +85,13 @@ class Board(private val tiles: Array<Array<GameTile>>) {
         checkSlideable(position)
         val dislodgedTile = getDislodgedTile(position, direction)
 
-        shiftByDirection(position,direction)
+        val newTiles = shiftByDirection(position,direction)
 
         val emptySlotPosition = getEmptySlotPositionAfterSliding(position, direction)
 
-        spareTile.rotate(degree)
-        setTile(emptySlotPosition, spareTile)
+        setTile(newTiles, emptySlotPosition, spareTile)
 
-        return dislodgedTile
+        return Pair(Board(newTiles), dislodgedTile)
     }
 
 
@@ -116,10 +118,15 @@ class Board(private val tiles: Array<Array<GameTile>>) {
     }
 
     // shifts a row/col in a certain direction
-    private fun shiftByDirection(position: Position, direction: Direction) {
-        for (index in getIterationRange(direction)) {
-            setTileFromNextTile(index, position, direction)
+    private fun shiftByDirection(position: Position, direction: Direction): Array<Array<GameTile>> {
+        val newTiles = Array(this.height) { row -> Array(this.width) { col ->
+            getTile(Coordinates.fromRowAndValue(row, col))
+            }
         }
+        for (index in getIterationRange(direction)) {
+            setTileFromNextTile(newTiles, index, position, direction)
+        }
+        return newTiles
     }
 
     // gets the indices to be shifted in a given direction
@@ -143,11 +150,11 @@ class Board(private val tiles: Array<Array<GameTile>>) {
     }
 
     // sets the current tile of the array to the next tile, given the direction
-    private fun setTileFromNextTile(index: Int,  position: Position, direction: Direction) {
+    private fun setTileFromNextTile(tiles: Array<Array<GameTile>>, index: Int,  position: Position, direction: Direction) {
         val difference = getDifference(direction)
         val currentTilePosition: Coordinates = getCurrentTilePositionInShift(direction, position, index)
         val nextTilePosition: Coordinates = getNextTilePositionInShift(direction, position, index, difference)
-        setTile(currentTilePosition, getTile(nextTilePosition))
+        setTile(tiles, currentTilePosition, getTile(nextTilePosition))
     }
 
     // gets the current tile position based on current row/col index and the current step index) of the shift
@@ -201,7 +208,7 @@ class Board(private val tiles: Array<Array<GameTile>>) {
     }
 
     // sets the given tile at the given coordinates
-    private fun setTile(position: Coordinates, tile: GameTile) {
+    private fun setTile(tiles: Array<Array<GameTile>>, position: Coordinates, tile: GameTile) {
         val row = tiles[position.row.value]
         row[position.col.value] = tile
     }

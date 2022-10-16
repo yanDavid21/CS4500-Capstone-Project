@@ -2,6 +2,7 @@ package Common
 
 import Common.board.Board
 import Common.board.Coordinates
+import Common.player.Player
 import Common.tile.Degree
 import Common.tile.GameTile
 import Common.tile.Path

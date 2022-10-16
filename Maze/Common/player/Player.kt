@@ -1,4 +1,4 @@
-package Common
+package Common.player
 
 import Common.tile.GameTile
 import Common.tile.treasure.Treasure

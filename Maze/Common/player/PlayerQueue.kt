@@ -1,4 +1,4 @@
-package Common
+package Common.player
 
 class PlayerQueue(
     private val players: MutableList<Player>
@@ -15,7 +15,7 @@ class PlayerQueue(
         return players[currentPlayerIndex]
     }
 
-    fun removeCurrentPlayer():Player  {
+    fun removeCurrentPlayer(): Player {
         val player = players.removeAt(currentPlayerIndex)
         currentPlayerIndex %= players.size
         return player

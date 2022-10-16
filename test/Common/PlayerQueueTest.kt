@@ -1,12 +1,12 @@
 package Common
 
 
+import Common.TestData.createPlayer1
+import Common.TestData.createPlayer2
+import Common.TestData.createPlayer3
+import Common.player.PlayerQueue
 import org.junit.jupiter.api.Test
-import java.util.*
 import kotlin.test.assertEquals
-import Common.TestData.player1
-import Common.TestData.player2
-import Common.TestData.player3
 
 internal class PlayerQueueTest {
 
@@ -14,18 +14,18 @@ internal class PlayerQueueTest {
     fun testGetCurrentPlayer() {
         val queue = makeQueue()
 
-        assertEquals(player1, queue.getCurrentPlayer())
+        assertEquals(createPlayer1(), queue.getCurrentPlayer())
 
         queue.nextPlayer()
 
-        assertEquals(player2, queue.getCurrentPlayer())
+        assertEquals(createPlayer2(), queue.getCurrentPlayer())
 
         queue.nextPlayer()
 
-        assertEquals(player3, queue.getCurrentPlayer())
+        assertEquals(createPlayer3(), queue.getCurrentPlayer())
 
         queue.nextPlayer()
-        assertEquals(player1, queue.getCurrentPlayer())
+        assertEquals(createPlayer1(), queue.getCurrentPlayer())
     }
 
     @Test
@@ -33,8 +33,8 @@ internal class PlayerQueueTest {
         val queue = makeQueue()
 
         val removed = queue.removeCurrentPlayer()
-        assertEquals(player1, removed)
-        assertEquals(player2, queue.getCurrentPlayer())
+        assertEquals(createPlayer1(), removed)
+        assertEquals(createPlayer2(), queue.getCurrentPlayer())
     }
 
     @Test
@@ -45,17 +45,17 @@ internal class PlayerQueueTest {
         queue.nextPlayer()
 
         queue.removeCurrentPlayer()
-        assertEquals(player1, queue.getCurrentPlayer())
+        assertEquals(createPlayer1(), queue.getCurrentPlayer())
 
         queue.nextPlayer()
         queue.nextPlayer()
-        assertEquals(player1, queue.getCurrentPlayer())
+        assertEquals(createPlayer1(), queue.getCurrentPlayer())
     }
 
     companion object {
         fun makeQueue(): PlayerQueue {
             return PlayerQueue(
-                mutableListOf(player1, player2, player3)
+                mutableListOf(createPlayer1(), createPlayer2(), createPlayer3())
             )
         }
     }

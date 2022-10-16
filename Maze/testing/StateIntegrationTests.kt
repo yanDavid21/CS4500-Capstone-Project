@@ -1,6 +1,6 @@
 package testing
 
-import Common.Player
+import Common.player.Player
 import Common.Referee
 import Common.board.Board
 import Common.board.ColumnPosition

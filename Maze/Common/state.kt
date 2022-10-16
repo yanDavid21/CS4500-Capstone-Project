@@ -1,6 +1,8 @@
 package Common
 
 import Common.board.*
+import Common.player.Player
+import Common.player.PlayerQueue
 import Common.tile.Degree
 import Common.tile.GameTile
 import Common.tile.HorizontalDirection
@@ -11,7 +13,7 @@ import Common.tile.VerticalDirection
  * tiles on the board, what the current spare tile is, whose turn it is, if there is a winner.
  */
 class Referee(
-    private val board: Board,
+    private var board: Board,
     private var spareTile: GameTile,
     players: List<Player>
 ) {
@@ -45,14 +47,21 @@ class Referee(
      * Slides a row in the board in the provided direction, then rotates and inserts the spare tile into the vacant spot.
      */
     fun slideRowAndInsertSpare(rowPosition: RowPosition, direction: HorizontalDirection, degree: Degree) {
-        slideInsertAndUpdateSpare { board.slideRowAndInsert(rowPosition,direction, this.spareTile, degree) }
+        slideInsertAndUpdateSpare(degree) { board.slideRowAndInsert(rowPosition,direction, this.spareTile) }
     }
 
     /**
      * Slides a column in the board in the provided direction, then rotates and inserts the spare tile into the vacant spot.
      */
     fun slideColumnAndInsertSpare(columnPosition: ColumnPosition, direction: VerticalDirection, degree: Degree) {
-        slideInsertAndUpdateSpare { board.slideColAndInsert(columnPosition, direction, this.spareTile, degree) }
+        slideInsertAndUpdateSpare(degree) { board.slideColAndInsert(columnPosition, direction, this.spareTile) }
+    }
+
+    /**
+     * Passes the current player.
+     */
+    fun passCurrentPlayer() {
+        this.playerQueue.nextPlayer()
     }
 
     /**
@@ -85,9 +94,14 @@ class Referee(
      * Performs a specific board sliding operation and then removes the player
      * from the newly created spare tile to the just inserted one if needed;
      */
-    private fun slideInsertAndUpdateSpare(getDislodgedAndSlide: () -> GameTile) {
+    private fun slideInsertAndUpdateSpare(degree: Degree, getDislodgedAndSlide: () -> Pair<Board, GameTile>) {
+        this.spareTile.rotate(degree)
         val toBeInserted = this.spareTile
-        this.spareTile = getDislodgedAndSlide()
+
+        val newBoardAndSpare = getDislodgedAndSlide()
+        this.board = newBoardAndSpare.first
+        this.spareTile = newBoardAndSpare.second
+
         moveAmnestiedPlayersIfAny(this.spareTile, toBeInserted)
     }
 
@@ -102,7 +116,7 @@ class Referee(
         return board.getReachableTiles(board.findPlayerLocation(player)).contains(location)
     }
 
-    private fun movePlayerAcrossBoard(activePlayer:Player, currentPosition: Coordinates, targetCoord: Coordinates) {
+    private fun movePlayerAcrossBoard(activePlayer: Player, currentPosition: Coordinates, targetCoord: Coordinates) {
         val tileToMoveTo= board.getTile(targetCoord)
         board.getTile(currentPosition).removePlayerFromTile(activePlayer)
         tileToMoveTo.addPlayerToTile(activePlayer)
@@ -117,7 +131,7 @@ class Referee(
         }
     }
 
-    private fun checkActiveMovePlayer(activePlayer: Player, currentPosition: Coordinates,  to: Coordinates) {
+    private fun checkActiveMovePlayer(activePlayer: Player, currentPosition: Coordinates, to: Coordinates) {
         if (!canPlayerReachTile(activePlayer, to) || currentPosition == to) {
             throw IllegalArgumentException("Can not move active player to $to.")
         }
