@@ -1,6 +1,7 @@
 package Common
 
 import Common.board.*
+import Common.tile.Degree
 import Common.tile.GameTile
 import Common.tile.HorizontalDirection
 import Common.tile.VerticalDirection
@@ -41,17 +42,17 @@ class Referee(
     }
 
     /**
-     * Slides a row in the board in the provided direction, then inserts the spare tile into the vacant spot.
+     * Slides a row in the board in the provided direction, then rotates and inserts the spare tile into the vacant spot.
      */
-    fun slideRowAndInsertSpare(rowPosition: RowPosition, direction: HorizontalDirection) {
-        slideInsertAndDealWithPlayers { board.slideRowAndInsert(rowPosition,direction, this.spareTile) }
+    fun slideRowAndInsertSpare(rowPosition: RowPosition, direction: HorizontalDirection, degree: Degree) {
+        slideInsertAndUpdateSpare { board.slideRowAndInsert(rowPosition,direction, this.spareTile, degree) }
     }
 
     /**
-     * Slides a column in the board in the provided direction, then inserts the spare tile into the vacant spot.
+     * Slides a column in the board in the provided direction, then rotates and inserts the spare tile into the vacant spot.
      */
-    fun slideColumnAndInsertSpare(columnPosition: ColumnPosition, direction: VerticalDirection) {
-        slideInsertAndDealWithPlayers { board.slideColAndInsert(columnPosition, direction, this.spareTile) }
+    fun slideColumnAndInsertSpare(columnPosition: ColumnPosition, direction: VerticalDirection, degree: Degree) {
+        slideInsertAndUpdateSpare { board.slideColAndInsert(columnPosition, direction, this.spareTile, degree) }
     }
 
     /**
@@ -84,7 +85,7 @@ class Referee(
      * Performs a specific board sliding operation and then removes the player
      * from the newly created spare tile to the just inserted one if needed;
      */
-    private fun slideInsertAndDealWithPlayers(getDislodgedAndSlide: () -> GameTile) {
+    private fun slideInsertAndUpdateSpare(getDislodgedAndSlide: () -> GameTile) {
         val toBeInserted = this.spareTile
         this.spareTile = getDislodgedAndSlide()
         moveAmnestiedPlayersIfAny(this.spareTile, toBeInserted)

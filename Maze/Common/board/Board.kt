@@ -1,10 +1,7 @@
 package Common.board
 
 import Common.Player
-import Common.tile.Direction
-import Common.tile.GameTile
-import Common.tile.HorizontalDirection
-import Common.tile.VerticalDirection
+import Common.tile.*
 import java.util.*
 import kotlin.collections.HashSet
 
@@ -17,19 +14,19 @@ class Board(private val tiles: Array<Array<GameTile>>) {
     private val width = tiles[0].size
 
     /**
-     * Slides the row at the given row index in a certain horizontal direction. Inserts a spare tile into the empty slot
+     * Slides the row at the given row index in a certain horizontal direction. Rotates and insert a spare tile into the empty slot
      * generated from the slide. Returns the tile that is dislodged from board as a result of the slide.
      */
-    fun slideRowAndInsert(rowPosition: RowPosition, direction: HorizontalDirection, spareTile: GameTile): GameTile {
-        return slideAndInsertSpare(rowPosition, direction, spareTile)
+    fun slideRowAndInsert(rowPosition: RowPosition, direction: HorizontalDirection, spareTile: GameTile, degree: Degree): GameTile {
+        return slideAndInsertSpare(rowPosition, direction, spareTile, degree)
     }
 
     /**
-     * Slides the col at the given column index in a certain vertical direction. Inserts a spare tile into the empty slot
+     * Slides the col at the given column index in a certain vertical direction. Rotates and inserts a spare tile into the empty slot
      * generated from the slide. Returns the tile that is dislodged from board as a result of the slide.
      */
-    fun slideColAndInsert(columnPosition: ColumnPosition, direction: VerticalDirection, spareTile: GameTile): GameTile {
-        return slideAndInsertSpare(columnPosition, direction, spareTile)
+    fun slideColAndInsert(columnPosition: ColumnPosition, direction: VerticalDirection, spareTile: GameTile, degree: Degree): GameTile {
+        return slideAndInsertSpare(columnPosition, direction, spareTile, degree)
     }
 
     /**
@@ -79,14 +76,17 @@ class Board(private val tiles: Array<Array<GameTile>>) {
         throw IllegalStateException("$player not found. Player should always be in the board.")
     }
 
-    // checks if slideable, throws Exception if not, slides a row or column, then inserts, returning the dislodged tile
-    private fun slideAndInsertSpare(position: Position, direction: Direction, spareTile: GameTile): GameTile {
+    // checks if slideable, throws Exception if not, slides a row or column, rotates by the degree, then inserts the spare tile,
+    // returning the dislodged tile
+    private fun slideAndInsertSpare(position: Position, direction: Direction, spareTile: GameTile, degree: Degree): GameTile {
         checkSlideable(position)
         val dislodgedTile = getDislodgedTile(position, direction)
 
         shiftByDirection(position,direction)
 
         val emptySlotPosition = getEmptySlotPositionAfterSliding(position, direction)
+
+        spareTile.rotate(degree)
         setTile(emptySlotPosition, spareTile)
 
         return dislodgedTile

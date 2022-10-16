@@ -107,6 +107,7 @@ internal class RefereeTest {
         val referee = TestData.createReferee()
 
         referee.kickOutActivePlayer()
+        assert(false)
     }
 
     @Test
