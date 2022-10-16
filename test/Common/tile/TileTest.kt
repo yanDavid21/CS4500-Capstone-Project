@@ -50,11 +50,9 @@ internal class TileTest {
         assertEquals(setOf(U, R), tile.getOutgoingDirections())
         assertEquals(setOf(D, L), tile.getIncomingDirections())
 
-        tile.rotate(Degree.NINETY)
-        assertEquals(setOf(L, U), tile.getOutgoingDirections())
-        assertEquals(setOf(R, D), tile.getIncomingDirections())
-
-        tile.rotate(Degree.NINETY)
+        val newTile = tile.rotate(Degree.NINETY)
+        assertEquals(setOf(L, U), newTile.getOutgoingDirections())
+        assertEquals(setOf(R, D), newTile.getIncomingDirections())
     }
 
     @Test
@@ -164,11 +162,11 @@ internal class TileTest {
     @Test
     fun testAddPlayerToTile() {
         val gameTile = GameTile(Path.UP_RIGHT, Degree.ZERO, treasure)
-        assertEquals(gameTile.getPlayers().size, 0)
+        assertEquals(gameTile.getPlayersOnTile().size, 0)
         assertEquals(gameTile.hasCertainPlayer(testPlayer), false)
-        gameTile.addPlayerToTile(testPlayer)
-        assertEquals(gameTile.getPlayers().size, 1)
-        assertEquals(gameTile.hasCertainPlayer(testPlayer), true)
+        val newGameTile = gameTile.addPlayerToTile(testPlayer)
+        assertEquals(newGameTile.getPlayersOnTile().size, 1)
+        assertEquals(newGameTile.hasCertainPlayer(testPlayer), true)
     }
 
     @Test

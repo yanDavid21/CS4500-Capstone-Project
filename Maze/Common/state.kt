@@ -106,7 +106,7 @@ class Referee(
     }
 
     private fun moveAmnestiedPlayersIfAny(fromTile: GameTile, toTile: GameTile) {
-        fromTile.getPlayers().forEach {
+        fromTile.getPlayersOnTile().forEach {
             fromTile.removePlayerFromTile(it)
             toTile.addPlayerToTile(it)
         }

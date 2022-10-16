@@ -4,18 +4,14 @@ import Common.player.Player
 import Common.tile.treasure.Treasure
 import java.util.*
 
-data class GameTile(val path: Path, var degree: Degree, val treasure: Treasure) {
-    private var players  = mutableSetOf<Player>()
-    private lateinit var incomingDirections: Set<Direction>
-    private lateinit var outgoingDirections: Set<Direction>
+data class GameTile(val path: Path, val degree: Degree, val treasure: Treasure, private val players: Set<Player> = setOf()) {
+    private val outgoingDirections: Set<Direction> = path.getDefaultOutgoingDirections().map {
+            outGoingDirection -> outGoingDirection.rotateBy(degree)
+    }.toSet()
+    private val incomingDirections: Set<Direction> = outgoingDirections.map { outgoingDirection -> outgoingDirection.reverse() }.toSet()
 
-    init {
-        recomputeDirections()
-    }
-
-    fun rotate(degree: Degree) {
-        this.degree = this.degree.add(degree)
-        recomputeDirections()
+    fun rotate(degree: Degree): GameTile {
+        return GameTile(this.path, this.degree.add(degree), this.treasure)
     }
 
     /**
@@ -57,19 +53,19 @@ data class GameTile(val path: Path, var degree: Degree, val treasure: Treasure) 
         return this.incomingDirections.contains(incomingDirection)
     }
 
-    fun addPlayerToTile(player: Player) {
-        this.players.add(player)
+    fun addPlayerToTile(player: Player): GameTile {
+        return GameTile(this.path, this.degree, this.treasure, setOf(player, *this.players.toTypedArray()))
     }
 
-    fun removePlayerFromTile(player: Player) {
-        this.players.remove(player)
+    fun removePlayerFromTile(player: Player): GameTile {
+        return GameTile(this.path, this.degree, this.treasure, this.players subtract setOf(player))
     }
 
     fun hasCertainPlayer(player: Player): Boolean {
         return this.players.contains(player)
     }
 
-    fun getPlayers(): Set<Player> {
+    fun getPlayersOnTile(): Set<Player> {
         return this.players.toSet()
     }
 
@@ -86,13 +82,6 @@ data class GameTile(val path: Path, var degree: Degree, val treasure: Treasure) 
             return this.treasure.equals(other.treasure) && this.path.equals(other.path)
         }
         return false
-    }
-
-    private fun recomputeDirections() {
-        outgoingDirections = path.getDefaultOutgoingDirections().mapTo(mutableSetOf()) {
-                outGoingDirection -> outGoingDirection.rotateBy(degree)
-        }
-        incomingDirections = outgoingDirections.mapTo(mutableSetOf()) { outgoingDirection -> outgoingDirection.reverse() }
     }
 }
 

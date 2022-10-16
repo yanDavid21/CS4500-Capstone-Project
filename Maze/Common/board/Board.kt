@@ -17,19 +17,19 @@ class Board(private val tiles: Array<Array<GameTile>>) {
     private val width = tiles[0].size
 
     /**
-     * Slides the row at the given row index in a certain horizontal direction. Rotates and insert a spare tile into the empty slot
+     * Slides the row at the given row index in a certain horizontal direction. Insert a spare tile into the empty slot
      * generated from the slide. Returns the tile that is dislodged from board as a result of the slide.
      */
-    fun slideRowAndInsert(rowPosition: RowPosition, direction: HorizontalDirection, spareTile: GameTile, degree: Degree): GameTile {
-        return slideAndInsertSpare(rowPosition, direction, spareTile, degree)
+    fun slideRowAndInsert(rowPosition: RowPosition, direction: HorizontalDirection, spareTile: GameTile): Pair<Board, GameTile> {
+        return slideAndInsertSpare(rowPosition, direction, spareTile)
     }
 
     /**
-     * Slides the col at the given column index in a certain vertical direction. Rotates and inserts a spare tile into the empty slot
+     * Slides the col at the given column index in a certain vertical direction. Inserts a spare tile into the empty slot
      * generated from the slide. Returns the tile that is dislodged from board as a result of the slide.
      */
-    fun slideColAndInsert(columnPosition: ColumnPosition, direction: VerticalDirection, spareTile: GameTile, degree: Degree): GameTile {
-        return slideAndInsertSpare(columnPosition, direction, spareTile, degree)
+    fun slideColAndInsert(columnPosition: ColumnPosition, direction: VerticalDirection, spareTile: GameTile): Pair<Board, GameTile> {
+        return slideAndInsertSpare(columnPosition, direction, spareTile)
     }
 
     /**
@@ -81,7 +81,7 @@ class Board(private val tiles: Array<Array<GameTile>>) {
 
     // checks if slideable, throws Exception if not, slides a row or column, rotates by the degree, then inserts the spare tile,
     // returning the dislodged tile
-    private fun slideAndInsertSpare(position: Position, direction: Direction, spareTile: GameTile, degree: Degree): GameTile {
+    private fun slideAndInsertSpare(position: Position, direction: Direction, spareTile: GameTile): Pair<Board, GameTile> {
         checkSlideable(position)
         val dislodgedTile = getDislodgedTile(position, direction)
 

@@ -36,11 +36,11 @@ internal class RefereeTest {
 
         referee.moveActivePlayer(Coordinates.fromRowAndValue(1, 0))
 
-        assertEquals(setOf(TestData.createPlayer1()), tiles[1][0].getPlayers())
+        assertEquals(setOf(TestData.createPlayer1()), tiles[1][0].getPlayersOnTile())
 
         referee.moveActivePlayer(Coordinates.fromRowAndValue(0, 1))
 
-        assertEquals(setOf(TestData.createPlayer2()), tiles[0][1].getPlayers())
+        assertEquals(setOf(TestData.createPlayer2()), tiles[0][1].getPlayersOnTile())
     }
 
 
@@ -97,8 +97,8 @@ internal class RefereeTest {
 
         referee.slideColumnAndInsertSpare(ColumnPosition(4), VerticalDirection.DOWN, Degree.ZERO)
 
-        assertEquals(setOf(player), spareTileToBeInserted.getPlayers())
-        assertEquals(setOf(), tiles[6][4].getPlayers())
+        assertEquals(setOf(player), spareTileToBeInserted.getPlayersOnTile())
+        assertEquals(setOf(), tiles[6][4].getPlayersOnTile())
 
     }
 
@@ -112,6 +112,11 @@ internal class RefereeTest {
 
     @Test
     fun testInsertRotate() {
+        assert(false)
+    }
+
+    @Test
+    fun testPassCurrentPlayer() {
         assert(false)
     }
 }
