@@ -6,6 +6,7 @@ import Common.board.Board
 import Common.board.ColumnPosition
 import Common.board.Coordinates
 import Common.board.RowPosition
+import Common.tile.Degree
 import Common.tile.HorizontalDirection
 import Common.tile.VerticalDirection
 import org.junit.jupiter.api.Assertions
@@ -74,13 +75,13 @@ internal class RefereeTest {
             spareTile, tiles[2][0], tiles[2][1], tiles[2][2], tiles[2][3], tiles[2][4], tiles[2][5]
         )
 
-        referee.slideRowAndInsertSpare(RowPosition(2), HorizontalDirection.RIGHT)
+        referee.slideRowAndInsertSpare(RowPosition(2), HorizontalDirection.RIGHT, Degree.ZERO)
         Assertions.assertArrayEquals(expectedNewRow, tiles[2])
 
         val expectedNewCol = arrayOf(
             tiles[1][6], tiles[2][6], tiles[3][6], tiles[4][6], tiles[5][6], tiles[6][6], tileAtEndOfRow
         )
-        referee.slideColumnAndInsertSpare(ColumnPosition(6), VerticalDirection.UP)
+        referee.slideColumnAndInsertSpare(ColumnPosition(6), VerticalDirection.UP, Degree.ZERO)
 
         Assertions.assertArrayEquals(expectedNewCol, tiles.map { it[6] }.toTypedArray())
     }
@@ -94,7 +95,7 @@ internal class RefereeTest {
         tiles[6][4].addPlayerToTile(player)
         val referee = Referee(board, spareTileToBeInserted, listOf(player))
 
-        referee.slideColumnAndInsertSpare(ColumnPosition(4), VerticalDirection.DOWN)
+        referee.slideColumnAndInsertSpare(ColumnPosition(4), VerticalDirection.DOWN, Degree.ZERO)
 
         assertEquals(setOf(player), spareTileToBeInserted.getPlayers())
         assertEquals(setOf(), tiles[6][4].getPlayers())
@@ -104,6 +105,12 @@ internal class RefereeTest {
     @Test
     fun testKickoutActivePlayer() {
         val referee = TestData.createReferee()
+
         referee.kickOutActivePlayer()
+    }
+
+    @Test
+    fun testInsertRotate() {
+        assert(false)
     }
 }
