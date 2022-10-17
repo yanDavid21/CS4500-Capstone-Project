@@ -6,10 +6,12 @@ import Common.tile.*
 import Common.tile.treasure.Gem
 import Common.tile.treasure.Treasure
 import org.junit.Assert
+import org.junit.Assert.assertEquals
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
 import org.junit.jupiter.api.assertThrows
-import org.junit.Assert.assertEquals
+import testing.TestUtils.getTilesInCol
+import testing.TestUtils.getTilesInRow
 
 @TestInstance(TestInstance.Lifecycle.PER_METHOD)
 internal class BoardTest {
@@ -127,17 +129,5 @@ internal class BoardTest {
             Coordinates.fromRowAndValue(6, 4), Coordinates.fromRowAndValue(6,5),
         Coordinates.fromRowAndValue(6,6)), reachableFromTopRight)
     }
-
-    private fun getTilesInRow(rowIndex: Int, board: Board): Array<GameTile> {
-        return (0 .. 6)
-            .map { board.getTile(Coordinates.fromRowAndValue(rowIndex, it)) }.toTypedArray()
-    }
-
-    private fun getTilesInCol(colIndex: Int, board: Board): Array<GameTile> {
-        return (0 .. 6)
-            .map { board.getTile(Coordinates.fromRowAndValue(it, colIndex)) }.toTypedArray()
-    }
-
-
 }
 

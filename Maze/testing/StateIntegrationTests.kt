@@ -1,11 +1,12 @@
 package testing
 
-import Common.player.Player
 import Common.Referee
 import Common.board.Board
 import Common.board.ColumnPosition
 import Common.board.Coordinates
 import Common.board.RowPosition
+import Common.player.Color
+import Common.player.Player
 import Common.tile.Degree
 import Common.tile.HorizontalDirection
 import Common.tile.VerticalDirection
@@ -40,9 +41,8 @@ fun main() {
         val goal = Treasure(Gem.GROSSULAR_GARNET, Gem.HACKMANITE) // random treasure
         val playerCoord = Coordinates.fromRowAndValue(it.current.`row#`, it.current.`col#`)
         val homeTile = board.getTile(playerCoord) // TODO: should be random
-        val player = Player(id, goal, homeTile)
+        val player = Player(id, playerCoord, goal, homeTile, Color.valueOf(it.color))
 
-        board.getTile(playerCoord).addPlayerToTile(player)
         player
     }
     val referee = Referee(board, spareTile, players)
@@ -56,7 +56,7 @@ fun main() {
         DirectionTest.DOWN -> referee.slideColumnAndInsertSpare(ColumnPosition(index), VerticalDirection.DOWN, degree)
     }
 
-    val reachablePositions = board.getReachableTiles(board.findPlayerLocation(players[0])).map { TestCoordinate.fromCoordinates(it) }
+    val reachablePositions = board.getReachableTiles(players[0].currentPosition).map { TestCoordinate.fromCoordinates(it) }
 
     val comp = compareBy<TestCoordinate>({ it.`row#`}, {it.`col#`})
 

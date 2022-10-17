@@ -32,7 +32,7 @@ class Referee(
         val activePlayer = playerQueue.getCurrentPlayer()
         checkActiveMovePlayer(activePlayer, activePlayer.currentPosition, to)
 
-        movePlayerAcrossBoard(activePlayer, activePlayer.currentPosition, to)
+        movePlayerAcrossBoard(activePlayer, to)
         playerQueue.getNextPlayer()
     }
 
@@ -78,9 +78,11 @@ class Referee(
      * active player the next player in the queue.
      */
     fun kickOutActivePlayer() {
-        val activePlayer = playerQueue.removeCurrentPlayer()
-        val playerPosition = activePlayer.currentPosition
-        this.board = board.setTile(playerPosition, board.getTile(playerPosition).removePlayerFromTile(activePlayer))
+        playerQueue.removeCurrentPlayer()
+    }
+
+    fun getBoard(): Board {
+        return this.board.getCopyOfBoard()
     }
 
     /**
@@ -113,14 +115,12 @@ class Referee(
     }
 
 
-    private fun movePlayerAcrossBoard(activePlayer: Player, currentPosition: Coordinates, targetCoord: Coordinates) {
+    private fun movePlayerAcrossBoard(activePlayer: Player, targetCoord: Coordinates) {
         val tileToMoveTo = board.getTile(targetCoord)
 
-        this.board = board
-            .setTile(currentPosition, board.getTile(currentPosition).removePlayerFromTile(activePlayer))
-            .setTile(targetCoord, tileToMoveTo.addPlayerToTile(activePlayer))
-
+        activePlayer.currentPosition = targetCoord
         activePlayer.treasureFound = activePlayer.treasureFound || tileToMoveTo.treasure == activePlayer.goal
+
         updateWinner(activePlayer, tileToMoveTo)
     }
 

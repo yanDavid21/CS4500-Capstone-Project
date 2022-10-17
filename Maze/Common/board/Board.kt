@@ -189,12 +189,6 @@ class Board(private val tiles: Array<Array<GameTile>>) {
         }
     }
 
-    fun setTile(position: Coordinates, tile: GameTile): Board {
-        val newTiles = copyOfTiles()
-        setTile(newTiles, position, tile)
-        return Board(newTiles)
-    }
-
     /**
      * Sets the tile at the given position.
      */

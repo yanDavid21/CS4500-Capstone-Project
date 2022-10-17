@@ -7,11 +7,13 @@ import Common.board.ColumnPosition
 import Common.board.Coordinates
 import Common.board.RowPosition
 import Common.tile.Degree
+import Common.tile.GameTile
 import Common.tile.HorizontalDirection
 import Common.tile.VerticalDirection
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
+import testing.TestUtils
 import kotlin.test.assertEquals
 
 internal class RefereeTest {
@@ -33,16 +35,16 @@ internal class RefereeTest {
     fun testMovePlayer() {
         val player1 = TestData.createPlayer1()
         val player2 = TestData.createPlayer2()
-        val tiles =
-        val referee = TestData.createRefereeWithOnePlayer(player)
+        val board = TestData.createBoard()
+        val referee = Referee(board, TestData.createSpareTile(), listOf(player1, player2))
 
         referee.moveActivePlayer(Coordinates.fromRowAndValue(1, 0))
 
-        assertEquals(Coordinates.fromRowAndValue(1,0), player.currentPosition)
+        assertEquals(Coordinates.fromRowAndValue(1,0), player1.currentPosition)
 
         referee.moveActivePlayer(Coordinates.fromRowAndValue(0, 1))
 
-        assertEquals(setOf(TestData.createPlayer2()), tiles[0][1].getPlayersOnTile())
+        assertEquals(Coordinates.fromRowAndValue(0, 1), player2.currentPosition)
     }
 
 
@@ -58,9 +60,9 @@ internal class RefereeTest {
     @Test
     fun testMovePlayerToTreasureTile() {
         val player = TestData.createPlayer1()
-        val referee = TestData.createRefereeWithOnePlayer(player, Coordinates.fromRowAndValue(1,0))
+        val referee = TestData.createRefereeWithOnePlayer(player)
 
-        referee.moveActivePlayer(Coordinates.fromRowAndValue(0,0))
+        referee.moveActivePlayer(Coordinates.fromRowAndValue(1,0))
 
         assert(player.treasureFound)
     }
@@ -78,14 +80,15 @@ internal class RefereeTest {
         )
 
         referee.slideRowAndInsertSpare(RowPosition(2), HorizontalDirection.RIGHT, Degree.ZERO)
-        Assertions.assertArrayEquals(expectedNewRow, tiles[2])
+        val newBoard = referee.getBoard()
+        Assertions.assertArrayEquals(expectedNewRow, TestUtils.getTilesInRow(2, newBoard))
 
         val expectedNewCol = arrayOf(
-            tiles[1][6], tiles[2][6], tiles[3][6], tiles[4][6], tiles[5][6], tiles[6][6], tileAtEndOfRow
+            tiles[1][6], tiles[2][5], tiles[3][6], tiles[4][6], tiles[5][6], tiles[6][6], tileAtEndOfRow
         )
         referee.slideColumnAndInsertSpare(ColumnPosition(6), VerticalDirection.UP, Degree.ZERO)
 
-        Assertions.assertArrayEquals(expectedNewCol, tiles.map { it[6] }.toTypedArray())
+        Assertions.assertArrayEquals(expectedNewCol, TestUtils.getTilesInCol(6, referee.getBoard()))
     }
 
     @Test
@@ -94,10 +97,10 @@ internal class RefereeTest {
         val spareTileToBeInserted = TestData.createSpareTile()
         val board = Board(tiles)
         val player = TestData.createPlayer3()
-        tiles[6][4].addPlayerToTile(player)
+
         val referee = Referee(board, spareTileToBeInserted, listOf(player))
 
-        referee.slideColumnAndInsertSpare(ColumnPosition(4), VerticalDirection.DOWN, Degree.ZERO)
+        referee.slideColumnAndInsertSpare(ColumnPosition(6), VerticalDirection.DOWN, Degree.ZERO)
 
         assertEquals(setOf(player), spareTileToBeInserted.getPlayersOnTile())
         assertEquals(setOf(), tiles[6][4].getPlayersOnTile())
@@ -106,10 +109,27 @@ internal class RefereeTest {
 
     @Test
     fun testKickoutActivePlayer() {
-        val referee = TestData.createReferee()
+        val player1 = TestData.createPlayer1()
+        val player2 = TestData.createPlayer2()
+        val player3 = TestData.createPlayer3()
 
+        val referee = Referee(TestData.createBoard(), TestData.createSpareTile(), listOf(player1, player2, player3))
+
+        // kick out player1
         referee.kickOutActivePlayer()
-        assert(false)
+
+        referee.moveActivePlayer(Coordinates.fromRowAndValue(0, 1))
+        assertEquals(Coordinates.fromRowAndValue(0, 1), player2.currentPosition)
+
+        // kick out player 3, player 2 can be move again
+        referee.kickOutActivePlayer()
+
+        assertEquals(Coordinates.fromRowAndValue(0, 2), player2.currentPosition)
+    }
+
+    @Test
+    fun testKickoutLastPlayer() {
+        //TODO: assertTrue(ask matthias in class === get fucked publicly)
     }
 
     @Test

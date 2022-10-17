@@ -1,6 +1,5 @@
 package Common.tile
 
-import Common.player.Player
 import Common.tile.treasure.Treasure
 import java.util.*
 
