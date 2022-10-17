@@ -15,23 +15,22 @@ object TestData {
 
     fun createRefereeWithOnePlayer(player: Player, player1Pos: Coordinates): Referee {
         val tiles = createTiles()
-        val newTile = tiles[player1Pos.row.value][player1Pos.col.value].addPlayerToTile(player)
-        tiles[player1Pos.row.value][player1Pos.col.value] = newTile
+        changeTile(tiles, player1Pos) { it.addPlayerToTile(player) }
+
         val board = createBoard(tiles)
-        board.getTile(player1Pos).addPlayerToTile(player)
 
         return Referee(board, createSpareTile(), listOf(player))
     }
 
     fun createReferee(tiles: Array<Array<GameTile>>): Referee {
         val player1 = createPlayer1()
-        tiles[0][0].addPlayerToTile(createPlayer1())
+        changeTile(tiles, 0, 0) { it.addPlayerToTile(player1) }
 
         val player2 = createPlayer2()
-        tiles[0][2].addPlayerToTile(player2)
+        changeTile(tiles, 0, 2) { it.addPlayerToTile(player2) }
 
         val player3 = createPlayer3()
-        tiles[6][6].addPlayerToTile(player3)
+        changeTile(tiles, 6, 6) { it.addPlayerToTile(player3) }
 
         val board = createBoard(tiles)
         return Referee(board, createSpareTile(), listOf(player1, player2, player3))
@@ -113,4 +112,11 @@ object TestData {
         )
     }
 
+    private fun changeTile(tiles: Array<Array<GameTile>>, pos: Coordinates, func: (GameTile) -> GameTile) {
+        changeTile(tiles, pos.row.value, pos.col.value, func)
+    }
+
+    private fun changeTile(tiles: Array<Array<GameTile>>, row:Int, col: Int, func: (GameTile) -> GameTile) {
+        tiles[row][col] = func(tiles[row][col])
+    }
 }
