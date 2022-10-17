@@ -2,18 +2,10 @@ package Common.tile
 
 interface Direction {
 
+    fun getDegree(): Degree
+
     fun rotateBy(degree: Degree): Direction {
         return fromDegree(this.getDegree().add(degree))
-    }
-
-    fun getDegree(): Degree {
-        return when(this) {
-            HorizontalDirection.RIGHT -> Degree.ZERO
-            VerticalDirection.UP -> Degree.NINETY
-            HorizontalDirection.LEFT -> Degree.ONE_EIGHTY
-            VerticalDirection.DOWN -> Degree.TWO_SEVENTY
-            else -> throw IllegalArgumentException("Invalid direction")
-        }
     }
 
     fun reverse(): Direction
@@ -34,6 +26,13 @@ interface Direction {
 enum class HorizontalDirection: Direction {
     LEFT, RIGHT;
 
+    override fun getDegree(): Degree {
+        return when(this) {
+            RIGHT -> Degree.ZERO
+            LEFT -> Degree.ONE_EIGHTY
+        }
+    }
+
     override fun reverse(): Direction {
         return when(this) {
             LEFT -> RIGHT
@@ -44,6 +43,13 @@ enum class HorizontalDirection: Direction {
 
 enum class VerticalDirection: Direction {
     UP, DOWN;
+
+    override fun getDegree(): Degree {
+        return when(this) {
+            UP -> Degree.NINETY
+            DOWN -> Degree.TWO_SEVENTY
+        }
+    }
 
     override fun reverse(): Direction {
         return when(this) {

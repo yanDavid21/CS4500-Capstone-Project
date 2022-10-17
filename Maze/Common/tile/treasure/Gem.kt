@@ -1,7 +1,7 @@
 package Common.tile.treasure
 
 /**
- * A Gem, identified by its name
+ * A enumeration of all possible Gems from the Maze game, identified by its name
  */
 enum class Gem {
     ALEXANDRITE_PEAR_SHAPE, ALEXANDRITE, ALMANDINE_GARNET, AMETHYST, AMETRINE,

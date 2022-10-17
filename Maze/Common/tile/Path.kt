@@ -1,5 +1,9 @@
 package Common.tile
 
+
+/**
+ * Represents a canonical path on a tile.g
+ */
 enum class Path(val symbol: String) {
     VERTICAL("│"),UP_RIGHT("└"),T("┬"),CROSS("┼");
 
