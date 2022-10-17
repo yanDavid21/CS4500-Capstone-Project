@@ -12,6 +12,7 @@ data class Player(val id: UUID,
                   var currentPosition: Coordinates,
                   val goal: Treasure,
                   val homeTile: GameTile,
+                  val color: Color,
                   var treasureFound: Boolean = false) {
 
     override fun equals(other: Any?): Boolean {

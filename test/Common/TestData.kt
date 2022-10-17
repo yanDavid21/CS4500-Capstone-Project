@@ -14,7 +14,7 @@ import java.util.*
 
 object TestData {
 
-    fun createRefereeWithOnePlayer(player: Player, player1Pos: Coordinates): Referee {
+    fun createRefereeWithOnePlayer(player: Player): Referee {
         val tiles = createTiles()
 
         val board = createBoard(tiles)
@@ -88,8 +88,10 @@ object TestData {
     fun createPlayer1(): Player {
         return Player(
             UUID.fromString("f9728f95-96db-4cf4-a9c1-13113635d312"),
-            Treasure(Gem.BLACK_OBSIDIAN, Gem.GROSSULAR_GARNET),
-            createTiles()[0][0]
+            Coordinates.fromRowAndValue(0,0),
+            Treasure(Gem.TIGERS_EYE, Gem.YELLOW_BERYL_OVAL),
+            createTiles()[0][0],
+            BaseColor.PURPLE
         )
     }
 
@@ -98,7 +100,8 @@ object TestData {
             UUID.fromString("f9728f95-96db-4cf4-a9c1-13113635d312"),
             Coordinates.fromRowAndValue(0, 2),
             Treasure(Gem.HEMATITE, Gem.HACKMANITE),
-            createTiles()[0][2]
+            createTiles()[0][2],
+            BaseColor.GREEN
         )
     }
 
@@ -107,7 +110,8 @@ object TestData {
             UUID.fromString("f25bc452-5ccc-4d29-8ad1-a76f89f42c24"),
             Coordinates.fromRowAndValue(6,6),
             Treasure(Gem.ALEXANDRITE, Gem.ZIRCON),
-            createTiles()[6][6]
+            createTiles()[6][6],
+            BaseColor.BLACK
         )
     }
 

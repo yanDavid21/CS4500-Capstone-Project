@@ -1,6 +1,5 @@
 package Common.board
 
-import Common.player.Player
 import Common.tile.Direction
 import Common.tile.GameTile
 import Common.tile.HorizontalDirection
@@ -56,7 +55,7 @@ class Board(private val tiles: Array<Array<GameTile>>) {
      * Gets the tile at the specified position.
      */
     fun getTile(position: Coordinates): GameTile {
-        return tiles[position.row.value][position.col.value]
+        return tiles[position.row.value][position.col.value].copy()
     }
 
 
@@ -172,13 +171,18 @@ class Board(private val tiles: Array<Array<GameTile>>) {
         val rowValue = position.row.value
         val colValue = position.col.value
 
-        return if (outgoingDirection == VerticalDirection.UP && rowValue > 0) {
+        val isAboveValid = outgoingDirection == VerticalDirection.UP && rowValue > 0
+        val isBelowValid = outgoingDirection == VerticalDirection.DOWN && rowValue < this.height - 1
+        val isLeftValid = outgoingDirection == HorizontalDirection.LEFT && colValue > 0
+        val isRightValid = outgoingDirection == HorizontalDirection.RIGHT && colValue < this.width - 1
+
+        return if (isAboveValid) {
             position.copyWithNewRow(rowValue - 1)
-        } else if (outgoingDirection == VerticalDirection.DOWN && rowValue < this.height - 1) {
+        } else if (isBelowValid) {
             position.copyWithNewRow(rowValue + 1)
-        } else if (outgoingDirection == HorizontalDirection.LEFT && colValue > 0) {
+        } else if (isLeftValid) {
             position.copyWithNewCol(colValue - 1)
-        } else if (outgoingDirection == HorizontalDirection.RIGHT && colValue < this.width - 1) {
+        } else if (isRightValid) {
             position.copyWithNewCol(colValue + 1)
         } else {
             null

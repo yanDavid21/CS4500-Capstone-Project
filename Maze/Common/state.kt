@@ -84,40 +84,14 @@ class Referee(
     }
 
     /**
-     * Looks for the player in the board, if not found throws exception.
+     * Moves all players in the queue when a row is slid left or right.
      */
-    private fun findPlayerPosition(player: Player): Coordinates {
-        for (rowPos in Position.MIN_ROW_INDEX until Position.MAX_ROW_INDEX) {
-            for (colPos in Position.MIN_COL_INDEX until Position.MAX_COL_INDEX) {
-                val pos = Coordinates.fromRowAndValue(rowPos, colPos)
-                val tileAtPos = board.getTile(pos)
-                if (tileAtPos.hasCertainPlayer(player)) {
-                    return pos
-                }
-            }
-        }
-        throw  java.lang.IllegalStateException("A Player should always be on the board, could not find $player")
-    }
-
-    /**
-     * Performs a specific board sliding operation and then removes the player
-     * from the newly created spare tile to the just inserted one if needed;
-     */
-    private fun slideInsertAndUpdateSpare(degree: Degree, getDislodgedAndSlide: () -> Pair<Board, GameTile>) {
-        this.spareTile = this.spareTile.rotate(degree)
-        val toBeInserted = this.spareTile
-
-        val newBoardAndSpare = getDislodgedAndSlide()
-        this.board = newBoardAndSpare.first
-        this.spareTile = newBoardAndSpare.second
-
-        moveAmnestiedPlayersIfAny(this.spareTile, toBeInserted)
-    }
-
-    private fun moveAmnestiedPlayersIfAny(fromTile: GameTile, toTile: GameTile) {
-        fromTile.getPlayersOnTile().forEach {
-            fromTile.removePlayerFromTile(it)
-            toTile.addPlayerToTile(it)
+    private fun movePlayersAfterRowSlide(rowBeingSlidPosition: RowPosition, direction: HorizontalDirection) {
+        playerQueue.get().forEach { player ->
+            val newColumnPosition: ColumnPosition? = player.currentPosition.col.nextPosition(direction)
+            val newPosition = newColumnPosition?.let { Coordinates(rowBeingSlidPosition, it)}
+                ?: board.getEmptySlotPositionAfterSliding(rowBeingSlidPosition, direction)
+            player.currentPosition = newPosition
         }
     }
 
@@ -137,6 +111,7 @@ class Referee(
     private fun canPlayerReachTile(player: Player, location: Coordinates): Boolean {
         return board.getReachableTiles(player.currentPosition).contains(location)
     }
+
 
     private fun movePlayerAcrossBoard(activePlayer: Player, currentPosition: Coordinates, targetCoord: Coordinates) {
         val tileToMoveTo = board.getTile(targetCoord)
