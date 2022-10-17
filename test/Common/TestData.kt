@@ -2,6 +2,7 @@ package Common
 
 import Common.board.Board
 import Common.board.Coordinates
+import Common.player.BaseColor
 import Common.player.Player
 import Common.tile.Degree
 import Common.tile.GameTile
@@ -15,7 +16,6 @@ object TestData {
 
     fun createRefereeWithOnePlayer(player: Player, player1Pos: Coordinates): Referee {
         val tiles = createTiles()
-        changeTile(tiles, player1Pos) { it.addPlayerToTile(player) }
 
         val board = createBoard(tiles)
 
@@ -24,13 +24,10 @@ object TestData {
 
     fun createReferee(tiles: Array<Array<GameTile>>): Referee {
         val player1 = createPlayer1()
-        changeTile(tiles, 0, 0) { it.addPlayerToTile(player1) }
 
         val player2 = createPlayer2()
-        changeTile(tiles, 0, 2) { it.addPlayerToTile(player2) }
 
         val player3 = createPlayer3()
-        changeTile(tiles, 6, 6) { it.addPlayerToTile(player3) }
 
         val board = createBoard(tiles)
         return Referee(board, createSpareTile(), listOf(player1, player2, player3))
@@ -99,6 +96,7 @@ object TestData {
     fun createPlayer2(): Player {
         return Player(
             UUID.fromString("f9728f95-96db-4cf4-a9c1-13113635d312"),
+            Coordinates.fromRowAndValue(0, 2),
             Treasure(Gem.HEMATITE, Gem.HACKMANITE),
             createTiles()[0][2]
         )
@@ -107,6 +105,7 @@ object TestData {
     fun createPlayer3(): Player {
         return Player(
             UUID.fromString("f25bc452-5ccc-4d29-8ad1-a76f89f42c24"),
+            Coordinates.fromRowAndValue(6,6),
             Treasure(Gem.ALEXANDRITE, Gem.ZIRCON),
             createTiles()[6][6]
         )

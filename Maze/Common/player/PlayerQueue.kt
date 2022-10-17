@@ -32,4 +32,8 @@ class PlayerQueue(
         currentPlayerIndex %= players.size
         return player
     }
+
+    fun get(): List<Player> {
+        return this.players
+    }
 }

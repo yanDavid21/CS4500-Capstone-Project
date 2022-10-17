@@ -1,6 +1,9 @@
 package Common
 
-import Common.board.*
+import Common.board.Board
+import Common.board.ColumnPosition
+import Common.board.Coordinates
+import Common.board.RowPosition
 import Common.player.Player
 import Common.player.PlayerQueue
 import Common.tile.Degree
@@ -27,11 +30,9 @@ class Referee(
      */
     fun moveActivePlayer(to: Coordinates) {
         val activePlayer = playerQueue.getCurrentPlayer()
-        val currentPlayerPosition = findPlayerPosition(activePlayer)
+        checkActiveMovePlayer(activePlayer, activePlayer.currentPosition, to)
 
-        checkActiveMovePlayer(activePlayer, currentPlayerPosition, to)
-        movePlayerAcrossBoard(activePlayer, currentPlayerPosition, to)
-
+        movePlayerAcrossBoard(activePlayer, activePlayer.currentPosition, to)
         playerQueue.getNextPlayer()
     }
 
@@ -47,14 +48,22 @@ class Referee(
      * Slides a row in the board in the provided direction, then rotates and inserts the spare tile into the vacant spot.
      */
     fun slideRowAndInsertSpare(rowPosition: RowPosition, direction: HorizontalDirection, degree: Degree) {
-        slideInsertAndUpdateSpare(degree) { board.slideRowAndInsert(rowPosition,direction, this.spareTile) }
+        val rotatedSpare = this.spareTile.rotate(degree)
+        val (board, spareTile) = board.slideRowAndInsert(rowPosition,direction, rotatedSpare)
+        this.board = board
+        this.spareTile = spareTile
+        movePlayersAfterRowSlide(rowPosition, direction)
     }
 
     /**
      * Slides a column in the board in the provided direction, then rotates and inserts the spare tile into the vacant spot.
      */
     fun slideColumnAndInsertSpare(columnPosition: ColumnPosition, direction: VerticalDirection, degree: Degree) {
-        slideInsertAndUpdateSpare(degree) { board.slideColAndInsert(columnPosition, direction, this.spareTile) }
+        val rotatedSpare = this.spareTile.rotate(degree)
+        val (board, spareTile) = board.slideColAndInsert(columnPosition, direction, rotatedSpare)
+        this.board = board
+        this.spareTile = spareTile
+        movePlayersAfterColumnSlide(columnPosition, direction)
     }
 
     /**
@@ -70,8 +79,8 @@ class Referee(
      */
     fun kickOutActivePlayer() {
         val activePlayer = playerQueue.removeCurrentPlayer()
-        val playerPosition = findPlayerPosition(activePlayer)
-        board.getTile(playerPosition).removePlayerFromTile(activePlayer)
+        val playerPosition = activePlayer.currentPosition
+        this.board = board.setTile(playerPosition, board.getTile(playerPosition).removePlayerFromTile(activePlayer))
     }
 
     /**
@@ -112,14 +121,29 @@ class Referee(
         }
     }
 
+    /**
+     * Moves all players in thr queue when a column is slide up or down.
+     */
+    private fun movePlayersAfterColumnSlide(columnBeingSlidPosition: ColumnPosition, direction: VerticalDirection) {
+        playerQueue.get().forEach { player ->
+            val newRowPosition = player.currentPosition.row.nextPosition(direction)
+            player.currentPosition = newRowPosition?.let { Coordinates(it, columnBeingSlidPosition)}
+                ?: board.getEmptySlotPositionAfterSliding(columnBeingSlidPosition, direction)
+
+        }
+    }
+
+
     private fun canPlayerReachTile(player: Player, location: Coordinates): Boolean {
-        return board.getReachableTiles(board.findPlayerLocation(player)).contains(location)
+        return board.getReachableTiles(player.currentPosition).contains(location)
     }
 
     private fun movePlayerAcrossBoard(activePlayer: Player, currentPosition: Coordinates, targetCoord: Coordinates) {
-        val tileToMoveTo= board.getTile(targetCoord)
-        board.getTile(currentPosition).removePlayerFromTile(activePlayer)
-        tileToMoveTo.addPlayerToTile(activePlayer)
+        val tileToMoveTo = board.getTile(targetCoord)
+
+        this.board = board
+            .setTile(currentPosition, board.getTile(currentPosition).removePlayerFromTile(activePlayer))
+            .setTile(targetCoord, tileToMoveTo.addPlayerToTile(activePlayer))
 
         activePlayer.treasureFound = activePlayer.treasureFound || tileToMoveTo.treasure == activePlayer.goal
         updateWinner(activePlayer, tileToMoveTo)

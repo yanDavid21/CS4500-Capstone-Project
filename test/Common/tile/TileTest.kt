@@ -1,5 +1,6 @@
 package Common.tile
 
+import Common.TestData
 import Common.player.Player
 import Common.tile.treasure.Gem
 import Common.tile.treasure.Treasure
@@ -17,7 +18,7 @@ internal class TileTest {
 
     private val treasure = Treasure(Gem.AMETHYST, Gem.AMETRINE)
     private val homeTile = GameTile(Path.CROSS, Degree.NINETY, Treasure(Gem.ZIRCON, Gem.RAW_BERYL))
-    private val testPlayer = Player(UUID.randomUUID(),treasure,homeTile,false)
+    private val testPlayer = TestData.createPlayer2()
 
     @Test
     fun testGetOutComingDirectionsNoRotation() {

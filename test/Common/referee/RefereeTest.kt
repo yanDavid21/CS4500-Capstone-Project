@@ -31,12 +31,14 @@ internal class RefereeTest {
 
     @Test
     fun testMovePlayer() {
-        val tiles = TestData.createTiles()
-        val referee = TestData.createReferee(tiles)
+        val player1 = TestData.createPlayer1()
+        val player2 = TestData.createPlayer2()
+        val tiles =
+        val referee = TestData.createRefereeWithOnePlayer(player)
 
         referee.moveActivePlayer(Coordinates.fromRowAndValue(1, 0))
 
-        assertEquals(setOf(TestData.createPlayer1()), tiles[1][0].getPlayersOnTile())
+        assertEquals(Coordinates.fromRowAndValue(1,0), player.currentPosition)
 
         referee.moveActivePlayer(Coordinates.fromRowAndValue(0, 1))
 
