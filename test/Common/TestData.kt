@@ -15,6 +15,8 @@ object TestData {
 
     fun createRefereeWithOnePlayer(player: Player, player1Pos: Coordinates): Referee {
         val tiles = createTiles()
+        val newTile = tiles[player1Pos.row.value][player1Pos.col.value].addPlayerToTile(player)
+        tiles[player1Pos.row.value][player1Pos.col.value] = newTile
         val board = createBoard(tiles)
         board.getTile(player1Pos).addPlayerToTile(player)
 

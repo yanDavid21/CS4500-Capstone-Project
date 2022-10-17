@@ -95,7 +95,7 @@ class Referee(
      * from the newly created spare tile to the just inserted one if needed;
      */
     private fun slideInsertAndUpdateSpare(degree: Degree, getDislodgedAndSlide: () -> Pair<Board, GameTile>) {
-        this.spareTile.rotate(degree)
+        this.spareTile = this.spareTile.rotate(degree)
         val toBeInserted = this.spareTile
 
         val newBoardAndSpare = getDislodgedAndSlide()

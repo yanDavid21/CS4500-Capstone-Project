@@ -120,7 +120,7 @@ class Board(private val tiles: Array<Array<GameTile>>) {
     // shifts a row/col in a certain direction
     private fun shiftByDirection(position: Position, direction: Direction): Array<Array<GameTile>> {
         val newTiles = Array(this.height) { row -> Array(this.width) { col ->
-            getTile(Coordinates.fromRowAndValue(row, col))
+            getTile(Coordinates.fromRowAndValue(row, col)).copy()
             }
         }
         for (index in getIterationRange(direction)) {
