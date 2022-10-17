@@ -3,7 +3,7 @@ package Common.tile
 import Common.tile.treasure.Treasure
 import java.util.*
 
-data class GameTile(val path: Path, val degree: Degree, val treasure: Treasure, private val players: Set<Player> = setOf()) {
+data class GameTile(val path: Path, val degree: Degree, val treasure: Treasure) {
     private val outgoingDirections: Set<Direction> = path.getDefaultOutgoingDirections().map {
             outGoingDirection -> outGoingDirection.rotateBy(degree)
     }.toSet()
@@ -50,22 +50,6 @@ data class GameTile(val path: Path, val degree: Degree, val treasure: Treasure, 
      */
     fun canBeReachedFrom(incomingDirection: Direction): Boolean {
         return this.incomingDirections.contains(incomingDirection)
-    }
-
-    fun addPlayerToTile(player: Player): GameTile {
-        return GameTile(this.path, this.degree, this.treasure, setOf(player, *this.players.toTypedArray()))
-    }
-
-    fun removePlayerFromTile(player: Player): GameTile {
-        return GameTile(this.path, this.degree, this.treasure, this.players subtract setOf(player))
-    }
-
-    fun hasCertainPlayer(player: Player): Boolean {
-        return this.players.contains(player)
-    }
-
-    fun getPlayersOnTile(): Set<Player> {
-        return this.players.toSet()
     }
 
     override fun toString(): String {

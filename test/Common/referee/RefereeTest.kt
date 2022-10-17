@@ -102,8 +102,7 @@ internal class RefereeTest {
 
         referee.slideColumnAndInsertSpare(ColumnPosition(6), VerticalDirection.DOWN, Degree.ZERO)
 
-        assertEquals(setOf(player), spareTileToBeInserted.getPlayersOnTile())
-        assertEquals(setOf(), tiles[6][4].getPlayersOnTile())
+        assertEquals(Coordinates.fromRowAndValue(0, 6), player.currentPosition)
 
     }
 
@@ -133,12 +132,84 @@ internal class RefereeTest {
     }
 
     @Test
-    fun testInsertRotate() {
-        assert(false)
+    fun testInsertRotateZeroDegrees() {
+        val player1 = TestData.createPlayer1()
+        val player2 = TestData.createPlayer2()
+        val player3 = TestData.createPlayer3()
+
+        val referee = Referee(TestData.createBoard(), TestData.createSpareTile(), listOf(player1, player2, player3))
+        referee.slideRowAndInsertSpare(RowPosition(0), HorizontalDirection.RIGHT, Degree.ZERO)
+        val tile = referee.getBoard().getTile(Coordinates(RowPosition(0), ColumnPosition(0)))
+        assertEquals(tile, GameTile(tile.path, Degree.ZERO, tile.treasure))
+    }
+
+
+    @Test
+    fun testInsertRotateNinetyDegrees() {
+        val player1 = TestData.createPlayer1()
+        val player2 = TestData.createPlayer2()
+        val player3 = TestData.createPlayer3()
+
+        val referee = Referee(TestData.createBoard(), TestData.createSpareTile(), listOf(player1, player2, player3))
+        referee.slideRowAndInsertSpare(RowPosition(0), HorizontalDirection.RIGHT, Degree.NINETY)
+        val tile = referee.getBoard().getTile(Coordinates(RowPosition(0), ColumnPosition(0)))
+        assertEquals(tile, GameTile(tile.path, Degree.NINETY, tile.treasure))
+    }
+
+
+
+    @Test
+    fun testInsertRotateOneEightyDegrees() {
+        val player1 = TestData.createPlayer1()
+        val player2 = TestData.createPlayer2()
+        val player3 = TestData.createPlayer3()
+
+        val referee = Referee(TestData.createBoard(), TestData.createSpareTile(), listOf(player1, player2, player3))
+        referee.slideRowAndInsertSpare(RowPosition(0), HorizontalDirection.RIGHT, Degree.ONE_EIGHTY)
+        val tile = referee.getBoard().getTile(Coordinates(RowPosition(0), ColumnPosition(0)))
+        assertEquals(tile, GameTile(tile.path, Degree.ONE_EIGHTY, tile.treasure))
+    }
+
+
+    @Test
+    fun testInsertRotateTwoSeventyDegrees() {
+        val player1 = TestData.createPlayer1()
+        val player2 = TestData.createPlayer2()
+        val player3 = TestData.createPlayer3()
+
+        val referee = Referee(TestData.createBoard(), TestData.createSpareTile(), listOf(player1, player2, player3))
+        referee.slideRowAndInsertSpare(RowPosition(0), HorizontalDirection.RIGHT, Degree.TWO_SEVENTY)
+        val tile = referee.getBoard().getTile(Coordinates(RowPosition(0), ColumnPosition(0)))
+        assertEquals(tile, GameTile(tile.path, Degree.TWO_SEVENTY, tile.treasure))
+    }
+
+
+    @Test
+    fun testInsertRotateThreeSixtyDegrees() {
+        val player1 = TestData.createPlayer1()
+        val player2 = TestData.createPlayer2()
+        val player3 = TestData.createPlayer3()
+
+        val referee = Referee(TestData.createBoard(), TestData.createSpareTile(), listOf(player1, player2, player3))
+        referee.slideRowAndInsertSpare(RowPosition(0), HorizontalDirection.RIGHT, Degree.ZERO.add(Degree.TWO_SEVENTY).add(Degree.NINETY))
+        val tile = referee.getBoard().getTile(Coordinates(RowPosition(0), ColumnPosition(0)))
+        assertEquals(tile, GameTile(tile.path, Degree.ZERO, tile.treasure))
     }
 
     @Test
     fun testPassCurrentPlayer() {
-        assert(false)
+        val player1 = TestData.createPlayer1()
+        val player2 = TestData.createPlayer2()
+
+        val referee = Referee(TestData.createBoard(), TestData.createSpareTile(), listOf(player1, player2))
+
+        referee.passCurrentPlayer()
+
+        referee.moveActivePlayer(Coordinates.fromRowAndValue(0, 1))
+        assertEquals(Coordinates.fromRowAndValue(0, 1),  player2.currentPosition)
+
+        referee.passCurrentPlayer()
+        referee.moveActivePlayer(Coordinates.fromRowAndValue(1,0))
+        assertEquals(Coordinates.fromRowAndValue(1,0), player1.currentPosition)
     }
 }

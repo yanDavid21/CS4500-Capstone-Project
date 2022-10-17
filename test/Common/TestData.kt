@@ -89,7 +89,7 @@ object TestData {
         return Player(
             UUID.fromString("f9728f95-96db-4cf4-a9c1-13113635d312"),
             Coordinates.fromRowAndValue(0,0),
-            Treasure(Gem.TIGERS_EYE, Gem.YELLOW_BERYL_OVAL),
+            Treasure(Gem.GROSSULAR_GARNET, Gem.GOLDSTONE),
             createTiles()[0][0],
             BaseColor.PURPLE
         )

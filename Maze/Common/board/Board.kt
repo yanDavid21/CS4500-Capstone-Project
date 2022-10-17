@@ -58,6 +58,10 @@ class Board(private val tiles: Array<Array<GameTile>>) {
         return tiles[position.row.value][position.col.value].copy()
     }
 
+    fun getCopyOfBoard(): Board {
+        return Board(copyOfTiles())
+    }
+
 
     // checks if slideable, throws Exception if not, slides a row or column, rotates by the degree, then inserts the spare tile,
     // returning the dislodged tile
