@@ -32,7 +32,7 @@ class Referee(
         checkActiveMovePlayer(activePlayer, currentPlayerPosition, to)
         movePlayerAcrossBoard(activePlayer, currentPlayerPosition, to)
 
-        playerQueue.nextPlayer()
+        playerQueue.getNextPlayer()
     }
 
 
@@ -61,7 +61,7 @@ class Referee(
      * Passes the current player.
      */
     fun passCurrentPlayer() {
-        this.playerQueue.nextPlayer()
+        this.playerQueue.getNextPlayer()
     }
 
     /**

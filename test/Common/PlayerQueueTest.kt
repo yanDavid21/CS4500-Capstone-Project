@@ -16,15 +16,15 @@ internal class PlayerQueueTest {
 
         assertEquals(createPlayer1(), queue.getCurrentPlayer())
 
-        queue.nextPlayer()
+        queue.getNextPlayer()
 
         assertEquals(createPlayer2(), queue.getCurrentPlayer())
 
-        queue.nextPlayer()
+        queue.getNextPlayer()
 
         assertEquals(createPlayer3(), queue.getCurrentPlayer())
 
-        queue.nextPlayer()
+        queue.getNextPlayer()
         assertEquals(createPlayer1(), queue.getCurrentPlayer())
     }
 
@@ -41,14 +41,14 @@ internal class PlayerQueueTest {
     fun testRemoveLastPlayer() {
         val queue = makeQueue()
 
-        queue.nextPlayer()
-        queue.nextPlayer()
+        queue.getNextPlayer()
+        queue.getNextPlayer()
 
         queue.removeCurrentPlayer()
         assertEquals(createPlayer1(), queue.getCurrentPlayer())
 
-        queue.nextPlayer()
-        queue.nextPlayer()
+        queue.getNextPlayer()
+        queue.getNextPlayer()
         assertEquals(createPlayer1(), queue.getCurrentPlayer())
     }
 
