@@ -22,6 +22,7 @@ class Referee(
 ) {
     private val playerQueue = PlayerQueue(players.toMutableList())
     private var winner: Player? = null
+    private var lastAction: Action? = null
 
     /**
      * Moves the currently active player from it tile to a given destination.
@@ -90,10 +91,11 @@ class Referee(
      */
     private fun movePlayersAfterRowSlide(rowBeingSlidPosition: RowPosition, direction: HorizontalDirection) {
         playerQueue.get().forEach { player ->
-            val newColumnPosition: ColumnPosition? = player.currentPosition.col.nextPosition(direction)
-            val newPosition = newColumnPosition?.let { Coordinates(rowBeingSlidPosition, it)}
-                ?: board.getEmptySlotPositionAfterSliding(rowBeingSlidPosition, direction)
-            player.currentPosition = newPosition
+            if (player.currentPosition.row == rowBeingSlidPosition) {
+                val newColumnPosition: ColumnPosition? = player.currentPosition.col.nextPosition(direction)
+                player.currentPosition = newColumnPosition?.let { Coordinates(rowBeingSlidPosition, it) }
+                    ?: board.getEmptySlotPositionAfterSliding(rowBeingSlidPosition, direction)
+            }
         }
     }
 
@@ -102,9 +104,16 @@ class Referee(
      */
     private fun movePlayersAfterColumnSlide(columnBeingSlidPosition: ColumnPosition, direction: VerticalDirection) {
         playerQueue.get().forEach { player ->
-            val newRowPosition = player.currentPosition.row.nextPosition(direction)
-            player.currentPosition = newRowPosition?.let { Coordinates(it, columnBeingSlidPosition)}
-                ?: board.getEmptySlotPositionAfterSliding(columnBeingSlidPosition, direction)
+            if (player.currentPosition.col == columnBeingSlidPosition) {
+                val newRowPosition = player.currentPosition.row.nextPosition(direction)
+                player.currentPosition = newRowPosition?.let { Coordinates(it, columnBeingSlidPosition) }
+                    ?: board.getEmptySlotPositionAfterSliding(columnBeingSlidPosition, direction)
+            }
+        }
+    }
+
+    private fun checkSlidingIsNotUndoingLastAction() {
+        lastAction?.let {
 
         }
     }

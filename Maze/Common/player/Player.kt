@@ -6,7 +6,7 @@ import Common.tile.treasure.Treasure
 import java.util.*
 
 /**
- * Represents a Maze player, every player has a treasure goal and home tile. A player's location is tracked by the board.
+ * Represents a Maze player, every player has a treasure goal, position and color for home tile.
  */
 data class Player(val id: UUID,
                   var currentPosition: Coordinates,

@@ -123,6 +123,7 @@ internal class RefereeTest {
         // kick out player 3, player 2 can be move again
         referee.kickOutActivePlayer()
 
+        referee.moveActivePlayer(Coordinates.fromRowAndValue(0, 2))
         assertEquals(Coordinates.fromRowAndValue(0, 2), player2.currentPosition)
     }
 
@@ -209,7 +210,12 @@ internal class RefereeTest {
         assertEquals(Coordinates.fromRowAndValue(0, 1),  player2.currentPosition)
 
         referee.passCurrentPlayer()
-        referee.moveActivePlayer(Coordinates.fromRowAndValue(1,0))
-        assertEquals(Coordinates.fromRowAndValue(1,0), player1.currentPosition)
+        referee.moveActivePlayer(Coordinates.fromRowAndValue(0,2))
+        assertEquals(Coordinates.fromRowAndValue(0,2), player2.currentPosition)
+    }
+
+    @Test
+    fun testCannotUndoLastAction() {
+        assert(false)
     }
 }

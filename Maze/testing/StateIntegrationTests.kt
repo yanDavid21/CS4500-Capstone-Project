@@ -40,7 +40,7 @@ fun main() {
         val id = UUID.randomUUID()
         val goal = Treasure(Gem.GROSSULAR_GARNET, Gem.HACKMANITE) // random treasure
         val playerCoord = Coordinates.fromRowAndValue(it.current.`row#`, it.current.`col#`)
-        val homeTile = board.getTile(playerCoord) // TODO: should be random
+        val homeTile = board.getTile(it.home.toCoordinate())
         val player = Player(id, playerCoord, goal, homeTile, Color.valueOf(it.color))
 
         player
@@ -56,7 +56,7 @@ fun main() {
         DirectionTest.DOWN -> referee.slideColumnAndInsertSpare(ColumnPosition(index), VerticalDirection.DOWN, degree)
     }
 
-    val reachablePositions = board.getReachableTiles(players[0].currentPosition).map { TestCoordinate.fromCoordinates(it) }
+    val reachablePositions = referee.getBoard().getReachableTiles(players[0].currentPosition).map { TestCoordinate.fromCoordinates(it) }
 
     val comp = compareBy<TestCoordinate>({ it.`row#`}, {it.`col#`})
 

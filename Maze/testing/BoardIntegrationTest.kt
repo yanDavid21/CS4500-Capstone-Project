@@ -19,6 +19,10 @@ data class TestCoordinate(
             return TestCoordinate(coordinates.row.value, coordinates.col.value)
         }
     }
+
+    fun toCoordinate(): Coordinates {
+        return Coordinates.fromRowAndValue(`row#`, `col#`)
+    }
 }
 
 fun main() {
