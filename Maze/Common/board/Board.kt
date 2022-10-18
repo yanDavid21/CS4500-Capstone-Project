@@ -58,6 +58,9 @@ class Board(private val tiles: Array<Array<GameTile>>) {
         return tiles[position.row.value][position.col.value].copy()
     }
 
+    /**
+     * Returns a deep copy of the existing board.
+     */
     fun getCopyOfBoard(): Board {
         return Board(copyOfTiles())
     }

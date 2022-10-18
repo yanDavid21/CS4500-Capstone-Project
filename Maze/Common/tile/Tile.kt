@@ -3,12 +3,20 @@ package Common.tile
 import Common.tile.treasure.Treasure
 import java.util.*
 
+/**
+ * Represents a tile on a Maze Board. Every tile has a path, degree for which it's been rotated, and treasure for players
+ * to collect. A tile has outgoing and incoming directions (the inverse of outgoing) to determine connectability with
+ * other tiles.
+ */
 data class GameTile(val path: Path, val degree: Degree, val treasure: Treasure) {
     private val outgoingDirections: Set<Direction> = path.getDefaultOutgoingDirections().map {
             outGoingDirection -> outGoingDirection.rotateBy(degree)
     }.toSet()
     private val incomingDirections: Set<Direction> = outgoingDirections.map { outgoingDirection -> outgoingDirection.reverse() }.toSet()
 
+    /**
+     * Rotates the game tile by the given degree, returning a new GameTile.
+     */
     fun rotate(degree: Degree): GameTile {
         return GameTile(this.path, this.degree.add(degree), this.treasure)
     }

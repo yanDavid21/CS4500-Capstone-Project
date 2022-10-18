@@ -33,6 +33,9 @@ class PlayerQueue(
         return player
     }
 
+    /**
+     * Returns an immutable list of players.
+     */
     fun get(): List<Player> {
         return this.players
     }
