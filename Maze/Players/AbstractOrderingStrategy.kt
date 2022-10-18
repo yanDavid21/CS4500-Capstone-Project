@@ -1,12 +1,12 @@
 package Players
 
-import Common.Action
-import Common.GameState
-import Common.Skip
-import Common.SlideRowRotateAndInsert
+import Common.*
 import Common.board.*
 import Common.player.Player
-import Common.tile.*
+import Common.tile.Degree
+import Common.tile.GameTile
+import Common.tile.HorizontalDirection
+import Common.tile.VerticalDirection
 
 /**
  * To instantiate different comparator strategies.
@@ -43,7 +43,7 @@ abstract class AbstractOrderingStrategy(
     protected fun findAllAlternativesThatAllowMove(board: Board, spareTile: GameTile): Action? {
         val allCoordinates = getAllCoordinates().sortedWith(comparator)
         for (coord in allCoordinates) {
-            val maybeAction = tryAllCombinationsToReachThisTile(board, spareTile, isTileValidGoal, board.getTile(coord))
+            val maybeAction = tryAllCombinationsToReachThisTile(board, spareTile, board.getTile(coord))
             if (maybeAction != null) {
                 return maybeAction
             }
@@ -57,42 +57,46 @@ abstract class AbstractOrderingStrategy(
      * coordinate and that does not repeat the last action performed on the board.
      */
     protected fun actionThatAllowsMoveTo(coordinates: Coordinates): Action {
-
+        // TODO: do!
+        return SlideColumnRotateAndInsert(ColumnPosition(6), VerticalDirection.DOWN, Degree.ZERO, coordinates)
     }
 
     protected fun tryAllCombinationsToReachThisTile(board: Board, spare: GameTile, alternate: GameTile): Action? {
         return forAllRows { position, direction, degree ->
             val state = GameState(board, spare, listOf(player)) // TODO: state must be immutable, currently changes player pos
-            doSlideAndCheckReachable(state, position, direction, degree, alternate)
+            doSlideAndCheckReachable(state, alternate, {
+                state.slideRowAndInsertSpare(position, direction, degree)
+            }, { SlideRowRotateAndInsert(position, direction, degree, it)})
         }
             ?: forAllCols { position, direction, degree ->
                 val state = GameState(board, spare, listOf(player))
-                doSlideAndCheckReachable(state, position, direction, degree, alternate)
+                doSlideAndCheckReachable(state, alternate,
+                    { state.slideColumnAndInsertSpare(position, direction, degree) },
+                    { SlideColumnRotateAndInsert(position, direction, degree, it)})
             }
     }
 
 
     private fun doSlideAndCheckReachable(
         state: GameState,
-        position: Position,
-        direction: Direction,
-        degree: Degree,
-        alternate: GameTile
+        alternate: GameTile,
+        doSlide: () -> Unit,
+        createAction: (Coordinates) -> Action
     ): Action? {
-        state.slideRowAndInsertSpare(position, direction, degree)
+        doSlide()
         val newBoard = state.getBoard()
         val reachablePositions = newBoard.getReachableTiles(player.currentPosition)
         return reachablePositions.fold<Coordinates, Action?>(null) { answ, reachablePos ->
             val tileAtPos = newBoard.getTile(reachablePos)
             if (isTileValidGoal(tileAtPos) || tileAtPos == alternate) {
-                SlideRowRotateAndInsert(position, direction, degree, reachablePos)
+                createAction(reachablePos)
             } else {
                 answ
             }
         }
     }
 
-    private fun forAllRows(performAction: (Position, Direction, Degree) -> Action?): Action? {
+    private fun forAllRows(performAction: (RowPosition, HorizontalDirection, Degree) -> Action?): Action? {
         val rowPositions = (Position.MIN_ROW_INDEX until Position.MAX_ROW_INDEX).map { RowPosition(it) }
         return forAllCombinations(
             rowPositions,
@@ -102,7 +106,7 @@ abstract class AbstractOrderingStrategy(
         }
     }
 
-    private fun forAllCols(performAction: (Position, Direction, Degree) -> Action?): Action? {
+    private fun forAllCols(performAction: (ColumnPosition, VerticalDirection, Degree) -> Action?): Action? {
         val columnPositions = (Position.MIN_COL_INDEX until Position.MAX_COL_INDEX).map { ColumnPosition(it) }
         return forAllCombinations(
             columnPositions,
@@ -113,9 +117,9 @@ abstract class AbstractOrderingStrategy(
     }
 
 
-    private fun forAllCombinations(
-        positions: List<Position>, directions: Array<Direction>,
-        toPerform: (Position, Direction, Degree) -> Action?
+    private fun <P, D> forAllCombinations(
+        positions: List<P>, directions: Array<D>,
+        toPerform: (P, D, Degree) -> Action?
     ): Action? {
         for (position in positions) {
             for (direction in directions) {
