@@ -15,7 +15,7 @@ import Common.tile.VerticalDirection
  * Contains all knowledge about the game state. Including all Player state (player id, goal tile, home tile),
  * tiles on the board, what the current spare tile is, whose turn it is, if there is a winner.
  */
-class Referee(
+class GameState(
     private var board: Board,
     private var spareTile: GameTile,
     players: List<Player>

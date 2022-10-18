@@ -14,15 +14,15 @@ import java.util.*
 
 object TestData {
 
-    fun createRefereeWithPlayers(vararg players: Player): Referee {
+    fun createRefereeWithPlayers(vararg players: Player): GameState {
         val tiles = createTiles()
 
         val board = createBoard(tiles)
 
-        return Referee(board, createSpareTile(), players.toList())
+        return GameState(board, createSpareTile(), players.toList())
     }
 
-    fun createReferee(tiles: Array<Array<GameTile>>): Referee {
+    fun createReferee(tiles: Array<Array<GameTile>>): GameState {
         val player1 = createPlayer1()
 
         val player2 = createPlayer2()
@@ -30,10 +30,10 @@ object TestData {
         val player3 = createPlayer3()
 
         val board = createBoard(tiles)
-        return Referee(board, createSpareTile(), listOf(player1, player2, player3))
+        return GameState(board, createSpareTile(), listOf(player1, player2, player3))
     }
 
-    fun createReferee(): Referee {
+    fun createReferee(): GameState {
         val tiles = createTiles()
         return createReferee(tiles)
     }

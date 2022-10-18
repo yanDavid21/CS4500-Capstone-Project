@@ -1,6 +1,6 @@
 package Common.referee
 
-import Common.Referee
+import Common.GameState
 import Common.TestData
 import Common.board.Board
 import Common.board.ColumnPosition
@@ -36,7 +36,7 @@ internal class RefereeTest {
         val player1 = TestData.createPlayer1()
         val player2 = TestData.createPlayer2()
         val board = TestData.createBoard()
-        val referee = Referee(board, TestData.createSpareTile(), listOf(player1, player2))
+        val referee = GameState(board, TestData.createSpareTile(), listOf(player1, player2))
 
         referee.moveActivePlayer(Coordinates.fromRowAndValue(1, 0))
 
@@ -72,7 +72,7 @@ internal class RefereeTest {
         val tiles = TestData.createTiles()
         val spareTile = TestData.createSpareTile()
         val board = Board(tiles)
-        val referee = Referee(board, spareTile, listOf())
+        val referee = GameState(board, spareTile, listOf())
 
         val tileAtEndOfRow = tiles[2][6]
         val expectedNewRow = arrayOf(
@@ -98,7 +98,7 @@ internal class RefereeTest {
         val board = Board(tiles)
         val player = TestData.createPlayer3()
 
-        val referee = Referee(board, spareTileToBeInserted, listOf(player))
+        val referee = GameState(board, spareTileToBeInserted, listOf(player))
 
         referee.slideColumnAndInsertSpare(ColumnPosition(6), VerticalDirection.DOWN, Degree.ZERO)
 
@@ -112,7 +112,7 @@ internal class RefereeTest {
         val player2 = TestData.createPlayer2()
         val player3 = TestData.createPlayer3()
 
-        val referee = Referee(TestData.createBoard(), TestData.createSpareTile(), listOf(player1, player2, player3))
+        val referee = GameState(TestData.createBoard(), TestData.createSpareTile(), listOf(player1, player2, player3))
 
         // kick out player1
         referee.kickOutActivePlayer()
@@ -138,7 +138,7 @@ internal class RefereeTest {
         val player2 = TestData.createPlayer2()
         val player3 = TestData.createPlayer3()
 
-        val referee = Referee(TestData.createBoard(), TestData.createSpareTile(), listOf(player1, player2, player3))
+        val referee = GameState(TestData.createBoard(), TestData.createSpareTile(), listOf(player1, player2, player3))
         referee.slideRowAndInsertSpare(RowPosition(0), HorizontalDirection.RIGHT, Degree.ZERO)
         val tile = referee.getBoard().getTile(Coordinates(RowPosition(0), ColumnPosition(0)))
         assertEquals(tile, GameTile(tile.path, Degree.ZERO, tile.treasure))
@@ -151,7 +151,7 @@ internal class RefereeTest {
         val player2 = TestData.createPlayer2()
         val player3 = TestData.createPlayer3()
 
-        val referee = Referee(TestData.createBoard(), TestData.createSpareTile(), listOf(player1, player2, player3))
+        val referee = GameState(TestData.createBoard(), TestData.createSpareTile(), listOf(player1, player2, player3))
         referee.slideRowAndInsertSpare(RowPosition(0), HorizontalDirection.RIGHT, Degree.NINETY)
         val tile = referee.getBoard().getTile(Coordinates(RowPosition(0), ColumnPosition(0)))
         assertEquals(tile, GameTile(tile.path, Degree.NINETY, tile.treasure))
@@ -165,7 +165,7 @@ internal class RefereeTest {
         val player2 = TestData.createPlayer2()
         val player3 = TestData.createPlayer3()
 
-        val referee = Referee(TestData.createBoard(), TestData.createSpareTile(), listOf(player1, player2, player3))
+        val referee = GameState(TestData.createBoard(), TestData.createSpareTile(), listOf(player1, player2, player3))
         referee.slideRowAndInsertSpare(RowPosition(0), HorizontalDirection.RIGHT, Degree.ONE_EIGHTY)
         val tile = referee.getBoard().getTile(Coordinates(RowPosition(0), ColumnPosition(0)))
         assertEquals(tile, GameTile(tile.path, Degree.ONE_EIGHTY, tile.treasure))
@@ -178,7 +178,7 @@ internal class RefereeTest {
         val player2 = TestData.createPlayer2()
         val player3 = TestData.createPlayer3()
 
-        val referee = Referee(TestData.createBoard(), TestData.createSpareTile(), listOf(player1, player2, player3))
+        val referee = GameState(TestData.createBoard(), TestData.createSpareTile(), listOf(player1, player2, player3))
         referee.slideRowAndInsertSpare(RowPosition(0), HorizontalDirection.RIGHT, Degree.TWO_SEVENTY)
         val tile = referee.getBoard().getTile(Coordinates(RowPosition(0), ColumnPosition(0)))
         assertEquals(tile, GameTile(tile.path, Degree.TWO_SEVENTY, tile.treasure))
@@ -191,7 +191,7 @@ internal class RefereeTest {
         val player2 = TestData.createPlayer2()
         val player3 = TestData.createPlayer3()
 
-        val referee = Referee(TestData.createBoard(), TestData.createSpareTile(), listOf(player1, player2, player3))
+        val referee = GameState(TestData.createBoard(), TestData.createSpareTile(), listOf(player1, player2, player3))
         referee.slideRowAndInsertSpare(RowPosition(0), HorizontalDirection.RIGHT, Degree.ZERO.add(Degree.TWO_SEVENTY).add(Degree.NINETY))
         val tile = referee.getBoard().getTile(Coordinates(RowPosition(0), ColumnPosition(0)))
         assertEquals(tile, GameTile(tile.path, Degree.ZERO, tile.treasure))
@@ -202,7 +202,7 @@ internal class RefereeTest {
         val player1 = TestData.createPlayer1()
         val player2 = TestData.createPlayer2()
 
-        val referee = Referee(TestData.createBoard(), TestData.createSpareTile(), listOf(player1, player2))
+        val referee = GameState(TestData.createBoard(), TestData.createSpareTile(), listOf(player1, player2))
 
         referee.passCurrentPlayer()
 

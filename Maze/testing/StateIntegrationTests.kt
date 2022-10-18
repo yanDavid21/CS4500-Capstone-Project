@@ -1,6 +1,6 @@
 package testing
 
-import Common.Referee
+import Common.GameState
 import Common.board.Board
 import Common.board.ColumnPosition
 import Common.board.Coordinates
@@ -23,7 +23,7 @@ fun main() {
     val jsonReader = JsonReader(InputStreamReader(System.`in`, "UTF-8"))
     val gson = Gson()
 
-    val state = gson.fromJson<State>(jsonReader, State::class.java)
+    val state = gson.fromJson<GameState>(jsonReader, GameState::class.java)
     val index = gson.fromJson<Int>(jsonReader, Int::class.java)
     val direction = gson.fromJson<DirectionTest>(jsonReader, DirectionTest::class.java)
     val degree = Degree.valueOf(gson.fromJson<Int>(jsonReader, Int::class.java))
@@ -45,7 +45,7 @@ fun main() {
 
         player
     }
-    val referee = Referee(board, spareTile, players)
+    val referee = GameState(board, spareTile, players)
 
     //val lastAction = state.last
 

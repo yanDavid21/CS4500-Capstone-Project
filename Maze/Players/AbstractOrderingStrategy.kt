@@ -21,9 +21,27 @@ abstract class AbstractOrderingStrategy(
     private val comparator: Comparator<Coordinates>,
     private val player: Player
 ): MazeStrategy {
+    protected val allCoordinates = mutableListOf<Coordinates>()
+    protected val isTileValidGoal: (GameTile) -> Boolean = { tile ->
+        player.treasureFound && tile == player.homeTile || !player.treasureFound && tile.treasure == player.goal
+    }
 
-    override fun decideMove(board: Board, player: Player): Action {
-        TODO("Not yet implemented")
+    override fun decideMove(board: Board, spareTile: GameTile): Action {
+        val reachablesTiles = board.getReachableTiles(player.currentPosition)
+
+        for (reachable in reachablesTiles) {
+            if (isTileValidGoal(board.getTile(reachable))) {
+                return  // TODO: construct move with a slide that allows us to move
+            }
+        }
+
+        // try all possible combinations using riemann
+
+        val allCoordinates = getAllCoordinatesFromBoard(board)
+        val coordinatesInDesiredOrder = allCoordinates.sortedWith(comparator)
+        for (coord in coordinatesInDesiredOrder) {
+            tryAllCombinationsToReachThisTile(board, spareTile, isTileValidGoal, board.getTile(coord))
+        }
     }
 
     protected fun tryAllCombinationsToReachThisTile(board: Board, spare: GameTile, isTileGoal: (GameTile) -> Boolean, alternate: GameTile): Action? {
