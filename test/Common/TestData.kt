@@ -14,12 +14,12 @@ import java.util.*
 
 object TestData {
 
-    fun createRefereeWithOnePlayer(player: Player): Referee {
+    fun createRefereeWithPlayers(vararg players: Player): Referee {
         val tiles = createTiles()
 
         val board = createBoard(tiles)
 
-        return Referee(board, createSpareTile(), listOf(player))
+        return Referee(board, createSpareTile(), players.toList())
     }
 
     fun createReferee(tiles: Array<Array<GameTile>>): Referee {

@@ -2,8 +2,8 @@ package Players
 
 import Common.Action
 import Common.board.Board
+import Common.board.Coordinates
 import Common.player.Player
-import Common.tile.GameTile
 
 /**
  * To instantiate different comparator strategies.
@@ -14,7 +14,7 @@ import Common.tile.GameTile
  * alternate goal is reachable, they move to this goal.
  */
 abstract class AbstractOrderingStrategy(
-    private val comparator: Comparator<GameTile>
+    private val comparator: Comparator<Coordinates>
 ): MazeStrategy {
 
     override fun decideMove(board: Board, player: Player): Action {

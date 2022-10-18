@@ -5,7 +5,7 @@ package Common.player
  */
 interface Color {
     companion object {
-        private val currentColors = mutableSetOf()
+        private val currentColors = mutableSetOf<Color>()
 
         /**
          * Gets the Color from a string. Throws IllegalArgumentException

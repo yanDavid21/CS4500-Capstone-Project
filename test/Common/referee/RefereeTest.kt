@@ -60,7 +60,7 @@ internal class RefereeTest {
     @Test
     fun testMovePlayerToTreasureTile() {
         val player = TestData.createPlayer1()
-        val referee = TestData.createRefereeWithOnePlayer(player)
+        val referee = TestData.createRefereeWithPlayers(player)
 
         referee.moveActivePlayer(Coordinates.fromRowAndValue(1,0))
 
@@ -212,6 +212,22 @@ internal class RefereeTest {
         referee.passCurrentPlayer()
         referee.moveActivePlayer(Coordinates.fromRowAndValue(0,2))
         assertEquals(Coordinates.fromRowAndValue(0,2), player2.currentPosition)
+    }
+
+    @Test
+    fun testMovePlayersInSlide() {
+        val player1 = TestData.createPlayer1()
+        val player2 = TestData.createPlayer2()
+        val referee = TestData.createRefereeWithPlayers(player1, player2)
+        player2.currentPosition = Coordinates.fromRowAndValue(0, 3)
+
+        referee.slideRowAndInsertSpare(RowPosition(0), HorizontalDirection.LEFT, Degree.ZERO)
+        assertEquals(Coordinates.fromRowAndValue(0, 6), player1.currentPosition)
+        assertEquals(Coordinates.fromRowAndValue(0, 2), player2.currentPosition)
+
+        referee.slideColumnAndInsertSpare(ColumnPosition(2), VerticalDirection.UP, Degree.NINETY)
+        assertEquals(Coordinates.fromRowAndValue(6,2), player2.currentPosition)
+        assertEquals(Coordinates.fromRowAndValue(0, 6), player1.currentPosition)
     }
 
     @Test
