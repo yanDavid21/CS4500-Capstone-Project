@@ -20,7 +20,7 @@ interface Direction {
     /**
      * Returns the default degree of a direction, used for rotation and the mapping between direction and degree in a path.
      */
-    protected fun getDegree(): Degree
+    fun getDegree(): Degree
 
     companion object {
         /**
