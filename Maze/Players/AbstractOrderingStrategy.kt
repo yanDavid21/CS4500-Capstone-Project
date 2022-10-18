@@ -1,9 +1,13 @@
 package Players
 
 import Common.Action
-import Common.board.Board
-import Common.board.Coordinates
+import Common.GameState
+import Common.SlideRowRotateAndInsert
+import Common.board.*
 import Common.player.Player
+import Common.tile.Degree
+import Common.tile.GameTile
+import Common.tile.HorizontalDirection
 
 /**
  * To instantiate different comparator strategies.
@@ -14,10 +18,49 @@ import Common.player.Player
  * alternate goal is reachable, they move to this goal.
  */
 abstract class AbstractOrderingStrategy(
-    private val comparator: Comparator<Coordinates>
+    private val comparator: Comparator<Coordinates>,
+    private val player: Player
 ): MazeStrategy {
 
     override fun decideMove(board: Board, player: Player): Action {
         TODO("Not yet implemented")
     }
+
+    protected fun tryAllCombinationsToReachThisTile(board: Board, spare: GameTile, isTileGoal: (GameTile) -> Boolean, alternate: GameTile): Action? {
+
+        (Position.MIN_ROW_INDEX until Position.MAX_ROW_INDEX).forEach { rowIndex ->
+            val rowPosition = RowPosition(rowIndex)
+            HorizontalDirection.values().forEach { direction ->
+                Degree.values().forEach { degree ->
+                    val state = GameState(board, spare, listOf(player))
+                    val reachables = slideAndGetReachableTiles(state, rowPosition, direction, degree)
+                    for (pos in reachables) {
+                        val tile = state.getBoard().getTile(pos)
+                        if (isTileGoal(tile) || tile == alternate) {
+                            return SlideRowRotateAndInsert(rowPosition, direction, degree, pos)
+                        }
+                    }
+                }
+            }
+        }
+        return null
+    }
+
+    private fun slideAndGetReachableTiles(state: GameState, rowPosition: RowPosition, direction: HorizontalDirection, degree: Degree): Set<Coordinates> {
+        state.slideRowAndInsertSpare(rowPosition, direction, degree)
+        val newBoard = state.getBoard()
+        return newBoard.getReachableTiles(player.currentPosition)
+    }
+
+    private fun getAllCoordinatesFromBoard(board: Board): List<Coordinates> {
+        val allCoordinates = mutableListOf<Coordinates>()
+        for (rowIndex in Position.MIN_ROW_INDEX until Position.MAX_ROW_INDEX) {
+            for (colIndex in Position.MIN_COL_INDEX until Position.MAX_COL_INDEX) {
+                allCoordinates.add(Coordinates(RowPosition(rowIndex), ColumnPosition((colIndex))))
+            }
+        }
+        return allCoordinates
+    }
+
+
 }
