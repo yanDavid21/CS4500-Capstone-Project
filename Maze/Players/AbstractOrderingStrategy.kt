@@ -103,7 +103,7 @@ abstract class AbstractOrderingStrategy(
         val newBoard = state.getBoard()
         val reachablePositions = newBoard.getReachableTiles(player.currentPosition)
         return reachablePositions.fold(null as MovingAction?) { action, reachablePos ->
-            action ?: getActionToReachTile(board, reachablePos, isTileWeWant, createAction)
+            action ?: getActionToReachTile(newBoard, reachablePos, isTileWeWant, createAction)
         }
     }
 
@@ -114,11 +114,11 @@ abstract class AbstractOrderingStrategy(
     }
 
     private fun getAllRows():List<RowPosition> {
-        return (Position.MIN_ROW_INDEX until Position.MAX_ROW_INDEX).map { RowPosition(it) }
+        return (Position.MIN_ROW_INDEX until Position.MAX_ROW_INDEX step 2).map { RowPosition(it) }
     }
 
     private fun getAllCols():List<ColumnPosition> {
-        return (Position.MIN_COL_INDEX until Position.MAX_COL_INDEX).map { ColumnPosition(it) }
+        return (Position.MIN_COL_INDEX until Position.MAX_COL_INDEX step 2).map { ColumnPosition(it) }
     }
     
     private fun <P, D> getAllCombinations(

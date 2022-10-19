@@ -85,6 +85,16 @@ object TestData {
                 listOf("apricot-square-radiant", "jaspilite"), listOf("magnesite", "moonstone"), listOf("ametrine", "ruby"), listOf("citrine", "diamond"),
                 listOf("blue-ceylon-sapphire", "chrysoberyl-cushion")))
 
+    fun createPlayer(position: Coordinates, treasure: Treasure, home: GameTile): Player {
+        return Player(
+            UUID.fromString("f9728f95-96db-4cf4-a9c1-13113635d312"),
+            position,
+            treasure,
+            home,
+            BaseColor.BLACK
+        )
+    }
+
     fun createPlayer1(): Player {
         return Player(
             UUID.fromString("f9728f95-96db-4cf4-a9c1-13113635d312"),
