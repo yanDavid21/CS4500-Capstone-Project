@@ -22,7 +22,7 @@ class GameState(
 ) {
     private val playerQueue = PlayerQueue(players.toMutableList())
     private var winner: Player? = null
-    private var lastAction: Action? = null
+    private var lastAction: MovingAction? = null
 
     /**
      * Moves the currently active player from it tile to a given destination.

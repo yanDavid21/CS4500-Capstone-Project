@@ -9,18 +9,19 @@ import Common.tile.VerticalDirection
 
 interface Action
 
-data class SlideRowRotateAndInsert(
+interface MovingAction: Action
+data class RowAction(
     val rowPosition: RowPosition,
     val direction: HorizontalDirection,
     val rotation: Degree,
     val newPosition: Coordinates
-): Action
+): MovingAction
 
-data class SlideColumnRotateAndInsert(
+data class ColumnAction(
     val columnPosition: ColumnPosition,
     val direction: VerticalDirection,
     val rotation: Degree,
     val newPosition: Coordinates
-): Action
+): MovingAction
 
 object Skip: Action

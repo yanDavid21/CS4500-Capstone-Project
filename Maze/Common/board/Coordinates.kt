@@ -1,5 +1,8 @@
 package Common.board
 
+import kotlin.math.pow
+import kotlin.math.sqrt
+
 /**
  * Represents a valid coordinate in the board. Rows and columns are indexed 0..6 and (0,0) is
  * top-left.
@@ -14,6 +17,15 @@ data class Coordinates(
      */
     fun copyWithNewRow(rowValue: Int): Coordinates {
         return this.copy(row = RowPosition(rowValue))
+    }
+
+    /**
+     * Computes the Euclidian distance between two coordinates.
+     */
+    fun distanceTo(other: Coordinates): Double {
+        val deltaX= (this.row.value - other.row.value).toDouble()
+        val deltaY = (this.col.value - other.col.value).toDouble()
+        return sqrt(deltaX.pow(2) + deltaY.pow(2))
     }
 
     /**
