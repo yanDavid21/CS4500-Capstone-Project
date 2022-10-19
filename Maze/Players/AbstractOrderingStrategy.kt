@@ -52,38 +52,50 @@ abstract class AbstractOrderingStrategy(
 
     protected fun findAllAlternativesThatAllowMove(board: Board, spareTile: GameTile): Action? {
         val allCoordinates = getAllCoordinates().sortedWith(comparator)
-        for (coord in allCoordinates) {
-            val maybeAction = tryAllCombinationsToReachThisTile(board, spareTile, board.getTile(coord))
-            if (maybeAction != null) {
-                return maybeAction
-            }
+        return allCoordinates.fold<Coordinates, Action?>(null) { answ, coord ->
+            answ ?: tryAllCombinationsToReachThisTile(board, spareTile, board.getTile(coord))
         }
-        return null
     }
 
     protected fun tryAllCombinationsToReachThisTile(board: Board, spare: GameTile, alternate: GameTile): Action? {
-        return forAllRows { position, direction, degree ->
-            val state = GameState(board, spare, listOf(player)) // TODO: state must be immutable, currently changes player pos
-            doSlideAndCheckReachable(state, alternate,
-                { state.slideRowAndInsertSpare(position, direction, degree) },
-                { SlideRowRotateAndInsert(position, direction, degree, it) })
+        return forAllRowsDoWithAllDirections { position, direction, degree ->
+            slideRow(board, spare, position, direction, degree, alternate)
         }
-            ?: forAllCols { position, direction, degree ->
-                val state = GameState(board, spare, listOf(player))
-                doSlideAndCheckReachable(state, alternate,
-                    { state.slideColumnAndInsertSpare(position, direction, degree) },
-                    { SlideColumnRotateAndInsert(position, direction, degree, it) })
+            ?: forAllColsDoWithAllDirections { position, direction, degree ->
+                slideCol(board, spare, position, direction, degree, alternate)
             }
     }
 
+    /**
+     * Slides a row in the given direction with the provided spare tile rotation. Checks if the goal or
+     * the alternate tile is reachable.
+     */
+    private fun slideRow(board: Board, spare: GameTile, position: RowPosition, direction: HorizontalDirection, degree: Degree, alternate: GameTile): Action? {
+        return doSlideAndCheckReachable(board, spare, player.copy(), alternate,
+            { state -> state.slideRowAndInsertSpare(position, direction, degree) },
+            { SlideRowRotateAndInsert(position, direction, degree, it) })
+    }
+
+    /**
+     * Slides a column in the given direction with the provided spare tile rotation. Checks if the goal or
+     * the alternate tile is reachable.
+     */
+    private fun slideCol(board: Board, spare: GameTile, position: ColumnPosition, direction: VerticalDirection, degree: Degree, alternate: GameTile): Action? {
+        return doSlideAndCheckReachable(board, spare, player.copy(), alternate,
+            { state -> state.slideColumnAndInsertSpare(position, direction, degree) },
+            { SlideColumnRotateAndInsert(position, direction, degree, it) })
+    }
 
     private fun doSlideAndCheckReachable(
-        state: GameState,
+        board: Board,
+        spareTile: GameTile,
+        player: Player,
         alternate: GameTile,
-        doSlide: () -> Unit,
+        doSlide: (GameState) -> Unit,
         createAction: (Coordinates) -> Action
     ): Action? {
-        doSlide()
+        val state = GameState(board, spareTile, listOf(player))
+        doSlide(state)
         val newBoard = state.getBoard()
         val reachablePositions = newBoard.getReachableTiles(player.currentPosition)
         return reachablePositions.fold<Coordinates, Action?>(null) { answ, reachablePos ->
@@ -96,19 +108,19 @@ abstract class AbstractOrderingStrategy(
         }
     }
 
-    private fun forAllRows(performAction: (RowPosition, HorizontalDirection, Degree) -> Action?): Action? {
+    private fun forAllRowsDoWithAllDirections(performAction: (RowPosition, HorizontalDirection, Degree) -> Action?): Action? {
         return forAllCombinations(
             (Position.MIN_ROW_INDEX until Position.MAX_ROW_INDEX).map { RowPosition(it) },
-            arrayOf(HorizontalDirection.LEFT, HorizontalDirection.RIGHT)
+            HorizontalDirection.values()
         ) { position, direction, degree ->
             performAction(position, direction, degree)
         }
     }
 
-    private fun forAllCols(performAction: (ColumnPosition, VerticalDirection, Degree) -> Action?): Action? {
+    private fun forAllColsDoWithAllDirections(performAction: (ColumnPosition, VerticalDirection, Degree) -> Action?): Action? {
         return forAllCombinations(
             (Position.MIN_COL_INDEX until Position.MAX_COL_INDEX).map { ColumnPosition(it) },
-            arrayOf(VerticalDirection.UP, VerticalDirection.DOWN)
+            VerticalDirection.values()
         ) { position, direction, degree ->
             performAction(position, direction, degree)
         }

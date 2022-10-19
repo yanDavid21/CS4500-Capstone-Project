@@ -23,7 +23,7 @@ fun main() {
     val jsonReader = JsonReader(InputStreamReader(System.`in`, "UTF-8"))
     val gson = Gson()
 
-    val state = gson.fromJson<GameState>(jsonReader, GameState::class.java)
+    val state = gson.fromJson<State>(jsonReader, State::class.java)
     val index = gson.fromJson<Int>(jsonReader, Int::class.java)
     val direction = gson.fromJson<DirectionTest>(jsonReader, DirectionTest::class.java)
     val degree = Degree.valueOf(gson.fromJson<Int>(jsonReader, Int::class.java))
@@ -39,7 +39,7 @@ fun main() {
     val players = state.plmt.map {
         val id = UUID.randomUUID()
         val goal = Treasure(Gem.GROSSULAR_GARNET, Gem.HACKMANITE) // random treasure
-        val playerCoord = Coordinates.fromRowAndValue(it.current.`row#`, it.current.`col#`)
+        val playerCoord = Coordinates.fromRowAndValue(it.current.`row#`, it.current.`column#`)
         val homeTile = board.getTile(it.home.toCoordinate())
         val player = Player(id, playerCoord, goal, homeTile, Color.valueOf(it.color))
 
@@ -58,9 +58,9 @@ fun main() {
 
     val reachablePositions = referee.getBoard().getReachableTiles(players[0].currentPosition).map { TestCoordinate.fromCoordinates(it) }
 
-    val comp = compareBy<TestCoordinate>({ it.`row#`}, {it.`col#`})
+    val comp = compareBy<TestCoordinate>({ it.`row#`}, {it.`column#`})
 
-    println(reachablePositions.sortedWith(comp).map { gson.toJson(it, TestCoordinate::class.java) })
+    println(reachablePositions.sortedWith(comp).map { gson.toJson(it, TestCoordinate::class.java).toString() })
 }
 
 data class State(

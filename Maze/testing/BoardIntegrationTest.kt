@@ -12,7 +12,7 @@ data class TileMatrix(
 )
 
 data class TestCoordinate(
-    val `row#` : Int, val `col#`: Int
+    val `row#` : Int, val `column#`: Int
 ) {
     companion object {
         fun fromCoordinates(coordinates: Coordinates): TestCoordinate {
@@ -21,7 +21,7 @@ data class TestCoordinate(
     }
 
     fun toCoordinate(): Coordinates {
-        return Coordinates.fromRowAndValue(`row#`, `col#`)
+        return Coordinates.fromRowAndValue(`row#`, `column#`)
     }
 }
 
@@ -38,10 +38,10 @@ fun main() {
 
     val board = Board(tiles)
 
-    val testCoordinate = Coordinates.fromRowAndValue(coordinates.`row#`, coordinates.`col#`)
+    val testCoordinate = Coordinates.fromRowAndValue(coordinates.`row#`, coordinates.`column#`)
     val reachablePositions = board.getReachableTiles(testCoordinate).map { TestCoordinate.fromCoordinates(it) }
 
-    val comp = compareBy<TestCoordinate>({ it.`row#`}, {it.`col#`})
+    val comp = compareBy<TestCoordinate>({ it.`row#`}, {it.`column#`})
 
     println(reachablePositions.sortedWith(comp).map { gson.toJson(it, TestCoordinate::class.java) })
 }

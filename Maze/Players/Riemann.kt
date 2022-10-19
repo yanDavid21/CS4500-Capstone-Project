@@ -1,3 +1,5 @@
 package Players
 
-class Riemann: AbstractOrderingStrategy(compareBy({ it.row.value  }, { it.col.value }))
+import Common.player.Player
+
+class Riemann(player: Player): AbstractOrderingStrategy(compareBy({ it.row.value  }, { it.col.value }), player)

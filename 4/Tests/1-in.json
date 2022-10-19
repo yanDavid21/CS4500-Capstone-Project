@@ -27,7 +27,7 @@
       ["purple-cabochon", "moss-agate"]], [["spinel", "sunstone"], ["pink-spinel-cushion", "carnelian"],
     ["apricot-square-radiant", "jaspilite"], ["magnesite", "moonstone"], ["ametrine", "ruby"], ["citrine", "diamond"],
     ["blue-ceylon-sapphire", "chrysoberyl-cushion"]]]}, "spare": {"tilekey": "└", "1-image":"grossular-garnet", "2-image":"sunstone"},
-  "plmt": [{"current":  {"row#": 6, "col#": 5}, "home": {"row#":5, "col#": 5}, "color": "red", "last": null}]}
+  "plmt": [{"current":  {"row#": 6, "column#": 5}, "home": {"row#":5, "column#": 5}, "color": "red", "last": null}]}
 
 6
 
