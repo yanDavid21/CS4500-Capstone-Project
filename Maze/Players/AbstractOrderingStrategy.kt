@@ -46,13 +46,9 @@ abstract class AbstractOrderingStrategy(
         }
     }
 
-    protected fun tryAllCombinationsToReachThisTile(board: Board, spare: GameTile, alternate: GameTile): Action? {
-        return forAllRowsDoWithAllDirections { position, direction, degree ->
-            slideRow(board, spare, position, direction, degree, alternate)
-        }
-            ?: forAllColsDoWithAllDirections { position, direction, degree ->
-                slideCol(board, spare, position, direction, degree, alternate)
-            }
+    private fun tryAllCombinationsToReachDesiredTile(board: Board, spare: GameTile, isTileWeWant: (GameTile) -> Boolean): MovingAction? {
+        return findFirstRowSlideActionIfAny(board, spare, isTileWeWant) 
+            ?: findFirstColumnSlideActionIfAny(board, spare, isTileWeWant)
     }
 
     private fun findFirstRowSlideActionIfAny(board: Board, spare: GameTile, isTileWeWant: (GameTile) -> Boolean): MovingAction? {
@@ -91,14 +87,17 @@ abstract class AbstractOrderingStrategy(
             createAction = { ColumnAction(position, direction, degree, it) }, isTileWeWant)
     }
 
+    /**
+     * TODO: java doc, note game state
+     */
     private fun doSlideAndCheckReachable(
         board: Board,
         spareTile: GameTile,
         player: Player,
-        alternate: GameTile,
         doSlide: (GameState) -> Unit,
-        createAction: (Coordinates) -> Action
-    ): Action? {
+        createAction: (Coordinates) -> MovingAction,
+        isTileWeWant: (GameTile) -> Boolean
+    ): MovingAction? {
         val state = GameState(board, spareTile, listOf(player))
         doSlide(state)
         val newBoard = state.getBoard()
