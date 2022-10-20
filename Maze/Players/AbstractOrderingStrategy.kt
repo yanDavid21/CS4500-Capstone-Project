@@ -117,10 +117,7 @@ abstract class AbstractOrderingStrategy(
             return null
         }
         val action = createAction(pos)
-        if (lastAction != null && action.isUndoingAction(lastAction)) {
-            return null
-        }
-        return action
+        return if (lastAction != null && action.isUndoingAction(lastAction)) null else action
     }
 
     private fun getAllRows():List<RowPosition> {
