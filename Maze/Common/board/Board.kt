@@ -1,6 +1,5 @@
 package Common.board
 
-import Common.Player
 import Common.tile.Direction
 import Common.tile.GameTile
 import Common.tile.HorizontalDirection
@@ -17,10 +16,10 @@ class Board(private val tiles: Array<Array<GameTile>>) {
     private val width = tiles[0].size
 
     /**
-     * Slides the row at the given row index in a certain horizontal direction. Inserts a spare tile into the empty slot
+     * Slides the row at the given row index in a certain horizontal direction. Insert a spare tile into the empty slot
      * generated from the slide. Returns the tile that is dislodged from board as a result of the slide.
      */
-    fun slideRowAndInsert(rowPosition: RowPosition, direction: HorizontalDirection, spareTile: GameTile): GameTile {
+    fun slideRowAndInsert(rowPosition: RowPosition, direction: HorizontalDirection, spareTile: GameTile): Pair<Board, GameTile> {
         return slideAndInsertSpare(rowPosition, direction, spareTile)
     }
 
@@ -28,7 +27,7 @@ class Board(private val tiles: Array<Array<GameTile>>) {
      * Slides the col at the given column index in a certain vertical direction. Inserts a spare tile into the empty slot
      * generated from the slide. Returns the tile that is dislodged from board as a result of the slide.
      */
-    fun slideColAndInsert(columnPosition: ColumnPosition, direction: VerticalDirection, spareTile: GameTile): GameTile {
+    fun slideColAndInsert(columnPosition: ColumnPosition, direction: VerticalDirection, spareTile: GameTile): Pair<Board, GameTile> {
         return slideAndInsertSpare(columnPosition, direction, spareTile)
     }
 
@@ -56,40 +55,30 @@ class Board(private val tiles: Array<Array<GameTile>>) {
      * Gets the tile at the specified position.
      */
     fun getTile(position: Coordinates): GameTile {
-        return tiles[position.row.value][position.col.value]
+        return tiles[position.row.value][position.col.value].copy()
     }
-
 
     /**
-     * Locates a player on the board by looking at all tiles until the player is found.
-     *
-     * Throws IllegalStateException if the player is not found, all players in the game
-     * should be on the board.
+     * Returns a deep copy of the existing board.
      */
-    fun findPlayerLocation(player: Player): Coordinates {
-        for (rowIndex in 0 until this.height) {
-            for (colIndex in 0 until this.width) {
-                val position = Coordinates(RowPosition(rowIndex), ColumnPosition(colIndex))
-                val tile = getTile(position)
-                if (tile.hasCertainPlayer(player)) {
-                    return position
-                }
-            }
-        }
-        throw IllegalStateException("$player not found. Player should always be in the board.")
+    fun getCopyOfBoard(): Board {
+        return Board(copyOfTiles())
     }
 
-    // checks if slideable, throws Exception if not, slides a row or column, then inserts, returning the dislodged tile
-    private fun slideAndInsertSpare(position: Position, direction: Direction, spareTile: GameTile): GameTile {
-        checkSlideable(position)
+
+    // checks if slideable, throws Exception if not, slides a row or column, rotates by the degree, then inserts the spare tile,
+    // returning the dislodged tile
+    private fun slideAndInsertSpare(position: Position, direction: Direction, spareTile: GameTile): Pair<Board, GameTile> {
+        position.checkSlideable()
         val dislodgedTile = getDislodgedTile(position, direction)
 
-        shiftByDirection(position,direction)
+        val newTiles = shiftByDirection(position,direction)
 
         val emptySlotPosition = getEmptySlotPositionAfterSliding(position, direction)
-        setTile(emptySlotPosition, spareTile)
 
-        return dislodgedTile
+        setTile(newTiles, emptySlotPosition, spareTile)
+
+        return Pair(Board(newTiles), dislodgedTile)
     }
 
 
@@ -105,7 +94,7 @@ class Board(private val tiles: Array<Array<GameTile>>) {
     }
 
     // get the position of the empty slot after making a slide in a given direction
-    private fun getEmptySlotPositionAfterSliding(position: Position, direction: Direction): Coordinates {
+    fun getEmptySlotPositionAfterSliding(position: Position, direction: Direction): Coordinates {
         return when(direction) {
             HorizontalDirection.LEFT -> Coordinates(RowPosition(position.value), ColumnPosition(width - 1))
             HorizontalDirection.RIGHT -> Coordinates(RowPosition(position.value), ColumnPosition(0))
@@ -116,10 +105,12 @@ class Board(private val tiles: Array<Array<GameTile>>) {
     }
 
     // shifts a row/col in a certain direction
-    private fun shiftByDirection(position: Position, direction: Direction) {
+    private fun shiftByDirection(position: Position, direction: Direction): Array<Array<GameTile>> {
+        val newTiles = copyOfTiles()
         for (index in getIterationRange(direction)) {
-            setTileFromNextTile(index, position, direction)
+            setTileFromNextTile(newTiles, index, position, direction)
         }
+        return newTiles
     }
 
     // gets the indices to be shifted in a given direction
@@ -143,11 +134,11 @@ class Board(private val tiles: Array<Array<GameTile>>) {
     }
 
     // sets the current tile of the array to the next tile, given the direction
-    private fun setTileFromNextTile(index: Int,  position: Position, direction: Direction) {
+    private fun setTileFromNextTile(tiles: Array<Array<GameTile>>, index: Int,  position: Position, direction: Direction) {
         val difference = getDifference(direction)
         val currentTilePosition: Coordinates = getCurrentTilePositionInShift(direction, position, index)
         val nextTilePosition: Coordinates = getNextTilePositionInShift(direction, position, index, difference)
-        setTile(currentTilePosition, getTile(nextTilePosition))
+        setTile(tiles, currentTilePosition, getTile(nextTilePosition))
     }
 
     // gets the current tile position based on current row/col index and the current step index) of the shift
@@ -187,29 +178,36 @@ class Board(private val tiles: Array<Array<GameTile>>) {
         val rowValue = position.row.value
         val colValue = position.col.value
 
-        return if (outgoingDirection == VerticalDirection.UP && rowValue > 0) {
+        val isAboveValid = outgoingDirection == VerticalDirection.UP && rowValue > 0
+        val isBelowValid = outgoingDirection == VerticalDirection.DOWN && rowValue < this.height - 1
+        val isLeftValid = outgoingDirection == HorizontalDirection.LEFT && colValue > 0
+        val isRightValid = outgoingDirection == HorizontalDirection.RIGHT && colValue < this.width - 1
+
+        return if (isAboveValid) {
             position.copyWithNewRow(rowValue - 1)
-        } else if (outgoingDirection == VerticalDirection.DOWN && rowValue < this.height - 1) {
+        } else if (isBelowValid) {
             position.copyWithNewRow(rowValue + 1)
-        } else if (outgoingDirection == HorizontalDirection.LEFT && colValue > 0) {
+        } else if (isLeftValid) {
             position.copyWithNewCol(colValue - 1)
-        } else if (outgoingDirection == HorizontalDirection.RIGHT && colValue < this.width - 1) {
+        } else if (isRightValid) {
             position.copyWithNewCol(colValue + 1)
         } else {
             null
         }
     }
 
-    // sets the given tile at the given coordinates
-    private fun setTile(position: Coordinates, tile: GameTile) {
+    /**
+     * Sets the tile at the given position.
+     */
+    private fun setTile(tiles: Array<Array<GameTile>>, position: Coordinates, tile: GameTile) {
         val row = tiles[position.row.value]
         row[position.col.value] = tile
     }
 
-    // throws an illegal argument exception if the given position noting the row/col is not slideable
-    private fun checkSlideable(positionToBeSlid: Position) {
-        if ((positionToBeSlid.value % 2 != 0)) {
-            throw IllegalArgumentException("Row/col ${positionToBeSlid.value} is not slideable.")
+    private fun copyOfTiles(): Array<Array<GameTile>> {
+        return Array(this.height) { row -> Array(this.width) { col ->
+            getTile(Coordinates.fromRowAndValue(row, col)).copy()
+            }
         }
     }
 }

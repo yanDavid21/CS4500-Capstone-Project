@@ -1,24 +1,31 @@
 package Common.tile
 
+/**
+ * Represents the cardinal directions of UP, DOWN, LEFT, RIGHT for describing slides and directions on a path.
+ */
 interface Direction {
 
+    /**
+     * Returns a new direction after applying the given degree to this direction.
+     */
     fun rotateBy(degree: Degree): Direction {
         return fromDegree(this.getDegree().add(degree))
     }
 
-    fun getDegree(): Degree {
-        return when(this) {
-            HorizontalDirection.RIGHT -> Degree.ZERO
-            VerticalDirection.UP -> Degree.NINETY
-            HorizontalDirection.LEFT -> Degree.ONE_EIGHTY
-            VerticalDirection.DOWN -> Degree.TWO_SEVENTY
-            else -> throw IllegalArgumentException("Invalid direction")
-        }
-    }
-
+    /**
+     * Returns the opposite of this direction.
+     */
     fun reverse(): Direction
 
+    /**
+     * Returns the default degree of a direction, used for rotation and the mapping between direction and degree in a path.
+     */
+    fun getDegree(): Degree
+
     companion object {
+        /**
+         * Returns the default direction from a degree, used for rotation and the mapping between direction and degree in a path.
+         */
         fun fromDegree(degree: Degree): Direction {
             return when(degree) {
                 Degree.ZERO -> HorizontalDirection.RIGHT
@@ -30,9 +37,18 @@ interface Direction {
     }
 
 }
-
+/**
+ * Represents LEFT or RIGHT in slides and in path directions.
+ */
 enum class HorizontalDirection: Direction {
     LEFT, RIGHT;
+
+    override fun getDegree(): Degree {
+        return when(this) {
+            RIGHT -> Degree.ZERO
+            LEFT -> Degree.ONE_EIGHTY
+        }
+    }
 
     override fun reverse(): Direction {
         return when(this) {
@@ -42,8 +58,18 @@ enum class HorizontalDirection: Direction {
     }
 }
 
+/**
+ * Represents UP or DOWN in slides and in path directions.
+ */
 enum class VerticalDirection: Direction {
     UP, DOWN;
+
+    override fun getDegree(): Degree {
+        return when(this) {
+            UP -> Degree.NINETY
+            DOWN -> Degree.TWO_SEVENTY
+        }
+    }
 
     override fun reverse(): Direction {
         return when(this) {

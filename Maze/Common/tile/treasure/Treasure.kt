@@ -1,5 +1,8 @@
 package Common.tile.treasure
 
+/**
+ * Represents a unordered pair of Gems.
+ */
 data class Treasure(val gem1: Gem, val gem2: Gem) {
 
     override fun equals(other: Any?): Boolean {

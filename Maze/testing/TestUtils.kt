@@ -1,5 +1,7 @@
 package testing
 
+import Common.board.Board
+import Common.board.Coordinates
 import Common.tile.Degree
 import Common.tile.GameTile
 import Common.tile.Path
@@ -9,11 +11,13 @@ import Common.tile.treasure.Treasure
 object TestUtils {
 
     fun getTreasuresFromStrings(treasures: List<List<List<String>>>): List<List<Treasure>> {
-        return treasures.map { it.map { pair ->
-            val gem1 = Gem.valueOf(pair[0].toUpperCase().replace("-","_"))
-            val gem2 = Gem.valueOf(pair[1].toUpperCase().replace("-","_"))
-            Treasure(gem1, gem2)
-        } }
+        return treasures.map { it.map { pair -> getTreasureFromString(pair[0], pair[1]) } }
+    }
+
+    fun getTreasureFromString(image1: String, image2: String): Treasure {
+        val gem1 = Gem.valueOf(image1.toUpperCase().replace("-","_"))
+        val gem2 = Gem.valueOf(image2.toUpperCase().replace("-","_"))
+        return Treasure(gem1, gem2)
     }
 
     fun getTilesFromConnectorsAndTreasures(connectors: List<List<String>>,
@@ -40,5 +44,15 @@ object TestUtils {
             "┼" -> GameTile(Path.CROSS, Degree.ZERO, treasure)
             else -> throw IllegalArgumentException("$string is not a valid connector")
         }
+    }
+
+    fun getTilesInRow(rowIndex: Int, board: Board): Array<GameTile> {
+        return (0 .. 6)
+            .map { board.getTile(Coordinates.fromRowAndValue(rowIndex, it)) }.toTypedArray()
+    }
+
+    fun getTilesInCol(colIndex: Int, board: Board): Array<GameTile> {
+        return (0 .. 6)
+            .map { board.getTile(Coordinates.fromRowAndValue(it, colIndex)) }.toTypedArray()
     }
 }

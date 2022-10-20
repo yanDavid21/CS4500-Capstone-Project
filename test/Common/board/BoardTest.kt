@@ -6,11 +6,12 @@ import Common.tile.*
 import Common.tile.treasure.Gem
 import Common.tile.treasure.Treasure
 import org.junit.Assert
+import org.junit.Assert.assertEquals
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
 import org.junit.jupiter.api.assertThrows
-import kotlin.test.assertEquals
-
+import testing.TestUtils.getTilesInCol
+import testing.TestUtils.getTilesInRow
 
 @TestInstance(TestInstance.Lifecycle.PER_METHOD)
 internal class BoardTest {
@@ -29,23 +30,32 @@ internal class BoardTest {
         val tiles = createTiles()
         val board = createBoard(tiles)
         val spareTile = GameTile(Path.T, Degree.ZERO, Treasure(Gem.AMETRINE, Gem.AMETHYST))
-        val spareTile2 = GameTile(Path.CROSS, Degree.NINETY, Treasure(Gem.AMETRINE, Gem.AMETHYST))
 
         // ACT
-        board.slideRowAndInsert(RowPosition(0), HorizontalDirection.RIGHT, spareTile)
-        val newFirstRow = tiles[0]
-        val expectedTiles = getArrayWithElementInIndex(newFirstRow,0,  spareTile)
+        val boardAndTile = board.slideRowAndInsert(RowPosition(0), HorizontalDirection.RIGHT, spareTile)
+        val newBoard = boardAndTile.first
+        val spareTile2 = boardAndTile.second
+
+        val firstRow = tiles[0]
+        val expectedTiles = arrayOf(
+            spareTile, firstRow[0], firstRow[1], firstRow[2], firstRow[3], firstRow[4], firstRow[5]
+        )
 
         // ASSERT
-        Assert.assertArrayEquals(expectedTiles, newFirstRow)
+        Assert.assertArrayEquals(expectedTiles, getTilesInRow(0, newBoard))
 
         // ACT
-        board.slideRowAndInsert(RowPosition(2), HorizontalDirection.LEFT, spareTile2)
-        val newLastRow = tiles[2]
+        val boardAndTile2 = board.slideRowAndInsert(RowPosition(2), HorizontalDirection.LEFT, spareTile2)
+        val thirdRow = tiles[2]
+
+        val expectedThirdRow = arrayOf(
+            thirdRow[1], thirdRow[2], thirdRow[3], thirdRow[4], thirdRow[5], thirdRow[6], spareTile2
+        )
 
         // ASSERT
-        Assert.assertArrayEquals(getArrayWithElementInIndex(newLastRow, 6, spareTile2), newLastRow)
+        Assert.assertArrayEquals(expectedThirdRow, getTilesInRow(2, boardAndTile2.first))
     }
+
 
     @Test
     fun testSlideVerticalUP() {
@@ -53,11 +63,13 @@ internal class BoardTest {
         val board = createBoard(tiles)
         val spareTile = GameTile(Path.T, Degree.ZERO, Treasure(Gem.AMETRINE, Gem.AMETHYST))
 
-        board.slideColAndInsert(ColumnPosition(0), VerticalDirection.UP, spareTile)
-        val newFirstCol = tiles.map { it[0] }.toTypedArray()
-        val expectedTiles = getArrayWithElementInIndex(newFirstCol, 6, spareTile)
-        Assert.assertArrayEquals(expectedTiles, newFirstCol)
+        val newBoardAndTile = board.slideColAndInsert(ColumnPosition(0), VerticalDirection.UP, spareTile)
+        val newBoard = newBoardAndTile.first
 
+        val expectedTiles = arrayOf(
+            tiles[1][0], tiles[2][0], tiles[3][0], tiles[4][0], tiles[5][0], tiles[6][0], spareTile
+        )
+        Assert.assertArrayEquals(expectedTiles, getTilesInCol(0, newBoard))
     }
 
     @Test
@@ -66,10 +78,13 @@ internal class BoardTest {
         val board = createBoard(tiles)
         val spareTile2 = GameTile(Path.CROSS, Degree.NINETY, Treasure(Gem.AMETRINE, Gem.AMETHYST))
 
-        board.slideColAndInsert(ColumnPosition(6), VerticalDirection.DOWN, spareTile2)
-        val newLastCol = tiles.map { it[6] }.toTypedArray()
-        Assert.assertArrayEquals(getArrayWithElementInIndex(newLastCol, 0, spareTile2), newLastCol)
+        val newBoardAndTile = board.slideColAndInsert(ColumnPosition(6), VerticalDirection.DOWN, spareTile2)
+        val expectedTiles = arrayOf(
+            spareTile2, tiles[0][6], tiles[1][6], tiles[2][6], tiles[3][6], tiles[4][6], tiles[5][6]
+        )
+        Assert.assertArrayEquals(expectedTiles, getTilesInCol(6, newBoardAndTile.first))
     }
+
 
 
     @Test
@@ -114,17 +129,5 @@ internal class BoardTest {
             Coordinates.fromRowAndValue(6, 4), Coordinates.fromRowAndValue(6,5),
         Coordinates.fromRowAndValue(6,6)), reachableFromTopRight)
     }
-
-
-
-
-
-    private fun <T> getArrayWithElementInIndex(array: Array<T>, index: Int, element: T): Array<T> {
-        val copy = array.copyOf()
-        copy[index] = element
-        return copy
-    }
-
-
 }
 

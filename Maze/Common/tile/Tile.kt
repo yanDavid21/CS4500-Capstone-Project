@@ -1,21 +1,24 @@
 package Common.tile
 
-import Common.Player
 import Common.tile.treasure.Treasure
 import java.util.*
 
-data class GameTile(val path: Path, var degree: Degree, val treasure: Treasure) {
-    private var players  = mutableSetOf<Player>()
-    private lateinit var incomingDirections: Set<Direction>
-    private lateinit var outgoingDirections: Set<Direction>
+/**
+ * Represents a tile on a Maze Board. Every tile has a path, degree for which it's been rotated, and treasure for players
+ * to collect. A tile has outgoing and incoming directions (the inverse of outgoing) to determine connectability with
+ * other tiles.
+ */
+data class GameTile(val path: Path, val degree: Degree, val treasure: Treasure) {
+    private val outgoingDirections: Set<Direction> = path.getDefaultOutgoingDirections().map {
+            outGoingDirection -> outGoingDirection.rotateBy(degree)
+    }.toSet()
+    private val incomingDirections: Set<Direction> = outgoingDirections.map { outgoingDirection -> outgoingDirection.reverse() }.toSet()
 
-    init {
-        recomputeDirections()
-    }
-
-    fun rotate(degree: Degree) {
-        this.degree = this.degree.add(degree)
-        recomputeDirections()
+    /**
+     * Rotates the game tile by the given degree, returning a new GameTile.
+     */
+    fun rotate(degree: Degree): GameTile {
+        return GameTile(this.path, this.degree.add(degree), this.treasure)
     }
 
     /**
@@ -57,24 +60,26 @@ data class GameTile(val path: Path, var degree: Degree, val treasure: Treasure) 
         return this.incomingDirections.contains(incomingDirection)
     }
 
-    fun addPlayerToTile(player: Player) {
-        this.players.add(player)
-    }
-
-    fun removePlayerFromTile(player: Player) {
-        this.players.remove(player)
-    }
-
-    fun hasCertainPlayer(player: Player): Boolean {
-        return this.players.contains(player)
-    }
-
-    fun getPlayers(): Set<Player> {
-        return this.players.toSet()
-    }
-
     override fun toString(): String {
-        return "($path, $degree)"
+        return when(this.path) {
+            Path.VERTICAL -> when(this.degree) {
+                Degree.ZERO, Degree.ONE_EIGHTY -> "│"
+                Degree.NINETY, Degree.TWO_SEVENTY -> "─"
+            }
+            Path.UP_RIGHT -> when(this.degree) {
+                Degree.ZERO -> "└"
+                Degree.NINETY -> "┘"
+                Degree.ONE_EIGHTY -> "┐"
+                Degree.TWO_SEVENTY -> "┌"
+            }
+            Path.CROSS -> "┼"
+            Path.T -> when(this.degree) {
+                Degree.ZERO -> "┬"
+                Degree.NINETY -> "├"
+                Degree.ONE_EIGHTY -> "┴"
+                Degree.TWO_SEVENTY -> "┤"
+            }
+        }
     }
 
     override fun hashCode(): Int {
@@ -86,13 +91,6 @@ data class GameTile(val path: Path, var degree: Degree, val treasure: Treasure) 
             return this.treasure.equals(other.treasure) && this.path.equals(other.path)
         }
         return false
-    }
-
-    private fun recomputeDirections() {
-        outgoingDirections = path.getDefaultOutgoingDirections().mapTo(mutableSetOf()) {
-                outGoingDirection -> outGoingDirection.rotateBy(degree)
-        }
-        incomingDirections = outgoingDirections.mapTo(mutableSetOf()) { outgoingDirection -> outgoingDirection.reverse() }
     }
 }
 

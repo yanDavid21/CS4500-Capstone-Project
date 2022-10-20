@@ -2,6 +2,8 @@ package Common
 
 import Common.board.Board
 import Common.board.Coordinates
+import Common.player.BaseColor
+import Common.player.Player
 import Common.tile.Degree
 import Common.tile.GameTile
 import Common.tile.Path
@@ -12,29 +14,26 @@ import java.util.*
 
 object TestData {
 
-    fun createRefereeWithOnePlayer(player: Player, player1Pos: Coordinates): Referee {
+    fun createRefereeWithPlayers(vararg players: Player): GameState {
         val tiles = createTiles()
-        val board = createBoard(tiles)
-        board.getTile(player1Pos).addPlayerToTile(player)
 
-        return Referee(board, createSpareTile(), listOf(player))
+        val board = createBoard(tiles)
+
+        return GameState(board, createSpareTile(), players.toList())
     }
 
-    fun createReferee(tiles: Array<Array<GameTile>>): Referee {
+    fun createReferee(tiles: Array<Array<GameTile>>): GameState {
         val player1 = createPlayer1()
-        tiles[0][0].addPlayerToTile(createPlayer1())
 
         val player2 = createPlayer2()
-        tiles[0][2].addPlayerToTile(player2)
 
         val player3 = createPlayer3()
-        tiles[6][6].addPlayerToTile(player3)
 
         val board = createBoard(tiles)
-        return Referee(board, createSpareTile(), listOf(player1, player2, player3))
+        return GameState(board, createSpareTile(), listOf(player1, player2, player3))
     }
 
-    fun createReferee(): Referee {
+    fun createReferee(): GameState {
         val tiles = createTiles()
         return createReferee(tiles)
     }
@@ -48,9 +47,19 @@ object TestData {
         return GameTile(Path.T, Degree.ONE_EIGHTY, Treasure(Gem.AMETHYST, Gem.AMETRINE))
     }
 
+    fun createSpareTile(path: Path): GameTile {
+        return GameTile(path, Degree.ZERO, Treasure(Gem.AMETHYST, Gem.AMETRINE))
+    }
+
 
     fun createBoard(tiles: Array<Array<GameTile>>): Board {
         return Board(tiles)
+    }
+
+    fun createBoard(connectors: List<List<String>>): Board {
+        val tiles = TestUtils.getTilesFromConnectorsAndTreasures(connectors,
+            TestUtils.getTreasuresFromStrings(this.treasureStrings))
+        return createBoard(tiles)
     }
 
     fun createBoard(): Board {
@@ -67,8 +76,8 @@ object TestData {
             listOf("┘", "┌", "│",  "┐", "└", "─", "┬")
     )
 
-    val treasureStrings = listOf(listOf(listOf("grossular-garnet", "black-obsidian"), listOf("tigers-eye", "yellow-beryl-oval"),
-            listOf("chrysoberyl-cushion", "color-change-oval"), listOf("sunstone", "prasiolite"),
+    val treasureStrings = listOf(
+        listOf(listOf("grossular-garnet", "black-obsidian"), listOf("tigers-eye", "yellow-beryl-oval"),listOf("chrysoberyl-cushion", "color-change-oval"), listOf("sunstone", "prasiolite"),
             listOf("citrine", "purple-oval"), listOf("emerald", "heliotrope"), listOf("zircon", "pink-spinel-cushion")),
             listOf(listOf("grossular-garnet", "goldstone"), listOf("ruby-diamond-profile", "zoisite"), listOf("star-cabochon", "ruby"),
                 listOf("chrome-diopside", "beryl"), listOf("moonstone", "rock-quartz"), listOf("kunzite-oval", "green-beryl"),
@@ -86,28 +95,51 @@ object TestData {
                 listOf("apricot-square-radiant", "jaspilite"), listOf("magnesite", "moonstone"), listOf("ametrine", "ruby"), listOf("citrine", "diamond"),
                 listOf("blue-ceylon-sapphire", "chrysoberyl-cushion")))
 
+    fun createPlayer(position: Coordinates, treasurePos: Coordinates, homePos: Coordinates): Player {
+        return Player(
+            UUID.fromString("f9728f95-96db-4cf4-a9c1-13113635d312"),
+            position,
+            treasurePos,
+            homePos,
+            BaseColor.BLACK
+        )
+    }
+
     fun createPlayer1(): Player {
         return Player(
             UUID.fromString("f9728f95-96db-4cf4-a9c1-13113635d312"),
-            Treasure(Gem.BLACK_OBSIDIAN, Gem.GROSSULAR_GARNET),
-            createTiles()[0][0]
+            Coordinates.fromRowAndValue(0,0),
+            Coordinates.fromRowAndValue(1,1),
+            Coordinates.fromRowAndValue(5, 5),
+            BaseColor.PURPLE
         )
     }
 
     fun createPlayer2(): Player {
         return Player(
             UUID.fromString("f9728f95-96db-4cf4-a9c1-13113635d312"),
-            Treasure(Gem.HEMATITE, Gem.HACKMANITE),
-            createTiles()[0][2]
+            Coordinates.fromRowAndValue(0, 2),
+            Coordinates.fromRowAndValue(3,3),
+            Coordinates.fromRowAndValue(3, 5),
+            BaseColor.GREEN
         )
     }
 
     fun createPlayer3(): Player {
         return Player(
             UUID.fromString("f25bc452-5ccc-4d29-8ad1-a76f89f42c24"),
-            Treasure(Gem.ALEXANDRITE, Gem.ZIRCON),
-            createTiles()[6][6]
+            Coordinates.fromRowAndValue(6,6),
+            Coordinates.fromRowAndValue(5,5),
+            Coordinates.fromRowAndValue(5, 5),
+            BaseColor.BLACK
         )
     }
 
+    private fun changeTile(tiles: Array<Array<GameTile>>, pos: Coordinates, func: (GameTile) -> GameTile) {
+        changeTile(tiles, pos.row.value, pos.col.value, func)
+    }
+
+    private fun changeTile(tiles: Array<Array<GameTile>>, row:Int, col: Int, func: (GameTile) -> GameTile) {
+        tiles[row][col] = func(tiles[row][col])
+    }
 }

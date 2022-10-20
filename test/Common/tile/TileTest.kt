@@ -1,10 +1,8 @@
 package Common.tile
 
-import Common.Player
 import Common.tile.treasure.Gem
 import Common.tile.treasure.Treasure
 import org.junit.jupiter.api.Test
-import java.util.*
 import kotlin.test.assertEquals
 
 
@@ -16,8 +14,6 @@ internal class TileTest {
     private val D = VerticalDirection.DOWN
 
     private val treasure = Treasure(Gem.AMETHYST, Gem.AMETRINE)
-    private val homeTile = GameTile(Path.CROSS, Degree.NINETY, Treasure(Gem.ZIRCON, Gem.RAW_BERYL))
-    private val testPlayer = Player(UUID.randomUUID(),treasure,homeTile,false)
 
     @Test
     fun testGetOutComingDirectionsNoRotation() {
@@ -50,11 +46,9 @@ internal class TileTest {
         assertEquals(setOf(U, R), tile.getOutgoingDirections())
         assertEquals(setOf(D, L), tile.getIncomingDirections())
 
-        tile.rotate(Degree.NINETY)
-        assertEquals(setOf(L, U), tile.getOutgoingDirections())
-        assertEquals(setOf(R, D), tile.getIncomingDirections())
-
-        tile.rotate(Degree.NINETY)
+        val newTile = tile.rotate(Degree.NINETY)
+        assertEquals(setOf(L, U), newTile.getOutgoingDirections())
+        assertEquals(setOf(R, D), newTile.getIncomingDirections())
     }
 
     @Test
@@ -160,33 +154,12 @@ internal class TileTest {
         assertEquals(false, GameTile(Path.UP_RIGHT, Degree.ONE_EIGHTY, treasure).canBeReachedFrom(VerticalDirection.DOWN))
     }
 
-
     @Test
-    fun testAddPlayerToTile() {
-        val gameTile = GameTile(Path.UP_RIGHT, Degree.ZERO, treasure)
-        assertEquals(gameTile.getPlayers().size, 0)
-        assertEquals(gameTile.hasCertainPlayer(testPlayer), false)
-        gameTile.addPlayerToTile(testPlayer)
-        assertEquals(gameTile.getPlayers().size, 1)
-        assertEquals(gameTile.hasCertainPlayer(testPlayer), true)
-    }
-
-    @Test
-    fun removePlayerFromTile() {
-        val gameTile = GameTile(Path.UP_RIGHT, Degree.ZERO, treasure)
-        assertEquals(gameTile.hasCertainPlayer(testPlayer), false)
-        gameTile.addPlayerToTile(testPlayer)
-        assertEquals(gameTile.hasCertainPlayer(testPlayer), true)
-        gameTile.removePlayerFromTile(testPlayer)
-        assertEquals(gameTile.hasCertainPlayer(testPlayer), false)
-    }
-
-    @Test
-    fun hasCertainPlayer() {
-        val gameTile = GameTile(Path.UP_RIGHT, Degree.ZERO, treasure)
-        assertEquals(gameTile.hasCertainPlayer(testPlayer), false)
-        gameTile.addPlayerToTile(testPlayer)
-        assertEquals(gameTile.hasCertainPlayer(testPlayer), true)
+    fun testToString() {
+        assertEquals("│", GameTile(Path.VERTICAL, Degree.ZERO, treasure).toString())
+        assertEquals("│", GameTile(Path.VERTICAL, Degree.ONE_EIGHTY, treasure).toString())
+        assertEquals("─", GameTile(Path.VERTICAL, Degree.NINETY, treasure).toString())
+        assertEquals("─", GameTile(Path.VERTICAL, Degree.TWO_SEVENTY, treasure).toString())
     }
 }
 
