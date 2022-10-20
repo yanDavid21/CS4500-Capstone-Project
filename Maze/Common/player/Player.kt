@@ -13,15 +13,6 @@ data class Player(val id: UUID,
                   val color: Color,
                   var treasureFound: Boolean = false) {
 
-    init {
-        if (goalPosition.row.isSlideable() || goalPosition.col.isSlideable() ||
-                    homePosition.row.isSlideable() || homePosition.col.isSlideable()) {
-            throw IllegalArgumentException("A player's home and treasure tiles should not be slideable. " +
-                    "Given [treasure: $goalPosition], [home: $goalPosition].")
-        }
-
-    }
-
     override fun equals(other: Any?): Boolean {
         return other is Player && other.id == this.id
     }
