@@ -1,14 +1,15 @@
 package Players
 
+import Common.Action
 import Common.ColumnAction
 import Common.RowAction
 import Common.TestData
 import Common.board.ColumnPosition
 import Common.board.Coordinates
 import Common.board.RowPosition
-import Common.tile.Degree
-import Common.tile.HorizontalDirection
-import Common.tile.VerticalDirection
+import Common.tile.*
+import Common.tile.treasure.Gem
+import Common.tile.treasure.Treasure
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 
@@ -26,16 +27,8 @@ internal class RiemannTest {
 
     @Test
     fun testFindMoveTreasurelIsImmediatlyReachable() {
-        val board = TestData.createBoard()
-
-        val player = TestData.createPlayer(
-            Coordinates.fromRowAndValue(0, 1),
-            board.getTile(Coordinates.fromRowAndValue(0, 2)).treasure,
-            board.getTile(Coordinates.fromRowAndValue(1,1))
-        )
-        val strategy = Riemann(player)
-
-        val move = strategy.decideMove(board, TestData.createSpareTile())
+        val move = getMoveWithPlayerAndTreasureAtPosition(Coordinates.fromRowAndValue(0, 1),
+            Coordinates.fromRowAndValue(0, 2), TestData.createSpareTile())
 
         val expectedMove = RowAction(RowPosition(0), HorizontalDirection.LEFT, Degree.ZERO,
             Coordinates.fromRowAndValue(0, 1))
@@ -67,20 +60,56 @@ internal class RiemannTest {
 
     @Test
     fun testFindTreasureIsReachableThroughPath() {
-        val board = TestData.createBoard()
-        val player = TestData.createPlayer(
-            Coordinates.fromRowAndValue(2,3),
-            board.getTile(Coordinates.fromRowAndValue(2,2)).treasure,
-            board.getTile(Coordinates.fromRowAndValue(1,1))
-        )
-
-        val strategy = Riemann(player)
-
-        val move = strategy.decideMove(board, TestData.createSpareTile())
+        val move = getMoveWithPlayerAndTreasureAtPosition(Coordinates.fromRowAndValue(2, 3),
+            Coordinates.fromRowAndValue(2, 2), TestData.createSpareTile())
 
         val expected = ColumnAction(ColumnPosition(2), VerticalDirection.DOWN, Degree.ZERO,
             Coordinates.fromRowAndValue(3,2))
 
         assertEquals(expected, move)
+    }
+
+    @Test
+    fun testFindTreasureIsReachableAfterPlayerKnockedOff() {
+        val move = getMoveWithPlayerAndTreasureAtPosition(
+            Coordinates.fromRowAndValue(2,6),
+            Coordinates.fromRowAndValue(3, 0),
+            GameTile(Path.UP_RIGHT, Degree.ZERO, Treasure(Gem.AMETHYST, Gem.AMETRINE))
+        )
+
+        assertEquals(
+            RowAction(RowPosition(2), HorizontalDirection.RIGHT, Degree.ONE_EIGHTY, Coordinates.fromRowAndValue(3,0)),
+            move
+        )
+    }
+
+    @Test
+    fun testFindTreasureIsReachableAfterRotatedTileIsInserted() {
+
+    }
+
+    @Test
+    fun testGetToTopLeftWhenTreasureIsNotReachable() {
+        val move = getMoveWithPlayerAndTreasureAtPosition(
+            Coordinates.fromRowAndValue(0,1),
+            Coordinates.fromRowAndValue(6,6),
+            TestData.createSpareTile()
+        )
+
+        val expected = RowAction(RowPosition(0), HorizontalDirection.LEFT, Degree.ZERO, Coordinates.fromRowAndValue(0, 1))
+        assertEquals(expected, move)
+    }
+
+    private fun getMoveWithPlayerAndTreasureAtPosition(playerPosition: Coordinates, treasurePosition: Coordinates, spare: GameTile): Action {
+        val board = TestData.createBoard()
+        val player = TestData.createPlayer(
+            playerPosition,
+            board.getTile(treasurePosition).treasure,
+            board.getTile(Coordinates.fromRowAndValue(1,1))
+        )
+
+        val strategy = Riemann(player)
+
+        return strategy.decideMove(board, spare)
     }
 }

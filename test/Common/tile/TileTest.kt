@@ -1,6 +1,5 @@
 package Common.tile
 
-import Common.TestData
 import Common.tile.treasure.Gem
 import Common.tile.treasure.Treasure
 import org.junit.jupiter.api.Test
@@ -15,8 +14,6 @@ internal class TileTest {
     private val D = VerticalDirection.DOWN
 
     private val treasure = Treasure(Gem.AMETHYST, Gem.AMETRINE)
-    private val homeTile = GameTile(Path.CROSS, Degree.NINETY, Treasure(Gem.ZIRCON, Gem.RAW_BERYL))
-    private val testPlayer = TestData.createPlayer2()
 
     @Test
     fun testGetOutComingDirectionsNoRotation() {
@@ -157,6 +154,12 @@ internal class TileTest {
         assertEquals(false, GameTile(Path.UP_RIGHT, Degree.ONE_EIGHTY, treasure).canBeReachedFrom(VerticalDirection.DOWN))
     }
 
-
+    @Test
+    fun testToString() {
+        assertEquals("│", GameTile(Path.VERTICAL, Degree.ZERO, treasure).toString())
+        assertEquals("│", GameTile(Path.VERTICAL, Degree.ONE_EIGHTY, treasure).toString())
+        assertEquals("─", GameTile(Path.VERTICAL, Degree.NINETY, treasure).toString())
+        assertEquals("─", GameTile(Path.VERTICAL, Degree.TWO_SEVENTY, treasure).toString())
+    }
 }
 

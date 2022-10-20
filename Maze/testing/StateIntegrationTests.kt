@@ -67,7 +67,7 @@ data class State(
     val board: BoardTest,
     val spare: TileTest,
     val plmt: List<PlayerTest>,
-    val last: String?
+    val last: List<String>
 )
 
 enum class DirectionTest {

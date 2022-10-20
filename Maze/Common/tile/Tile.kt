@@ -61,22 +61,24 @@ data class GameTile(val path: Path, val degree: Degree, val treasure: Treasure) 
     }
 
     override fun toString(): String {
-        return when(this) {
-            GameTile(Path.VERTICAL, Degree.ZERO, treasure), GameTile(Path.VERTICAL, Degree.ONE_EIGHTY, treasure) -> "│"
-            GameTile(Path.VERTICAL, Degree.NINETY, treasure), GameTile(Path.VERTICAL, Degree.TWO_SEVENTY, treasure) -> "─"
-            GameTile(Path.UP_RIGHT, Degree.ONE_EIGHTY, treasure) -> "┐"
-            GameTile(Path.UP_RIGHT, Degree.ZERO, treasure) -> "└"
-            GameTile(Path.UP_RIGHT, Degree.TWO_SEVENTY, treasure) -> "┌"
-            GameTile(Path.UP_RIGHT, Degree.NINETY, treasure) -> "┘"
-            GameTile(Path.T, Degree.ZERO, treasure) -> "┬"
-            GameTile(Path.T, Degree.NINETY, treasure) -> "├"
-            GameTile(Path.T, Degree.ONE_EIGHTY, treasure) -> "┴"
-            GameTile(Path.T, Degree.TWO_SEVENTY, treasure) -> "┤"
-            GameTile(Path.CROSS, Degree.ZERO, treasure),
-            GameTile(Path.CROSS, Degree.NINETY, treasure),
-            GameTile(Path.CROSS, Degree.ONE_EIGHTY, treasure),
-            GameTile(Path.CROSS, Degree.TWO_SEVENTY, treasure)-> "┼"
-            else -> throw IllegalArgumentException("$this is not a valid connector")
+        return when(this.path) {
+            Path.VERTICAL -> when(this.degree) {
+                Degree.ZERO, Degree.ONE_EIGHTY -> "│"
+                Degree.NINETY, Degree.TWO_SEVENTY -> "─"
+            }
+            Path.UP_RIGHT -> when(this.degree) {
+                Degree.ZERO -> "└"
+                Degree.NINETY -> "┘"
+                Degree.ONE_EIGHTY -> "┐"
+                Degree.TWO_SEVENTY -> "┌"
+            }
+            Path.CROSS -> "┼"
+            Path.T -> when(this.degree) {
+                Degree.ZERO -> "┬"
+                Degree.NINETY -> "├"
+                Degree.ONE_EIGHTY -> "┴"
+                Degree.TWO_SEVENTY -> "┤"
+            }
         }
     }
 
