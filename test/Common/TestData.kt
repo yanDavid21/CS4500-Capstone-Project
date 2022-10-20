@@ -52,6 +52,12 @@ object TestData {
         return Board(tiles)
     }
 
+    fun createBoard(connectors: List<List<String>>): Board {
+        val tiles = TestUtils.getTilesFromConnectorsAndTreasures(connectors,
+            TestUtils.getTreasuresFromStrings(this.treasureStrings))
+        return createBoard(tiles)
+    }
+
     fun createBoard(): Board {
         return Board(createTiles())
     }
@@ -66,8 +72,8 @@ object TestData {
             listOf("┘", "┌", "│",  "┐", "└", "─", "┬")
     )
 
-    val treasureStrings = listOf(listOf(listOf("grossular-garnet", "black-obsidian"), listOf("tigers-eye", "yellow-beryl-oval"),
-            listOf("chrysoberyl-cushion", "color-change-oval"), listOf("sunstone", "prasiolite"),
+    val treasureStrings = listOf(
+        listOf(listOf("grossular-garnet", "black-obsidian"), listOf("tigers-eye", "yellow-beryl-oval"),listOf("chrysoberyl-cushion", "color-change-oval"), listOf("sunstone", "prasiolite"),
             listOf("citrine", "purple-oval"), listOf("emerald", "heliotrope"), listOf("zircon", "pink-spinel-cushion")),
             listOf(listOf("grossular-garnet", "goldstone"), listOf("ruby-diamond-profile", "zoisite"), listOf("star-cabochon", "ruby"),
                 listOf("chrome-diopside", "beryl"), listOf("moonstone", "rock-quartz"), listOf("kunzite-oval", "green-beryl"),
@@ -85,7 +91,7 @@ object TestData {
                 listOf("apricot-square-radiant", "jaspilite"), listOf("magnesite", "moonstone"), listOf("ametrine", "ruby"), listOf("citrine", "diamond"),
                 listOf("blue-ceylon-sapphire", "chrysoberyl-cushion")))
 
-    fun createPlayer(position: Coordinates, treasure: Treasure, home: GameTile): Player {
+    fun createPlayer(position: Coordinates, treasurePos: Coordinates, homePos: Coordinates): Player {
         return Player(
             UUID.fromString("f9728f95-96db-4cf4-a9c1-13113635d312"),
             position,
@@ -109,8 +115,8 @@ object TestData {
         return Player(
             UUID.fromString("f9728f95-96db-4cf4-a9c1-13113635d312"),
             Coordinates.fromRowAndValue(0, 2),
-            Treasure(Gem.HEMATITE, Gem.HACKMANITE),
-            createTiles()[0][2],
+            Coordinates.fromRowAndValue(0,0),
+            Coordinates.fromRowAndValue(0, 2),
             BaseColor.GREEN
         )
     }
@@ -119,8 +125,8 @@ object TestData {
         return Player(
             UUID.fromString("f25bc452-5ccc-4d29-8ad1-a76f89f42c24"),
             Coordinates.fromRowAndValue(6,6),
-            Treasure(Gem.ALEXANDRITE, Gem.ZIRCON),
-            createTiles()[6][6],
+            Coordinates.fromRowAndValue(5,5),
+            Coordinates.fromRowAndValue(6, 6),
             BaseColor.BLACK
         )
     }

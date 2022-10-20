@@ -69,7 +69,7 @@ class Board(private val tiles: Array<Array<GameTile>>) {
     // checks if slideable, throws Exception if not, slides a row or column, rotates by the degree, then inserts the spare tile,
     // returning the dislodged tile
     private fun slideAndInsertSpare(position: Position, direction: Direction, spareTile: GameTile): Pair<Board, GameTile> {
-        checkSlideable(position)
+        position.checkSlideable()
         val dislodgedTile = getDislodgedTile(position, direction)
 
         val newTiles = shiftByDirection(position,direction)

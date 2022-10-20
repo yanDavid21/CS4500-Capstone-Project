@@ -24,6 +24,20 @@ interface Position {
         }
     }
 
+    // throws an illegal argument exception if the given position noting the row/col is not slideable
+    fun checkSlideable() {
+        if (!isSlideable()) {
+            throw IllegalArgumentException("Row/col ${this.value} is not slideable.")
+        }
+    }
+
+
+    fun isSlideable(): Boolean {
+        return (this.value % 2 == 0)
+    }
+
+
+
     companion object {
         const val MIN_COL_INDEX = 0
         const val MIN_ROW_INDEX = 0

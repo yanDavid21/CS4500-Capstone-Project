@@ -42,9 +42,9 @@ internal class RiemannTest {
 
         // when player slides left, it can reach home
         val player = TestData.createPlayer(
-            Coordinates.fromRowAndValue(0, 2),
-            board.getTile(Coordinates.fromRowAndValue(0, 2)).treasure,
-            board.getTile(Coordinates.fromRowAndValue(1,1))
+            Coordinates.fromRowAndValue(1, 2),
+            Coordinates.fromRowAndValue(1, 2),
+            Coordinates.fromRowAndValue(2,1)
         )
         player.treasureFound = true
 
@@ -84,23 +84,31 @@ internal class RiemannTest {
     }
 
     @Test
-    fun testFindTreasureIsReachableAfterRotatedTileIsInserted() {
-
-    }
-
-    @Test
     fun testGetToTopLeftWhenTreasureIsNotReachable() {
-        val move = getMoveWithPlayerAndTreasureAtPosition(
-            Coordinates.fromRowAndValue(0,1),
-            Coordinates.fromRowAndValue(6,6),
-            TestData.createSpareTile()
+        val board = TestData.createBoard(tiles)
+
+        val player = TestData.createPlayer(
+            Coordinates.fromRowAndValue(0, 3),
+            Coordinates.fromRowAndValue(5,5),
+            Coordinates.fromRowAndValue(5,5)
         )
 
-        val expected = RowAction(RowPosition(0), HorizontalDirection.LEFT, Degree.ZERO, Coordinates.fromRowAndValue(0, 1))
+        val strategy = Riemann(player)
+
+        val move = strategy.decideMove(board, GameTile(Path.VERTICAL,Degree.ZERO, Treasure(Gem.AMETRINE, Gem.GOLDSTONE)))
+
+        val expected = ColumnAction(ColumnPosition(2), VerticalDirection.DOWN, Degree.NINETY, Coordinates.fromRowAndValue(0, 1))
         assertEquals(expected, move)
     }
 
-    private fun getMoveWithPlayerAndTreasureAtPosition(playerPosition: Coordinates, treasurePosition: Coordinates, spare: GameTile): Action {
+    @Test
+    fun testStrategyDoesNotUnmoveAction() {
+
+    }
+
+    private fun getMoveWithPlayerAndTreasureAtPosition(playerPosition: Coordinates,
+                                                       treasurePosition: Coordinates,
+                                                       spare: GameTile): Action {
         val board = TestData.createBoard()
         val player = TestData.createPlayer(
             playerPosition,
@@ -112,4 +120,13 @@ internal class RiemannTest {
 
         return strategy.decideMove(board, spare)
     }
+
+    private val tiles = listOf(
+        listOf("┐","└","│","─","┐","└","┌"),
+        listOf("─","┘","│","┘","┬","├","┴"),
+        listOf("┐","─","│","┤","┼","│","─"),
+        listOf("┤","└","┌","┘","┬","├","┴"),
+        listOf("┘","┼","│","─","┐","└","┌"),
+        listOf("─","┬","├","┴","┤","┼","│"),
+        listOf("┤","┐","└","┌","┘","┬","├"))
 }

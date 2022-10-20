@@ -1,8 +1,6 @@
 package Common.player
 
 import Common.board.Coordinates
-import Common.tile.GameTile
-import Common.tile.treasure.Treasure
 import java.util.*
 
 /**
@@ -10,8 +8,8 @@ import java.util.*
  */
 data class Player(val id: UUID,
                   var currentPosition: Coordinates,
-                  val goal: Treasure,
-                  val homeTile: GameTile,
+                  val goalPosition: Coordinates,
+                  val homePosition: Coordinates,
                   val color: Color,
                   var treasureFound: Boolean = false) {
 

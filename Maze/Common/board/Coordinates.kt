@@ -20,15 +20,6 @@ data class Coordinates(
     }
 
     /**
-     * Computes the Euclidian distance between two coordinates.
-     */
-    fun distanceTo(other: Coordinates): Double {
-        val deltaX= (this.row.value - other.row.value).toDouble()
-        val deltaY = (this.col.value - other.col.value).toDouble()
-        return sqrt(deltaX.pow(2) + deltaY.pow(2))
-    }
-
-    /**
      * Returns a copy of this with a new column value.
      */
     fun copyWithNewCol(colValue: Int): Coordinates {

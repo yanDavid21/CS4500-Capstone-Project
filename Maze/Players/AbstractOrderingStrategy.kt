@@ -1,10 +1,12 @@
 package Players
 
 import Common.*
-import Common.board.*
+import Common.board.ColumnPosition
+import Common.board.Coordinates
+import Common.board.Position
+import Common.board.RowPosition
 import Common.player.Player
 import Common.tile.Degree
-import Common.tile.GameTile
 import Common.tile.HorizontalDirection
 import Common.tile.VerticalDirection
 
@@ -23,9 +25,9 @@ abstract class AbstractOrderingStrategy(
     
 
     //TODO: GAMESTATE instead ? need past action
-    override fun decideMove(board: Board, spareTile: GameTile): Action {
-        return moveToGoalIfReachable(board, spareTile)
-            ?: tryToReachAllAlternativeTiles(board, spareTile)
+    override fun decideMove(playerState: PlayerState): Action {
+        return moveToGoalIfReachable(playerState)
+            ?: tryToReachAllAlternativeTiles(playerState)
             ?: Skip
     }
 
@@ -41,14 +43,14 @@ abstract class AbstractOrderingStrategy(
         val allCoordinatesInDesiredOrder = getAllCoordinates().sortedWith(comparator)
         
         return allCoordinatesInDesiredOrder.fold(null as MovingAction?) { action, coord ->
-            action ?: tryAllCombinationsToReachDesiredTile(board, spareTile,
-                isTileWeWant = { tile -> tile == board.getTile(coord)})
+            action ?: tryAllCombinationsToReachDesiredTile(playerState,
+                isTileWeWant = { coords -> coords == coord })
         }
     }
 
-    private fun tryAllCombinationsToReachDesiredTile(board: Board, spare: GameTile, isTileWeWant: (GameTile) -> Boolean): MovingAction? {
-        return findFirstRowSlideActionIfAny(board, spare, isTileWeWant) 
-            ?: findFirstColumnSlideActionIfAny(board, spare, isTileWeWant)
+    private fun tryAllCombinationsToReachDesiredTile(playerState: PlayerState, isTileWeWant: (Coordinates) -> Boolean): MovingAction? {
+        return findFirstRowSlideActionIfAny(playerState, isTileWeWant)
+            ?: findFirstColumnSlideActionIfAny(playerState, isTileWeWant)
     }
 
     private fun findFirstRowSlideActionIfAny(board: Board, spare: GameTile, isTileWeWant: (GameTile) -> Boolean): MovingAction? {
@@ -91,26 +93,32 @@ abstract class AbstractOrderingStrategy(
      * TODO: java doc, note game state
      */
     private fun doSlideAndCheckReachable(
-        board: Board,
-        spareTile: GameTile,
+        playerState: PlayerState,
         player: Player,
         doSlide: (GameState) -> Unit,
         createAction: (Coordinates) -> MovingAction,
         isTileWeWant: (GameTile) -> Boolean
     ): MovingAction? {
+        val (board, spareTile, lastAction) = playerState
         val state = GameState(board, spareTile, listOf(player))
         doSlide(state)
         val newBoard = state.getBoard()
         val reachablePositions = newBoard.getReachableTiles(player.currentPosition)
         return reachablePositions.fold(null as MovingAction?) { action, reachablePos ->
-            action ?: getActionToReachTile(newBoard, reachablePos, isTileWeWant, createAction)
+            action ?: getActionToReachTile(lastAction, reachablePos, isTileWeWant, createAction)
         }
     }
 
     private fun getActionToReachTile(board: Board, pos: Coordinates, isTileWeWant: (GameTile) -> Boolean,
                                      createAction: (Coordinates) -> MovingAction): MovingAction? {
-        val tile = board.getTile(pos)
-        return if (isTileWeWant(tile)) createAction(pos) else null
+        if (!isTileWeWant(pos)) {
+            return null
+        }
+        val action = createAction(pos)
+        if (lastAction != null && action.isUndoingAction(lastAction)) {
+            return null
+        }
+        return action
     }
 
     private fun getAllRows():List<RowPosition> {

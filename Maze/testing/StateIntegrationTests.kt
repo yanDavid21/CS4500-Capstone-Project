@@ -40,8 +40,8 @@ fun main() {
         val id = UUID.randomUUID()
         val goal = Treasure(Gem.GROSSULAR_GARNET, Gem.HACKMANITE) // random treasure
         val playerCoord = Coordinates.fromRowAndValue(it.current.`row#`, it.current.`column#`)
-        val homeTile = board.getTile(it.home.toCoordinate())
-        val player = Player(id, playerCoord, goal, homeTile, Color.valueOf(it.color))
+        val homeCoord = Coordinates.fromRowAndValue(it.home.`row#`, it.home.`column#`)
+        val player = Player(id, playerCoord, Coordinates.fromRowAndValue(0,0), homeCoord, Color.valueOf(it.color))
 
         player
     }
