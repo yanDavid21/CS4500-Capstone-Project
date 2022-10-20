@@ -26,8 +26,8 @@ internal class RiemannTest: AbstractOrderingStrategyTests() {
        )
 
        val expected = RowAction(
-           RowPosition(2),
-           HorizontalDirection.LEFT,
+           RowPosition(0),
+           HorizontalDirection.RIGHT,
            Degree.ZERO,
            Coordinates.fromRowAndValue(0, 0)
        )
@@ -49,8 +49,8 @@ internal class RiemannTest: AbstractOrderingStrategyTests() {
         val expected = RowAction(
             RowPosition(0),
             HorizontalDirection.RIGHT,
-            Degree.ONE_EIGHTY,
-            Coordinates.fromRowAndValue(0, 1)
+            Degree.NINETY,
+            Coordinates.fromRowAndValue(0, 0)
         )
 
         assertEquals(expected, move)

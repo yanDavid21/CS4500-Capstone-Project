@@ -15,19 +15,21 @@ abstract class AbstractOrderingStrategyTests {
 
     abstract fun createStrategy(player: Player): MazeStrategy
 
-
     @Test
     fun testFindMoveTreasurelIsImmediatlyReachable() {
-        /*
-        val move = getMoveWithPlayerAndTreasureAtPosition(Coordinates.fromRowAndValue(0, 1),
-            Coordinates.fromRowAndValue(0, 2), TestData.createSpareTile())
+        val move = getMoveWithPlayerAtPosition(
+            Coordinates.fromRowAndValue(1, 3),
+            Coordinates.fromRowAndValue(1, 4),
+            Coordinates.fromRowAndValue(5,5),
+            TestData.createBoard(),
+            TestData.createSpareTile(),
+            null
+        )
 
         val expectedMove = RowAction(RowPosition(0), HorizontalDirection.LEFT, Degree.ZERO,
-            Coordinates.fromRowAndValue(0, 1))
+            Coordinates.fromRowAndValue(1, 4))
 
         assertEquals(expectedMove, move)
-
-         */
     }
 
     @Test
@@ -36,9 +38,9 @@ abstract class AbstractOrderingStrategyTests {
 
         // when player slides left, it can reach home
         val player = TestData.createPlayer(
-            Coordinates.fromRowAndValue(1, 2),
-            Coordinates.fromRowAndValue(1, 2),
-            Coordinates.fromRowAndValue(2,1)
+            Coordinates.fromRowAndValue(1, 3),
+            Coordinates.fromRowAndValue(1, 4),
+            Coordinates.fromRowAndValue(1,2)
         )
         player.treasureFound = true
 
@@ -47,11 +49,10 @@ abstract class AbstractOrderingStrategyTests {
         val move = strategy.decideMove(PlayerState(board, TestData.createSpareTile(), null))
 
         val expectedMove = RowAction(RowPosition(0), HorizontalDirection.LEFT, Degree.ZERO,
-            Coordinates.fromRowAndValue(1, 1))
+            Coordinates.fromRowAndValue(1, 2))
 
         assertEquals(expectedMove, move)
     }
-
 
     @Test
     fun testFindTreasureIsReachableThroughPath() {
@@ -144,7 +145,7 @@ abstract class AbstractOrderingStrategyTests {
     }
 
     protected val tiles = listOf(
-        listOf("┐","└","│","─","┐","└","┌"),
+        listOf("┐","└","│","─","┐","└","─"),
         listOf("└","─","│","┘","┬","├","┴"),
         listOf("┐","─","│","┤","┼","│","─"),
         listOf("┤","└","┌","┘","┬","├","┴"),

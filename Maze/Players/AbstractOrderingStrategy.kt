@@ -1,13 +1,16 @@
 package Players
 
 import Common.*
-import Common.board.*
+import Common.board.ColumnPosition
+import Common.board.Coordinates
+import Common.board.Position
+import Common.board.RowPosition
 import Common.player.Player
 import Common.tile.Degree
 import Common.tile.HorizontalDirection
 import Common.tile.VerticalDirection
 
-typealias TileIdentifier = (Coordinates, Board) -> Boolean
+typealias TileIdentifier = (Coordinates) -> Boolean
 /**
  * To instantiate different comparator strategies.
  *
@@ -22,7 +25,6 @@ abstract class AbstractOrderingStrategy(
 ) : MazeStrategy {
     
 
-    //TODO: GAMESTATE instead ? need past action
     override fun decideMove(playerState: PlayerState): Action {
         return moveToGoalIfReachable(playerState)
             ?: tryToReachAllAlternativeTiles(playerState)
@@ -30,7 +32,7 @@ abstract class AbstractOrderingStrategy(
     }
 
     private fun moveToGoalIfReachable(playerState: PlayerState): MovingAction? {
-        val isTileValidGoal: TileIdentifier= { tilePosition, _ ->
+        val isTileValidGoal: TileIdentifier= { tilePosition ->
             (player.treasureFound && player.homePosition == tilePosition)
                     || (!player.treasureFound && player.goalPosition == tilePosition)
         }
@@ -41,9 +43,8 @@ abstract class AbstractOrderingStrategy(
     private fun tryToReachAllAlternativeTiles(playerState: PlayerState): MovingAction? {
         val allCoordinatesInDesiredOrder = getAllCoordinates().sortedWith(comparator)
         return allCoordinatesInDesiredOrder.fold(null as MovingAction?) { action, coord ->
-            val alternateTile = playerState.board.getTile(coord)
             action ?: tryAllCombinationsToReachDesiredTile(playerState,
-                isTileWeWant = { tilePos, board -> board.getTile(tilePos) == alternateTile })
+                isTileWeWant = { tilePos -> tilePos == coord })
         }
     }
 
@@ -89,7 +90,9 @@ abstract class AbstractOrderingStrategy(
     }
 
     /**
-     * TODO: java doc, note game state
+     * Performs the given sliding action, gets all reachable positions from the player's current positions,
+     * finds if any of these tiles are the desired goal, if so returns an action to reach it, otherwise returns
+     * null (MovingAction?)
      */
     private fun doSlideAndCheckReachable(
         playerState: PlayerState,
@@ -104,13 +107,13 @@ abstract class AbstractOrderingStrategy(
         val newBoard = state.getBoard()
         val reachablePositions = newBoard.getReachableTiles(player.currentPosition)
         return reachablePositions.fold(null as MovingAction?) { action, reachablePos ->
-            action ?: getActionToReachTile(newBoard, lastAction, reachablePos, isTileWeWant, createAction)
+            action ?: getActionToReachTile(lastAction, reachablePos, isTileWeWant, createAction)
         }
     }
 
-    private fun getActionToReachTile(board: Board, lastAction: MovingAction?, pos: Coordinates, isTileWeWant: TileIdentifier,
+    private fun getActionToReachTile(lastAction: MovingAction?, pos: Coordinates, isTileWeWant: TileIdentifier,
                                      createAction: (Coordinates) -> MovingAction): MovingAction? {
-        if (!isTileWeWant(pos, board)) {
+        if (!isTileWeWant(pos)) {
             return null
         }
         val action = createAction(pos)
@@ -144,8 +147,8 @@ abstract class AbstractOrderingStrategy(
 
     private fun getAllCoordinates(): List<Coordinates> {
         val allCoordinates = mutableListOf<Coordinates>()
-        for (rowIndex in Position.MIN_ROW_INDEX until Position.MAX_ROW_INDEX) {
-            for (colIndex in Position.MIN_COL_INDEX until Position.MAX_COL_INDEX) {
+        for (rowIndex in Position.MIN_ROW_INDEX .. Position.MAX_ROW_INDEX) {
+            for (colIndex in Position.MIN_COL_INDEX .. Position.MAX_COL_INDEX) {
                 allCoordinates.add(Coordinates(RowPosition(rowIndex), ColumnPosition((colIndex))))
             }
         }
