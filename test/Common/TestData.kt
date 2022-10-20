@@ -47,6 +47,10 @@ object TestData {
         return GameTile(Path.T, Degree.ONE_EIGHTY, Treasure(Gem.AMETHYST, Gem.AMETRINE))
     }
 
+    fun createSpareTile(path: Path): GameTile {
+        return GameTile(path, Degree.ZERO, Treasure(Gem.AMETHYST, Gem.AMETRINE))
+    }
+
 
     fun createBoard(tiles: Array<Array<GameTile>>): Board {
         return Board(tiles)
@@ -105,8 +109,8 @@ object TestData {
         return Player(
             UUID.fromString("f9728f95-96db-4cf4-a9c1-13113635d312"),
             Coordinates.fromRowAndValue(0,0),
-            Coordinates.fromRowAndValue(1,0),
-            Coordinates.fromRowAndValue(0, 0),
+            Coordinates.fromRowAndValue(1,1),
+            Coordinates.fromRowAndValue(5, 5),
             BaseColor.PURPLE
         )
     }
@@ -115,8 +119,8 @@ object TestData {
         return Player(
             UUID.fromString("f9728f95-96db-4cf4-a9c1-13113635d312"),
             Coordinates.fromRowAndValue(0, 2),
-            Coordinates.fromRowAndValue(0,0),
-            Coordinates.fromRowAndValue(0, 2),
+            Coordinates.fromRowAndValue(3,3),
+            Coordinates.fromRowAndValue(3, 5),
             BaseColor.GREEN
         )
     }
@@ -126,7 +130,7 @@ object TestData {
             UUID.fromString("f25bc452-5ccc-4d29-8ad1-a76f89f42c24"),
             Coordinates.fromRowAndValue(6,6),
             Coordinates.fromRowAndValue(5,5),
-            Coordinates.fromRowAndValue(6, 6),
+            Coordinates.fromRowAndValue(5, 5),
             BaseColor.BLACK
         )
     }

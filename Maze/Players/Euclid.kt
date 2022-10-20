@@ -4,7 +4,7 @@ import Common.board.Coordinates
 import Common.player.Player
 
 class Euclid(player: Player): AbstractOrderingStrategy(
-    compareBy { coord -> euclidDistanceFromGoal(coord, player) },
+    compareBy({ coord -> euclidDistanceFromGoal(coord, player) }, { it.row.value }, { it.col.value }),
     player) {
 }
 

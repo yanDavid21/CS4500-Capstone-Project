@@ -59,10 +59,14 @@ internal class RefereeTest {
 
     @Test
     fun testMovePlayerToTreasureTile() {
-        val player = TestData.createPlayer1()
+        val player = TestData.createPlayer(
+            Coordinates.fromRowAndValue(3, 2),
+            Coordinates.fromRowAndValue(3, 3),
+            Coordinates.fromRowAndValue(5, 5)
+        )
         val referee = TestData.createRefereeWithPlayers(player)
 
-        referee.moveActivePlayer(Coordinates.fromRowAndValue(1,0))
+        referee.moveActivePlayer(Coordinates.fromRowAndValue(3,3))
 
         assert(player.treasureFound)
     }
@@ -127,10 +131,6 @@ internal class RefereeTest {
         assertEquals(Coordinates.fromRowAndValue(0, 2), player2.currentPosition)
     }
 
-    @Test
-    fun testKickoutLastPlayer() {
-        //TODO: assertTrue(ask matthias in class === get fucked publicly)
-    }
 
     @Test
     fun testInsertRotateZeroDegrees() {
@@ -228,10 +228,5 @@ internal class RefereeTest {
         referee.slideColumnAndInsertSpare(ColumnPosition(2), VerticalDirection.UP, Degree.NINETY)
         assertEquals(Coordinates.fromRowAndValue(6,2), player2.currentPosition)
         assertEquals(Coordinates.fromRowAndValue(0, 6), player1.currentPosition)
-    }
-
-    @Test
-    fun testCannotUndoLastAction() {
-        assert(false)
     }
 }

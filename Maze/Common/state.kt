@@ -112,12 +112,6 @@ class GameState(
         }
     }
 
-    private fun checkSlidingIsNotUndoingLastAction() {
-        lastAction?.let {
-
-        }
-    }
-
 
     private fun canPlayerReachTile(player: Player, location: Coordinates): Boolean {
         return board.getReachableTiles(player.currentPosition).contains(location)
