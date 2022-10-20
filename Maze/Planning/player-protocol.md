@@ -20,3 +20,5 @@ of the game. If the move is fine, it will execute the move and update the curren
 Once the game is over, the referee will generate a `GameOver` message and broadcast it to all players. This message will either
 say the game ended in a tie, or it will contain the winning player and its reward.
 
+
+![Sequence diagram of 4 users and a game server.](sw_dev_server_client_seq_diagram.png)
