@@ -31,6 +31,14 @@ abstract class AbstractOrderingStrategy(
             ?: Skip
     }
 
+    /**
+     * Tries all combinations to reach the player's goal.
+     *
+     * The player's goal is the treasure tile, if it has not yet found the treasure; or
+     * the home tile if it has.
+     *
+     * Returns the first action that leads to the goal.
+     */
     private fun moveToGoalIfReachable(playerState: PlayerState): MovingAction? {
         val isTileValidGoal: TileIdentifier= { tilePosition ->
             (player.treasureFound && player.homePosition == tilePosition)
@@ -38,8 +46,13 @@ abstract class AbstractOrderingStrategy(
         }
         return tryAllCombinationsToReachDesiredTile(playerState, isTileValidGoal)
     }
-    
 
+    /**
+     * Finds all possible alternatives in an ordering specified by the concrete tile.
+     * For every tile, tries all possibilities to try to reach it,
+     *
+     * Returns the first action that leads to the alternate tile.
+     */
     private fun tryToReachAllAlternativeTiles(playerState: PlayerState): MovingAction? {
         val allCoordinatesInDesiredOrder = getAllCoordinates().sortedWith(comparator)
         return allCoordinatesInDesiredOrder.fold(null as MovingAction?) { action, coord ->
