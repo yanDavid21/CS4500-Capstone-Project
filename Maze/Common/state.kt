@@ -125,16 +125,14 @@ class GameState(
 
 
     private fun movePlayerAcrossBoard(activePlayer: Player, targetCoord: Coordinates) {
-        val tileToMoveTo = board.getTile(targetCoord)
-
         activePlayer.currentPosition = targetCoord
-        activePlayer.treasureFound = activePlayer.treasureFound || tileToMoveTo.treasure == activePlayer.goal
+        activePlayer.treasureFound = activePlayer.treasureFound || targetCoord == activePlayer.goalPosition
 
-        updateWinner(activePlayer, tileToMoveTo)
+        updateWinner(activePlayer)
     }
 
-    private fun updateWinner(activePlayer: Player, targetTile: GameTile) {
-        if (activePlayer.homeTile == targetTile && activePlayer.treasureFound) {
+    private fun updateWinner(activePlayer: Player) {
+        if (activePlayer.currentPosition == activePlayer.homePosition && activePlayer.treasureFound) {
             winner = activePlayer
         }
     }

@@ -112,8 +112,8 @@ internal class RiemannTest {
         val board = TestData.createBoard()
         val player = TestData.createPlayer(
             playerPosition,
-            board.getTile(treasurePosition).treasure,
-            board.getTile(Coordinates.fromRowAndValue(1,1))
+            treasurePosition,
+            Coordinates.fromRowAndValue(1,1)
         )
 
         val strategy = Riemann(player)

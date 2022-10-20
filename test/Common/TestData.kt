@@ -95,8 +95,8 @@ object TestData {
         return Player(
             UUID.fromString("f9728f95-96db-4cf4-a9c1-13113635d312"),
             position,
-            treasure,
-            home,
+            treasurePos,
+            homePos,
             BaseColor.BLACK
         )
     }
@@ -105,8 +105,8 @@ object TestData {
         return Player(
             UUID.fromString("f9728f95-96db-4cf4-a9c1-13113635d312"),
             Coordinates.fromRowAndValue(0,0),
-            Treasure(Gem.GROSSULAR_GARNET, Gem.GOLDSTONE),
-            createTiles()[0][0],
+            Coordinates.fromRowAndValue(1,0),
+            Coordinates.fromRowAndValue(0, 0),
             BaseColor.PURPLE
         )
     }

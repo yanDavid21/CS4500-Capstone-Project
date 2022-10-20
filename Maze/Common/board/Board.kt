@@ -204,13 +204,6 @@ class Board(private val tiles: Array<Array<GameTile>>) {
         row[position.col.value] = tile
     }
 
-    // throws an illegal argument exception if the given position noting the row/col is not slideable
-    private fun checkSlideable(positionToBeSlid: Position) {
-        if ((positionToBeSlid.value % 2 != 0)) {
-            throw IllegalArgumentException("Row/col ${positionToBeSlid.value} is not slideable.")
-        }
-    }
-
     private fun copyOfTiles(): Array<Array<GameTile>> {
         return Array(this.height) { row -> Array(this.width) { col ->
             getTile(Coordinates.fromRowAndValue(row, col)).copy()

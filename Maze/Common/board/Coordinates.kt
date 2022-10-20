@@ -38,6 +38,17 @@ data class Coordinates(
             return Coordinates(RowPosition(rowPos), ColumnPosition(colPos))
         }
     }
+
+    /**
+     * Computes the Euclidian distance between this coordinates and another coordinate.
+     */
+    fun euclidDistanceTo(targetCoordinates: Coordinates): Double {
+        val (row, col) = this
+        val (targetRow, targetCol) = targetCoordinates
+        val deltaX = (col.value - targetCol.value).toDouble()
+        val deltaY = (row.value - targetRow.value).toDouble()
+        return sqrt(deltaX.pow(2) + deltaY.pow(2))
+    }
 }
 
 

@@ -18,7 +18,15 @@ data class RowAction(
     val direction: HorizontalDirection,
     val rotation: Degree,
     val newPosition: Coordinates
-): MovingAction
+): MovingAction {
+
+    override fun isUndoingAction(other: MovingAction): Boolean {
+        if (other is RowAction) {
+            return (other.rowPosition == rowPosition) && other.direction == direction.reverse()
+        }
+        return false
+    }
+}
 
 data class ColumnAction(
     val columnPosition: ColumnPosition,
