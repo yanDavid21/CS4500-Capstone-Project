@@ -12,9 +12,13 @@ Indicate below each bullet which file/unit takes care of each task:
 
 1. the "top-level" function/method, which composes tasks 2 and 3 
 
+
 2. a method that `generates` the sequence of spots the player may wish to move to
 
+
 3. a method that `searches` rows,  columns, etcetc. 
+
+https://github.khoury.northeastern.edu/CS4500-F22/yanda1928-josuma26/blob/b203e91a0efb9817836a5e88f90baeeb07a6a027/Maze/Players/AbstractOrderingStrategy.kt#L64-L67
 
 4. a method that ensure that the location of the avatar _after_ the
    insertion and rotation is a good one and makes the target reachable
@@ -23,7 +27,18 @@ ALSO point to
 
 - the data def. for what the strategy returns
 
+https://github.khoury.northeastern.edu/CS4500-F22/yanda1928-josuma26/blob/b203e91a0efb9817836a5e88f90baeeb07a6a027/Maze/Common/Action.kt#L10
+
 - unit tests for the strategy
+
+For both:
+https://github.khoury.northeastern.edu/CS4500-F22/yanda1928-josuma26/blob/b203e91a0efb9817836a5e88f90baeeb07a6a027/test/Players/AbstractOrderingStrategyTests.kt#L14
+
+Euclid specific:
+https://github.khoury.northeastern.edu/CS4500-F22/yanda1928-josuma26/blob/b203e91a0efb9817836a5e88f90baeeb07a6a027/test/Players/EuclidTest.kt#L15
+
+Riemmann:
+https://github.khoury.northeastern.edu/CS4500-F22/yanda1928-josuma26/blob/b203e91a0efb9817836a5e88f90baeeb07a6a027/test/Players/RiemannTest.kt#L14
 
 The ideal feedback for each of these points is a GitHub
 perma-link to the range of lines in a specific file or a collection of
