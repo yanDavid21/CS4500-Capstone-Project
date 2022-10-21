@@ -10,10 +10,10 @@ code.)
 
 Indicate below each bullet which file/unit takes care of each task:
 
-1. the "top-level" function/method, which composes tasks 2 and 3 
-
-
+1. the "top-level" function/method, which composes tasks 2 and 3
+   https://github.khoury.northeastern.edu/CS4500-F22/yanda1928-josuma26/blob/5c8a869cd30913216b9db03865f0f9fa2ae8f2d7/Maze/Players/AbstractOrderingStrategy.kt#L28
 2. a method that `generates` the sequence of spots the player may wish to move to
+   https://github.khoury.northeastern.edu/CS4500-F22/yanda1928-josuma26/blob/5c8a869cd30913216b9db03865f0f9fa2ae8f2d7/Maze/Players/AbstractOrderingStrategy.kt#L57
 
 
 3. a method that `searches` rows,  columns, etcetc. 
