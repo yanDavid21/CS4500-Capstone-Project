@@ -1,0 +1,9 @@
+#!/bin/sh
+
+parent_path=$( cd "$(dirname "${BASH_SOURCE[0]}")" ; pwd -P )
+
+cd "$parent_path"
+
+JAR_PATH="Other/CS4500Gradle-1.0-SNAPSHOT.jar"
+
+java -jar $JAR_PATH

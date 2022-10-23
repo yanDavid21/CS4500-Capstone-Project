@@ -1,10 +1,13 @@
 package testing
 
+import Common.ColumnAction
+import Common.MovingAction
+import Common.RowAction
 import Common.board.Board
+import Common.board.ColumnPosition
 import Common.board.Coordinates
-import Common.tile.Degree
-import Common.tile.GameTile
-import Common.tile.Path
+import Common.board.RowPosition
+import Common.tile.*
 import Common.tile.treasure.Gem
 import Common.tile.treasure.Treasure
 
@@ -54,5 +57,23 @@ object TestUtils {
     fun getTilesInCol(colIndex: Int, board: Board): Array<GameTile> {
         return (0 .. 6)
             .map { board.getTile(Coordinates.fromRowAndValue(it, colIndex)) }.toTypedArray()
+    }
+
+    fun getLastMovingAction(data: List<String>?): MovingAction? {
+        return if (data == null) {
+            null
+        } else {
+            val index = data[0].toInt()
+            val direction = DirectionTest.valueOf(data[1])
+
+            val zero = Degree.ZERO
+            val zerozero = Coordinates.fromRowAndValue(0, 0)
+            when (direction) {
+                DirectionTest.LEFT-> RowAction(RowPosition(index), HorizontalDirection.LEFT, zero, zerozero)
+                DirectionTest.RIGHT -> RowAction(RowPosition(index), HorizontalDirection.RIGHT, zero, zerozero)
+                DirectionTest.UP -> ColumnAction(ColumnPosition(index), VerticalDirection.UP, zero, zerozero)
+                DirectionTest.DOWN -> ColumnAction(ColumnPosition(index), VerticalDirection.DOWN, zero, zerozero)
+            }
+        }
     }
 }
