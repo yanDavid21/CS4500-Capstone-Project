@@ -24,4 +24,14 @@ data class Player(
     override fun hashCode(): Int {
         return id.hashCode()
     }
+
+    fun toPublicPlayerData(): PublicPlayerData {
+        return PublicPlayerData(id, currentPosition, homePosition, color)
+    }
 }
+
+
+/**
+ * Public information about the player data.
+ */
+data class PublicPlayerData(var name: String, var currentPosition: Coordinates, val homePosition: Coordinates, val color: Color)

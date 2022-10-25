@@ -25,7 +25,7 @@ abstract class AbstractOrderingStrategy(
 ) : MazeStrategy {
     
 
-    override fun decideMove(playerState: PlayerState): Action {
+    override fun decideMove(playerState: PublicGameState): Action {
         return moveToGoalIfReachable(playerState)
             ?: tryToReachAllAlternativeTiles(playerState)
             ?: Skip
@@ -49,7 +49,7 @@ abstract class AbstractOrderingStrategy(
      *
      * Returns the first action that leads to the alternate tile.
      */
-    private fun tryToReachAllAlternativeTiles(playerState: PlayerState): MovingAction? {
+    private fun tryToReachAllAlternativeTiles(playerState: PublicGameState): MovingAction? {
         val allCoordinatesInDesiredOrder = getAllCoordinates().sortedWith(comparator)
         return allCoordinatesInDesiredOrder.fold(null as MovingAction?) { action, coord ->
             action ?: tryAllCombinationsToReachDesiredTile(playerState, coord)
@@ -103,7 +103,7 @@ abstract class AbstractOrderingStrategy(
      * null (MovingAction?)
      */
     private fun doSlideAndCheckReachable(
-        playerState: PlayerState,
+        playerState: PublicGameState,
         player: Player,
         checkAction: (GameState) -> Boolean,
         action: MovingAction,

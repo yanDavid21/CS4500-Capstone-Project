@@ -6,6 +6,7 @@ import Common.board.Coordinates
 import Common.board.RowPosition
 import Common.player.Player
 import Common.player.PlayerQueue
+import Common.player.PublicPlayerData
 import Common.tile.Degree
 import Common.tile.GameTile
 import Common.tile.HorizontalDirection
@@ -195,5 +196,17 @@ class GameState(
         if (!canPlayerReachTile(activePlayer, to) || currentPosition == to) {
             throw IllegalArgumentException("Can not move active player to $to.")
         }
+    }
+}
+
+/**
+ * Holds the data a particular player will know about the game.
+ */
+data class PublicGameState(
+    val board: Board, val spareTile: GameTile, val lastAction: MovingAction?, val publicPlayerData: Map<String, PublicPlayerData>
+) {
+
+    fun getPlayerData(playerName: String): PublicPlayerData {
+        return publicPlayerData[playerName] ?: throw IllegalStateException("Could not find player data for player: $playerName")
     }
 }
