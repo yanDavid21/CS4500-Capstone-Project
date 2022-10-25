@@ -22,7 +22,9 @@ class GameState(
     private var lastMovingAction: MovingAction? = null
 ) {
     private val playerQueue = PlayerQueue(players.toMutableList())
-    private var winner: Player? = null
+    var winner: Player? = null
+    private var consecutiveSkips: Int = 0
+
 
 
     /**
@@ -58,6 +60,34 @@ class GameState(
         this.lastMovingAction = ColumnAction(columnPosition, direction, degree, to)
     }
 
+    fun isValidRowMove(rowPosition: RowPosition, direction: HorizontalDirection, degree: Degree, to: Coordinates): Boolean {
+        val (board, _) = board.slideRowAndInsert(rowPosition, direction, spareTile.rotate(degree))
+        movePlayersAfterRowSlide(rowPosition, direction)
+        val isValidMove = canPlayerReachTile(playerQueue.getCurrentPlayer(), to, board)
+        movePlayersAfterRowSlide(rowPosition, direction.reverse() as HorizontalDirection)
+        return isValidMove
+    }
+
+    fun isValidColumnMove(columnPosition: ColumnPosition, direction: VerticalDirection, degree: Degree, to: Coordinates): Boolean {
+        val (board, _) = board.slideColAndInsert(columnPosition, direction, spareTile.rotate(degree))
+        movePlayersAfterColumnSlide(columnPosition, direction)
+        val isValidMove = canPlayerReachTile(playerQueue.getCurrentPlayer(), to, board)
+        movePlayersAfterColumnSlide(columnPosition, direction.reverse() as VerticalDirection)
+        return isValidMove
+    }
+
+    /**
+     * Returns a mapping of all the player's current goal positions.
+     */
+    fun getPlayerGoal(playerName: String): Coordinates {
+        return playerGoals().getOrElse(playerName) {
+            throw IllegalArgumentException("Could not find goal for player: $playerName")
+        }
+    }
+
+    fun getPlayerData(): Map<String, Player> {
+        return playerQueue.get().associateBy { it.id }
+    }
 
     /**
      * Moves the currently active player from it tile to a given destination.
@@ -77,6 +107,7 @@ class GameState(
      */
     fun passCurrentPlayer() {
         this.playerQueue.getNextPlayer()
+        this.consecutiveSkips += 1
     }
 
     /**
@@ -91,24 +122,22 @@ class GameState(
         return this.board.getCopyOfBoard()
     }
 
-    fun getSpareTile(): GameTile { return this.spareTile.copy() }
-
-    /**
-     * Returns a mapping of all the player's current goal positions.
-     */
-    fun getPlayerGoal(playerName: String): Coordinates {
-        return playerGoals().getOrElse(playerName) {
-            throw IllegalArgumentException("Could not find goal for player: $playerName")
-        }
+    fun getActivePlayer(): Player {
+        return playerQueue.getCurrentPlayer()
     }
 
-    fun createPlayerState(): PlayerState {
-        return PlayerState(board, spareTile, lastMovingAction)
+    fun toPublicState(): PublicGameState {
+        return PublicGameState(board, spareTile, lastMovingAction,
+            playerQueue.get().associate { player -> Pair(player.id, player.toPublicPlayerData()) })
+    }
+
+    fun isGameOver(): Boolean {
+        return winner?.let { true } ?: consecutiveSkips == playerQueue.size()
     }
 
     private fun playerGoals(): Map<String, Coordinates> {
         return playerQueue.get().associate { player ->
-            Pair(player.id.toString(),  player.getGoal())
+            Pair(player.id,  player.getGoal())
         }
     }
 
@@ -140,9 +169,12 @@ class GameState(
         }
     }
 
+    private fun canPlayerReachTile(player: Player, location: Coordinates, board: Board): Boolean {
+        return board.getReachableTiles(player.currentPosition).contains(location)
+    }
 
     private fun canPlayerReachTile(player: Player, location: Coordinates): Boolean {
-        return board.getReachableTiles(player.currentPosition).contains(location)
+        return canPlayerReachTile(player, location, board)
     }
 
 

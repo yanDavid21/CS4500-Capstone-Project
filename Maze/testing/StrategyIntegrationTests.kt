@@ -1,7 +1,7 @@
 package testing
 
 import Common.ColumnAction
-import Common.PlayerState
+import Common.PublicGameState
 import Common.RowAction
 import Common.Skip
 import Common.board.Board
@@ -37,7 +37,7 @@ fun main() {
     println(output)
 }
 
-fun getPlayerState(state: State): PlayerState {
+fun getPlayerState(state: State): PublicGameState {
     val currentBoard = Board(TestUtils.getTilesFromConnectorsAndTreasures(state.board.connectors,
         TestUtils.getTreasuresFromStrings(state.board.treasures)))
     val spare = TestUtils.getTileFromStringAndTreasure(
@@ -46,11 +46,11 @@ fun getPlayerState(state: State): PlayerState {
     )
     val lastAction = TestUtils.getLastMovingAction(state.last)
 
-    return PlayerState(currentBoard, spare, lastAction)
+    return PublicGameState(currentBoard, spare, lastAction, state.plmt)
 }
 
 fun getCurrentPlayer(playerData: PlayerTest, target: Coordinates): Player {
-    val id = UUID.randomUUID()
+    val id = UUID.randomUUID().toString()
     val playerCoord = Coordinates.fromRowAndValue(playerData.current.`row#`, playerData.current.`column#`)
     val homeCoord = Coordinates.fromRowAndValue(playerData.home.`row#`, playerData.home.`column#`)
     return Player(id, playerCoord, target, homeCoord, Color.valueOf(playerData.color))

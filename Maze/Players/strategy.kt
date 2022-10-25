@@ -1,8 +1,8 @@
 package Players
 
 import Common.Action
-import Common.PlayerState
+import Common.PublicGameState
 
 interface MazeStrategy {
-    fun decideMove(playerState: PlayerState): Action
+    fun decideMove(playerState: PublicGameState): Action
 }

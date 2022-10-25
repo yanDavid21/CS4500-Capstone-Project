@@ -39,4 +39,8 @@ class PlayerQueue(
     fun get(): List<Player> {
         return this.players
     }
+
+    fun size(): Int {
+        return this.players.size
+    }
 }
