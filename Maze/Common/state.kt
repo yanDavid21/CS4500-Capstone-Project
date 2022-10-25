@@ -18,24 +18,11 @@ import Common.tile.VerticalDirection
 class GameState(
     private var board: Board,
     private var spareTile: GameTile,
-    players: List<Player>
+    players: List<Player>,
+    private var lastMovingAction: MovingAction? = null
 ) {
     private val playerQueue = PlayerQueue(players.toMutableList())
     private var winner: Player? = null
-    private var lastAction: MovingAction? = null
-
-    /**
-     * Moves the currently active player from it tile to a given destination.
-     *
-     * Throws IllegalArgumentException if the given tile is not reachable.
-     */
-    fun moveActivePlayer(to: Coordinates) {
-        val activePlayer = playerQueue.getCurrentPlayer()
-        checkActiveMovePlayer(activePlayer, activePlayer.currentPosition, to)
-
-        movePlayerAcrossBoard(activePlayer, to)
-        playerQueue.getNextPlayer()
-    }
 
 
     /**
@@ -48,23 +35,41 @@ class GameState(
     /**
      * Slides a row in the board in the provided direction, then rotates and inserts the spare tile into the vacant spot.
      */
-    fun slideRowAndInsertSpare(rowPosition: RowPosition, direction: HorizontalDirection, degree: Degree) {
+    fun slideRowAndInsertSpare(rowPosition: RowPosition, direction: HorizontalDirection, degree: Degree, to: Coordinates) {
         val rotatedSpare = this.spareTile.rotate(degree)
         val (board, spareTile) = board.slideRowAndInsert(rowPosition,direction, rotatedSpare)
         this.board = board
         this.spareTile = spareTile
         movePlayersAfterRowSlide(rowPosition, direction)
+        moveActivePlayer(to)
+        this.lastMovingAction = RowAction(rowPosition, direction, degree, to)
     }
 
     /**
      * Slides a column in the board in the provided direction, then rotates and inserts the spare tile into the vacant spot.
      */
-    fun slideColumnAndInsertSpare(columnPosition: ColumnPosition, direction: VerticalDirection, degree: Degree) {
+    fun slideColumnAndInsertSpare(columnPosition: ColumnPosition, direction: VerticalDirection, degree: Degree, to: Coordinates) {
         val rotatedSpare = this.spareTile.rotate(degree)
         val (board, spareTile) = board.slideColAndInsert(columnPosition, direction, rotatedSpare)
         this.board = board
         this.spareTile = spareTile
         movePlayersAfterColumnSlide(columnPosition, direction)
+        moveActivePlayer(to)
+        this.lastMovingAction = ColumnAction(columnPosition, direction, degree, to)
+    }
+
+
+    /**
+     * Moves the currently active player from it tile to a given destination.
+     *
+     * Throws IllegalArgumentException if the given tile is not reachable.
+     */
+    private fun moveActivePlayer(to: Coordinates) {
+        val activePlayer = playerQueue.getCurrentPlayer()
+        checkActiveMovePlayer(activePlayer, activePlayer.currentPosition, to)
+
+        movePlayerAcrossBoard(activePlayer, to)
+        playerQueue.getNextPlayer()
     }
 
     /**
@@ -86,6 +91,27 @@ class GameState(
         return this.board.getCopyOfBoard()
     }
 
+    fun getSpareTile(): GameTile { return this.spareTile.copy() }
+
+    /**
+     * Returns a mapping of all the player's current goal positions.
+     */
+    fun getPlayerGoal(playerName: String): Coordinates {
+        return playerGoals().getOrElse(playerName) {
+            throw IllegalArgumentException("Could not find goal for player: $playerName")
+        }
+    }
+
+    fun createPlayerState(): PlayerState {
+        return PlayerState(board, spareTile, lastMovingAction)
+    }
+
+    private fun playerGoals(): Map<String, Coordinates> {
+        return playerQueue.get().associate { player ->
+            Pair(player.id.toString(),  player.getGoal())
+        }
+    }
+
     /**
      * Moves all players in the queue when a row is slid left or right.
      */
@@ -93,8 +119,9 @@ class GameState(
         playerQueue.get().forEach { player ->
             if (player.currentPosition.row == rowBeingSlidPosition) {
                 val newColumnPosition: ColumnPosition? = player.currentPosition.col.nextPosition(direction)
-                player.currentPosition = newColumnPosition?.let { Coordinates(rowBeingSlidPosition, it) }
+                val newPlayerCoordinates =  newColumnPosition?.let { Coordinates(rowBeingSlidPosition, it) }
                     ?: board.getEmptySlotPositionAfterSliding(rowBeingSlidPosition, direction)
+                movePlayerAcrossBoard(player, newPlayerCoordinates)
             }
         }
     }
@@ -106,8 +133,9 @@ class GameState(
         playerQueue.get().forEach { player ->
             if (player.currentPosition.col == columnBeingSlidPosition) {
                 val newRowPosition = player.currentPosition.row.nextPosition(direction)
-                player.currentPosition = newRowPosition?.let { Coordinates(it, columnBeingSlidPosition) }
+                val newPlayerCoordinates = newRowPosition?.let { Coordinates(it, columnBeingSlidPosition) }
                     ?: board.getEmptySlotPositionAfterSliding(columnBeingSlidPosition, direction)
+                movePlayerAcrossBoard(player, newPlayerCoordinates)
             }
         }
     }

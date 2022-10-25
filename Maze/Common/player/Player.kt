@@ -13,6 +13,10 @@ data class Player(val id: UUID,
                   val color: Color,
                   var treasureFound: Boolean = false) {
 
+    fun getGoal(): Coordinates {
+        return if (treasureFound) homePosition else goalPosition
+    }
+
     override fun equals(other: Any?): Boolean {
         return other is Player && other.id == this.id
     }

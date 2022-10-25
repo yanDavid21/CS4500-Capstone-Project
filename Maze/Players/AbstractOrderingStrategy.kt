@@ -41,8 +41,7 @@ abstract class AbstractOrderingStrategy(
      */
     private fun moveToGoalIfReachable(playerState: PlayerState): MovingAction? {
         val isTileValidGoal: TileIdentifier= { tilePosition ->
-            (player.treasureFound && player.homePosition == tilePosition)
-                    || (!player.treasureFound && player.goalPosition == tilePosition)
+            tilePosition == player.getGoal()
         }
         return tryAllCombinationsToReachDesiredTile(playerState, isTileValidGoal)
     }
@@ -124,6 +123,7 @@ abstract class AbstractOrderingStrategy(
         }
     }
 
+    // TODO: check if action (including goal tile) is valid instead
     private fun getActionToReachTile(lastAction: MovingAction?, pos: Coordinates, isTileWeWant: TileIdentifier,
                                      createAction: (Coordinates) -> MovingAction): MovingAction? {
         if (!isTileWeWant(pos)) {
