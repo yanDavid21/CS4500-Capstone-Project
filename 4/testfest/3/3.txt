@@ -1,0 +1,8 @@
+(testing /course/cs4500f22/ta/github/yanda1928-josuma26/4/xstate)
+(testing /course/cs4500f22/ta/github/4/3/Tests/0-in.json /course/cs4500f22/ta/github/4/3/Tests/0-out.json)
+Error: Unable to access jarfile Other/CS4500Gradle-1.0-SNAPSHOT.jar
+(testing /course/cs4500f22/ta/github/4/3/Tests/1-in.json /course/cs4500f22/ta/github/4/3/Tests/1-out.json)
+Error: Unable to access jarfile Other/CS4500Gradle-1.0-SNAPSHOT.jar
+((/course/cs4500f22/ta/github/4/3/Tests/0-in.json /course/cs4500f22/ta/github/4/3/Tests/0-out.json) (/course/cs4500f22/ta/github/4/3/Tests/1-in.json /course/cs4500f22/ta/github/4/3/Tests/1-out.json))
+((passed 2) (total 2) (partial-score 2))
+
