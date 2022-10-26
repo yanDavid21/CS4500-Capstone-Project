@@ -9,7 +9,7 @@ import Common.tile.treasure.Treasure
 import Players.PlayerMechanism
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withTimeout
-import java.time.Duration
+import kotlin.math.abs
 
 abstract class Referee {
 
@@ -102,15 +102,10 @@ abstract class Referee {
         // will only return null if playersData is empty
         val minimumDistance = playersData.values.minOfOrNull { it.getGoal().euclidDistanceTo(it.currentPosition) }!!
 
-        val playersWhoFoundTreasure = findPlayersWhoFoundTreasure(playerData)
-        return if (playersWhoFoundTreasure.isNotEmpty()) {
-            playerData.values.associate {
-                val isAsCloseAsMin = it.currentPosition.euclidDistanceTo(it.goalPosition) == minimumDistance
-                Pair(it.id, it.treasureFound && isAsCloseAsMin ) }
+        return if (didAPlayerFindTreasure(playersData)) {
+            findWinnersWhoFoundClosestToHomeTreasure(playersData.values, minimumDistance)
         } else {
-            playerData.values.associate {
-                Pair(it.id, it.currentPosition.euclidDistanceTo(it.goalPosition) == minimumDistance)
-            }
+            findWinnersWhoWereClosestToTreasure(playersData.values, minimumDistance)
         }
     }
 

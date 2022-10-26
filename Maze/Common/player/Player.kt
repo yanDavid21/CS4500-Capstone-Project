@@ -28,6 +28,13 @@ data class Player(
     fun toPublicPlayerData(): PublicPlayerData {
         return PublicPlayerData(id, currentPosition, homePosition, color)
     }
+
+    fun move(newCoords: Coordinates): Player {
+        return this.copy(
+            currentPosition = newCoords,
+            treasureFound = treasureFound || newCoords == goalPosition
+        )
+    }
 }
 
 
