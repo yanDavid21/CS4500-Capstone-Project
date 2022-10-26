@@ -13,6 +13,7 @@ sealed interface MovingAction: Action {
 
     fun isUndoingAction(other: MovingAction): Boolean
 }
+
 data class RowAction(
     val rowPosition: RowPosition,
     val direction: HorizontalDirection,

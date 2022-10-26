@@ -200,7 +200,7 @@ class GameState(
 }
 
 /**
- * Holds the data a particular player will know about the game.
+ * Holds the public data players will know about the game.
  */
 data class PublicGameState(
     val board: Board, val spareTile: GameTile, val lastAction: MovingAction?, val publicPlayerData: Map<String, PublicPlayerData>
