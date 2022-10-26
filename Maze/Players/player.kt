@@ -32,11 +32,10 @@ class PlayerMechanism(val name: String, randomSeed: Long = 0L) {
      */
     fun proposeBoard0(rows: Int, columns: Int): Array<Array<GameTile>> {
         checkValidBoardDimensions(rows, columns)
-        val possibleGems = mutableSetOf<Gem>()
 
         val tiles = Array(rows) {
             Array(columns) {
-                GameTile(getRandomPath(), getRandomDegree(), getRandomTreasure())
+                GameTile(getRandomPath(), getRandomDegree(), getRandomTreasure(possibleTreasure, rows * columns))
             }
         }
         return tiles
@@ -90,7 +89,9 @@ class PlayerMechanism(val name: String, randomSeed: Long = 0L) {
         return Path.values()[randomIndex]
     }
 
-    private fun getRandomTreasure() {
-
+    private fun getRandomTreasure(setOfTreasures: MutableSet<Treasure>, gemsNeeded: Int) {
+        val possibleTreasure = mutableSetOf<Treasure>()
+        val gem1 = Gem.values()[0]
+        return Array(gemsNeeded) { index -> Treasure(gem1, Gem.values()[index])}.toSet()
     }
 }
