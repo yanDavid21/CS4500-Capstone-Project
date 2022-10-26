@@ -17,28 +17,141 @@ abstract class Referee {
     abstract fun choseBoard(suggestedBoards: List<Board>, players: List<PlayerMechanism>): GameState
 
     fun startGame(players: List<PlayerMechanism>) {
-        val suggestedBoards = players.map {
-            it.proposeBoard0(Position.MAX_ROW_INDEX + 1, Position.MAX_COL_INDEX + 1)
-        }
+        val gameState = setUp(players)
 
-        val gameState = setUp(suggestedBoards, players)
+        sendInitialGameStateData(gameState, players)
+
+        val endGameData =  playGame(gameState, players.associateBy { it.name })
+
+        sendGameOverInformation(endGameData, players)
+    }
+
+    fun setUp(players: List<PlayerMechanism>): GameState {
+        val suggestedBoards = players.map {
+            it.proposeBoard0(Position.WIDTH, Position.HEIGHT)
+        }
+        return choseBoard(
+            validateBoards(suggestedBoards), players
+        )
+    }
+
+    fun sendInitialGameStateData(gameState: GameState, players: List<PlayerMechanism>) {
         val initialPlayerState = gameState.toPublicState()
         players.forEach { player ->
             val goal = gameState.getPlayerGoal(player.name)
             player.setupAndUpdateGoal(initialPlayerState, goal)
         }
+    }
 
-        val endGameData =  playGame(gameState, players.associateBy { it.name })
-        players.forEach {
-            val playerWon = endGameData[it.name]!!
-            it.won(playerWon)
+    fun sendGameOverInformation(endgameData: Map<String, Boolean>, players: List<PlayerMechanism>) {
+        players.forEach { player ->
+            endgameData[player.name]?.let { playerWon -> player.won(playerWon)}
         }
     }
 
-    fun setUp(suggestedBoards: List<Array<Array<GameTile>>>, players: List<PlayerMechanism>): GameState {
-        return choseBoard(
-            validateBoards(suggestedBoards), players
-        )
+    fun playGame(initialState: GameState, players: Map<String, PlayerMechanism>): Map<String, Boolean> {
+        var state = initialState
+        var roundCount = 0
+        while (!state.isGameOver() && roundCount < MAX_ROUNDS) {
+            val currentPlayer = state.getActivePlayer()
+            val currentMechanism = players[currentPlayer.id] ?: throw IllegalStateException("Invalid player.")
+
+            state = runRoundSafelyWithTimeout(currentPlayer, currentMechanism, state)
+            roundCount++
+        }
+
+        return getWinners(state, players.keys)
+    }
+
+    private fun runRoundSafelyWithTimeout(currentPlayer: Player, currentMechanism: PlayerMechanism, state: GameState): GameState {
+        return runBlocking {
+            withTimeout(TIMEOUT) {
+                try {
+                    playOneRound(currentPlayer, currentMechanism, state)
+                } catch (exception: Exception) {
+                    state.kickOutActivePlayer()
+                }
+            }
+        }
+    }
+
+    private fun playOneRound(currentPlayer:Player, currentMechanism: PlayerMechanism, state: GameState): GameState {
+        val suggestedMove = currentMechanism.takeTurn(state.toPublicState())
+        val newState = if (isMoveValid(suggestedMove, state)) {
+            performMove(suggestedMove, state)
+        } else {
+            state.kickOutActivePlayer()
+        }
+        if (newState.hasActivePlayerReachedTreasure()) {
+            currentMechanism.setupAndUpdateGoal(null, currentPlayer.homePosition)
+        }
+        return newState.endActivePlayerRound()
+    }
+
+    private fun getWinners(state: GameState, players: Set<String>): Map<String, Boolean> {
+        return state.winner?.let { winner ->
+            players.associate { player -> Pair(player, player == winner.id) }
+        } ?:  getPlayersClosestToWinning(state)
+    }
+
+    private fun getPlayersClosestToWinning(state: GameState): Map<String, Boolean> {
+        val playersData = state.getPlayersData()
+        if (playersData.isEmpty()) {
+            return mapOf()
+        }
+        // will only return null if playersData is empty
+        val minimumDistance = playersData.values.minOfOrNull { it.getGoal().euclidDistanceTo(it.currentPosition) }!!
+
+        val playersWhoFoundTreasure = findPlayersWhoFoundTreasure(playerData)
+        return if (playersWhoFoundTreasure.isNotEmpty()) {
+            playerData.values.associate {
+                val isAsCloseAsMin = it.currentPosition.euclidDistanceTo(it.goalPosition) == minimumDistance
+                Pair(it.id, it.treasureFound && isAsCloseAsMin ) }
+        } else {
+            playerData.values.associate {
+                Pair(it.id, it.currentPosition.euclidDistanceTo(it.goalPosition) == minimumDistance)
+            }
+        }
+    }
+
+    private fun findWinnersWhoFoundClosestToHomeTreasure(players: Collection<Player>, minDistance: Double): Map<String, Boolean> {
+        return players.associate {
+            val isClosest = it.currentPosition.euclidDistanceTo(it.goalPosition).equalsDelta(minDistance)
+            Pair(it.id, it.treasureFound && isClosest)
+        }
+    }
+    
+    private fun findWinnersWhoWereClosestToTreasure(players: Collection<Player>, minDistance: Double): Map<String, Boolean> {
+        return players.associate {
+            Pair(it.id, it.currentPosition.euclidDistanceTo(it.homePosition).equalsDelta(minDistance))
+        }
+    }
+
+    private fun didAPlayerFindTreasure(players: Map<String, Player>): Boolean {
+        for (player in players.values) {
+            if (player.treasureFound) {
+                return true
+            }
+        }
+        return false
+    }
+
+    private fun isMoveValid(action: Action, state: GameState): Boolean {
+        return when(action) {
+            is Skip -> true
+            is RowAction -> state.isValidRowMove(action.rowPosition, action.direction, action.rotation, action.newPosition)
+            is ColumnAction -> state.isValidColumnMove(action.columnPosition, action.direction, action.rotation, action.newPosition)
+            else -> throw IllegalArgumentException("Not a valid action: $action")
+        }
+    }
+
+    private fun performMove(action: Action, state: GameState): GameState {
+        return when(action) {
+            is Skip -> state.passCurrentPlayer()
+            is RowAction -> state.slideRowAndInsertSpare(action.rowPosition, action.direction, action.rotation, action.newPosition)
+            is ColumnAction -> state.slideColumnAndInsertSpare(action.columnPosition, action.direction, action.rotation, action.newPosition)
+            else -> throw IllegalArgumentException("Not a valid action: $action")
+        }
     }
 
     private fun validateBoards(suggestedBoardTiles: List<Array<Array<GameTile>>>): List<Board> {
@@ -74,90 +187,10 @@ abstract class Referee {
         return true
     }
 
-
-    fun playGame(state: GameState, players: Map<String, PlayerMechanism>): Map<String, Boolean> {
-
-        while (!state.isGameOver()) {
-            val currentPlayer = state.getActivePlayer()
-            val currentMechanism = players[currentPlayer.id] ?: throw IllegalStateException("Invalid player.")
-
-
-            val suggestedMove = currentMechanism.takeTurn(state.toPublicState())
-
-            //runBlocking {  }
-
-            if (isMoveValid(suggestedMove, state)) {
-                performMove(suggestedMove, state)
-                if (state.hasActivePlayerReachedGoal()) {
-                    currentMechanism.setupAndUpdateGoal(null, currentPlayer.homePosition)
-                }
-            } else {
-                state.kickOutActivePlayer()
-            }
-        }
-
-        return getWinners(state, players.keys)
-    }
-
-    private fun <T> performSafely(action: () -> T, ifFails: () -> T): T {
-        return try {
-            action()
-        } catch (e: IllegalArgumentException) {
-            ifFails()
-        }
-    }
-
-    private fun getWinners(state: GameState, players: Set<String>): Map<String, Boolean> {
-        return state.winner?.let { winner ->
-            players.associate { player -> Pair(player, player == winner.id) }
-        } ?:  getPlayersClosestToWinning(state, players)
-    }
-
-    private fun getPlayersClosestToWinning(state: GameState, players: Set<String>): Map<String, Boolean> {
-        val playerData = state.getPlayerData()
-        val minimumDistance = playerData.values.map { it.getGoal().euclidDistanceTo(it.currentPosition) }.min()!!
-
-        val playersWhoFoundTreasure = findPlayersWhoFoundTreasure(playerData)
-        return if (playersWhoFoundTreasure.isNotEmpty()) {
-            playerData.values.associate {
-                val isAsCloseAsMin = it.currentPosition.euclidDistanceTo(it.goalPosition) == minimumDistance
-                Pair(it.id, it.treasureFound && isAsCloseAsMin ) }
-        } else {
-            playerData.values.associate {
-                Pair(it.id, it.currentPosition.euclidDistanceTo(it.goalPosition) == minimumDistance)
-            }
-        }
-    }
-
-    private fun findPlayersWhoFoundTreasure(players: Map<String, Player>): Set<Player> {
-        val playersWhoFound = mutableSetOf<Player>()
-        players.forEach { (_, player) ->
-            if (player.treasureFound) {
-                playersWhoFound.add(player)
-            }
-        }
-        return playersWhoFound
-    }
-
-    private fun isMoveValid(action: Action, state: GameState): Boolean {
-        return when(action) {
-            is Skip -> true
-            is RowAction -> state.isValidRowMove(action.rowPosition, action.direction, action.rotation, action.newPosition)
-            is ColumnAction -> state.isValidColumnMove(action.columnPosition, action.direction, action.rotation, action.newPosition)
-            else -> throw IllegalArgumentException("Not a valid action: $action")
-        }
-    }
-
-    private fun performMove(action: Action, state: GameState) {
-        when(action) {
-            is Skip -> state.passCurrentPlayer()
-            is RowAction -> state.slideRowAndInsertSpare(action.rowPosition, action.direction, action.rotation, action.newPosition)
-            is ColumnAction -> state.slideColumnAndInsertSpare(action.columnPosition, action.direction, action.rotation, action.newPosition)
-            else -> throw IllegalArgumentException("Not a valid action: $action")
-        }
-    }
-
     companion object {
-        val TIMEOUT = Duration.ofSeconds(100)
+        const val TIMEOUT = 2L // in seconds
+        const val MAX_ROUNDS = 10000
+        private const val DELTA = 0.000001
+        fun Double.equalsDelta(other: Double) = abs(this - other) < DELTA
     }
 }

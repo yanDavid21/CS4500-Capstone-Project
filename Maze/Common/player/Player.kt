@@ -7,11 +7,11 @@ import Common.board.Coordinates
  */
 data class Player(
     val id: String,
-    var currentPosition: Coordinates,
+    val currentPosition: Coordinates,
     val goalPosition: Coordinates,
     val homePosition: Coordinates,
     val color: Color,
-    var treasureFound: Boolean = false) {
+    val treasureFound: Boolean = false) {
 
     fun getGoal(): Coordinates {
         return if (treasureFound) homePosition else goalPosition

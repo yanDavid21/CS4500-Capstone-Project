@@ -4,7 +4,6 @@ package Common
 import Common.TestData.createPlayer1
 import Common.TestData.createPlayer2
 import Common.TestData.createPlayer3
-import Common.player.PlayerQueue
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 
