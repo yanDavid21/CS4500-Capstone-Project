@@ -47,11 +47,12 @@ fun main() {
     }
     val referee = GameState(board, spareTile, players)
 
+    val position = players[0].currentPosition
     when(direction) {
-        DirectionTest.LEFT -> board.slideRowAndInsertSpare(RowPosition(index), HorizontalDirection.LEFT, degree)
-        DirectionTest.RIGHT -> referee.slideRowAndInsertSpare(RowPosition(index), HorizontalDirection.RIGHT, degree)
-        DirectionTest.UP -> referee.slideColumnAndInsertSpare(ColumnPosition(index), VerticalDirection.UP, degree)
-        DirectionTest.DOWN -> referee.slideColumnAndInsertSpare(ColumnPosition(index), VerticalDirection.DOWN, degree)
+        DirectionTest.LEFT -> referee.slideRowAndInsertSpare(RowPosition(index), HorizontalDirection.LEFT, degree, position)
+        DirectionTest.RIGHT -> referee.slideRowAndInsertSpare(RowPosition(index), HorizontalDirection.RIGHT, degree, position)
+        DirectionTest.UP -> referee.slideColumnAndInsertSpare(ColumnPosition(index), VerticalDirection.UP, degree, position)
+        DirectionTest.DOWN -> referee.slideColumnAndInsertSpare(ColumnPosition(index), VerticalDirection.DOWN, degree, position)
     }
 
     val reachablePositions = referee.getBoard().getReachableTiles(players[0].currentPosition).map { TestCoordinate.fromCoordinates(it) }

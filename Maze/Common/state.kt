@@ -95,7 +95,7 @@ class GameState(
      *
      * Throws IllegalArgumentException if the given tile is not reachable.
      */
-    private fun moveActivePlayer(to: Coordinates) {
+    fun moveActivePlayer(to: Coordinates) {
         val activePlayer = playerQueue.getCurrentPlayer()
         checkActiveMovePlayer(activePlayer, activePlayer.currentPosition, to)
 

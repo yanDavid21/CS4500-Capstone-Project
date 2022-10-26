@@ -10,7 +10,6 @@ import Common.tile.Degree
 import Common.tile.HorizontalDirection
 import Common.tile.VerticalDirection
 
-typealias TileIdentifier = (Coordinates) -> Boolean
 /**
  * To instantiate different comparator strategies.
  *

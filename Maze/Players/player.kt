@@ -7,10 +7,9 @@ import Common.tile.GameTile
 import Common.tile.Degree
 import Common.tile.Path
 import Common.player.Player
-import Common.player.PublicPlayerData
+import Common.tile.treasure.Treasure
 import Common.tile.treasure.Gem
 import java.util.Random
-import Players.Riemann
 
 
 /**

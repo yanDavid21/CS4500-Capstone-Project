@@ -5,14 +5,15 @@ import Common.board.Board
 import Common.board.Position
 import Common.player.Player
 import Common.tile.GameTile
+import Common.tile.treasure.Treasure
 import Players.PlayerMechanism
+import kotlinx.coroutines.runBlocking
+import java.time.Duration
 
 abstract class Referee {
 
     // implementations will chose square and odd boards
     abstract fun choseBoard(suggestedBoards: List<Board>, players: List<PlayerMechanism>): GameState
-
-
 
     fun startGame(players: List<PlayerMechanism>) {
         val suggestedBoards = players.map {
@@ -56,6 +57,19 @@ abstract class Referee {
         if (tiles[0].size != Position.MAX_ROW_INDEX + 1) {
             return false
         }
+        val gems = tiles.flatten().map { it.treasure }
+        return allGemsAreUnique(gems)
+    }
+
+    private fun allGemsAreUnique(gems: List<Treasure>): Boolean {
+        val setOfGems = mutableSetOf<Treasure>()
+        for (gem in gems) {
+            if (!setOfGems.contains(gem)) {
+                setOfGems.add(gem)
+            } else {
+                return false
+            }
+        }
         return true
     }
 
@@ -65,7 +79,13 @@ abstract class Referee {
         while (!state.isGameOver()) {
             val currentPlayer = state.getActivePlayer()
             val currentMechanism = players[currentPlayer.id] ?: throw IllegalStateException("Invalid player.")
+
+
             val suggestedMove = currentMechanism.takeTurn(state.toPublicState())
+
+            runBlocking {
+
+            }
 
             if (isMoveValid(suggestedMove, state)) {
                 performMove(suggestedMove, state)
@@ -78,6 +98,14 @@ abstract class Referee {
         }
 
         return getWinners(state, players.keys)
+    }
+
+    private fun <T> performSafely(action: () -> T, ifFails: () -> T): T {
+        return try {
+            action()
+        } catch (e: IllegalArgumentException) {
+            ifFails()
+        }
     }
 
     private fun getWinners(state: GameState, players: Set<String>): Map<String, Boolean> {
@@ -128,5 +156,9 @@ abstract class Referee {
             is ColumnAction -> state.slideColumnAndInsertSpare(action.columnPosition, action.direction, action.rotation, action.newPosition)
             else -> throw IllegalArgumentException("Not a valid action: $action")
         }
+    }
+
+    companion object {
+        val TIMEOUT = Duration.ofSeconds(100)
     }
 }

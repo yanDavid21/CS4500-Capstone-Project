@@ -33,6 +33,7 @@ dependencies {
     testImplementation(kotlin("test"))
 
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.4.0")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4")
     implementation("com.google.code.gson:gson:2.9.1")
 
     runtimeOnly("org.jetbrains.kotlin:kotlin-runtime:1.2.71")

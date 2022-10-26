@@ -45,8 +45,7 @@ fun getPlayerState(state: State): PublicGameState {
         TestUtils.getTreasureFromString(state.spare.image1, state.spare.image2)
     )
     val lastAction = TestUtils.getLastMovingAction(state.last)
-
-    return PublicGameState(currentBoard, spare, lastAction, state.plmt)
+    return PublicGameState(currentBoard, spare, lastAction, mapOf())
 }
 
 fun getCurrentPlayer(playerData: PlayerTest, target: Coordinates): Player {
