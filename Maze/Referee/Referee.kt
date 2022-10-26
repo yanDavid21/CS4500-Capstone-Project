@@ -8,6 +8,7 @@ import Common.tile.GameTile
 import Common.tile.treasure.Treasure
 import Players.PlayerMechanism
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withTimeout
 import java.time.Duration
 
 abstract class Referee {
@@ -83,9 +84,7 @@ abstract class Referee {
 
             val suggestedMove = currentMechanism.takeTurn(state.toPublicState())
 
-            runBlocking {
-
-            }
+            //runBlocking {  }
 
             if (isMoveValid(suggestedMove, state)) {
                 performMove(suggestedMove, state)

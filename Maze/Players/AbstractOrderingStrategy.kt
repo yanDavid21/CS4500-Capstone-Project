@@ -15,14 +15,13 @@ import Common.tile.VerticalDirection
  *
  * These types of strategies specify an ordering of checking alternative goal tiles.
  * For all of these tiles, they explore every sliding and inserting combination
- * (left then right sliding for all rows; then up then down for all columns) and, if the goal tile or the
- * alternate goal is reachable, they move to this goal.
+ * (left then right sliding for all rows; then up then down for all columns) and, if
+ * the goal tile or the alternate goal is reachable, they move to this goal.
  */
 abstract class AbstractOrderingStrategy(
     private val comparator: Comparator<Coordinates>,
     private val player: Player
 ) : MazeStrategy {
-    
 
     override fun decideMove(playerState: PublicGameState): Action {
         return moveToGoalIfReachable(playerState)
@@ -55,23 +54,28 @@ abstract class AbstractOrderingStrategy(
         }
     }
 
-    private fun tryAllCombinationsToReachDesiredTile(playerState: PublicGameState, goalTile: Coordinates): MovingAction? {
+    private fun tryAllCombinationsToReachDesiredTile(playerState: PublicGameState,
+                                                     goalTile: Coordinates): MovingAction? {
         return findFirstRowSlideActionIfAny(playerState, goalTile)
             ?: findFirstColumnSlideActionIfAny(playerState, goalTile)
     }
 
-    private fun findFirstRowSlideActionIfAny(playerState: PublicGameState, goalTile: Coordinates): MovingAction? {
-        val allRows = getAllRows()
+    private fun findFirstRowSlideActionIfAny(playerState: PublicGameState,
+                                             goalTile: Coordinates): MovingAction? {
+        val allRows = getAllMovableRows()
         val allRowActionCombinations= getAllCombinations(allRows, HorizontalDirection.values())
-        return allRowActionCombinations.fold(null as MovingAction?) { action, (rowPosition, direction, degree) ->
+        return allRowActionCombinations.fold(null as MovingAction?) {
+                action, (rowPosition, direction, degree) ->
             action ?: slideRow(playerState, rowPosition, direction, degree, goalTile)
         }
     }
 
-    private fun findFirstColumnSlideActionIfAny(playerState: PublicGameState, goalTile: Coordinates): MovingAction? {
-        val allCols = getAllCols()
+    private fun findFirstColumnSlideActionIfAny(playerState: PublicGameState,
+                                                goalTile: Coordinates): MovingAction? {
+        val allCols = getAllMovableColumns()
         val allColumnActionCombinations = getAllCombinations(allCols, VerticalDirection.values())
-        return allColumnActionCombinations.fold(null as MovingAction?) { answ, (colPosition, direction, degree) ->
+        return allColumnActionCombinations.fold(null as MovingAction?) {
+                answ, (colPosition, direction, degree) ->
             answ ?: slideCol(playerState, colPosition, direction, degree, goalTile)
         }
     }
@@ -80,7 +84,9 @@ abstract class AbstractOrderingStrategy(
      * Slides a row in the given direction with the provided spare tile rotation. Checks if the goal or
      * the alternate tile is reachable.
      */
-    private fun slideRow(playerState: PublicGameState, position: RowPosition, direction: HorizontalDirection, degree: Degree, goalPosition: Coordinates): MovingAction? {
+    private fun slideRow(playerState: PublicGameState, position: RowPosition,
+                         direction: HorizontalDirection, degree: Degree,
+                         goalPosition: Coordinates): MovingAction? {
         return doSlideAndCheckReachable(playerState, player.copy(),
             checkAction = { state -> state.isValidRowMove(position, direction, degree, goalPosition) },
             RowAction(position, direction, degree, goalPosition))
@@ -90,7 +96,9 @@ abstract class AbstractOrderingStrategy(
      * Slides a column in the given direction with the provided spare tile rotation. Checks if the goal or
      * the alternate tile is reachable.
      */
-    private fun slideCol(playerState: PublicGameState, position: ColumnPosition, direction: VerticalDirection, degree: Degree, goalPosition: Coordinates): MovingAction? {
+    private fun slideCol(playerState: PublicGameState, position: ColumnPosition,
+                         direction: VerticalDirection, degree: Degree,
+                         goalPosition: Coordinates): MovingAction? {
         return doSlideAndCheckReachable(playerState, player.copy(),
             checkAction = { state -> state.isValidColumnMove(position, direction, degree, goalPosition) },
             ColumnAction(position, direction, degree, goalPosition))
@@ -98,8 +106,8 @@ abstract class AbstractOrderingStrategy(
 
     /**
      * Performs the given sliding action, gets all reachable positions from the player's current positions,
-     * finds if any of these tiles are the desired goal, if so returns an action to reach it, otherwise returns
-     * null (MovingAction?)
+     * finds if any of these tiles are the desired goal, if so returns an action to reach it,
+     * otherwise returns null (MovingAction?)
      */
     private fun doSlideAndCheckReachable(
         playerState: PublicGameState,
@@ -113,11 +121,11 @@ abstract class AbstractOrderingStrategy(
         return if (checkAction(state) && !willUndoLastAction) action else null
     }
 
-    private fun getAllRows():List<RowPosition> {
+    private fun getAllMovableRows():List<RowPosition> {
         return (Position.MIN_ROW_INDEX .. Position.MAX_ROW_INDEX step 2).map { RowPosition(it) }
     }
 
-    private fun getAllCols():List<ColumnPosition> {
+    private fun getAllMovableColumns():List<ColumnPosition> {
         return (Position.MIN_COL_INDEX .. Position.MAX_COL_INDEX step 2).map { ColumnPosition(it) }
     }
     
