@@ -5,7 +5,7 @@ import Common.board.Board
 import Common.board.ColumnPosition
 import Common.board.Coordinates
 import Common.board.RowPosition
-import Common.player.Player
+import Common.player.PlayerData
 import Common.tile.*
 import org.junit.jupiter.api.Test
 import testing.TestUtils
@@ -13,7 +13,7 @@ import kotlin.test.assertEquals
 
 abstract class AbstractOrderingStrategyTests {
 
-    abstract fun createStrategy(player: Player): MazeStrategy
+    abstract fun createStrategy(player: PlayerData): MazeStrategy
 
     @Test
     fun testFindMoveTreasurelIsImmediatlyReachable() {

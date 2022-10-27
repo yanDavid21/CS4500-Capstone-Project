@@ -3,7 +3,7 @@ package Common
 import Common.board.Board
 import Common.board.Coordinates
 import Common.player.BaseColor
-import Common.player.Player
+import Common.player.PlayerData
 import Common.tile.Degree
 import Common.tile.GameTile
 import Common.tile.Path
@@ -13,12 +13,20 @@ import testing.TestUtils
 
 object TestData {
 
-    fun createRefereeWithPlayers(vararg players: Player): GameState {
+    fun createRefereeWithPlayers(vararg players: PlayerData): GameState {
         val tiles = createTiles()
 
         val board = createBoard(tiles)
 
         return GameState(board, createSpareTile(), players.toList())
+    }
+
+    fun createRefereeWithPlayers(players: List<PlayerData>): GameState {
+        val tiles = createTiles()
+
+        val board = createBoard(tiles)
+
+        return GameState(board, createSpareTile(), players)
     }
 
     fun createReferee(board: Board): GameState {
@@ -92,8 +100,8 @@ object TestData {
                 listOf("apricot-square-radiant", "jaspilite"), listOf("magnesite", "moonstone"), listOf("ametrine", "ruby"), listOf("citrine", "diamond"),
                 listOf("blue-ceylon-sapphire", "chrysoberyl-cushion")))
 
-    fun createPlayer(position: Coordinates, treasurePos: Coordinates, homePos: Coordinates): Player {
-        return Player(
+    fun createPlayer(position: Coordinates, treasurePos: Coordinates, homePos: Coordinates): PlayerData {
+        return PlayerData(
             "player",
             position,
             treasurePos,
@@ -102,8 +110,8 @@ object TestData {
         )
     }
 
-    fun createPlayer1(): Player {
-        return Player(
+    fun createPlayer1(): PlayerData {
+        return PlayerData(
             "player1",
             Coordinates.fromRowAndValue(0,0),
             Coordinates.fromRowAndValue(1,1),
@@ -112,8 +120,8 @@ object TestData {
         )
     }
 
-    fun createPlayer2(): Player {
-        return Player(
+    fun createPlayer2(): PlayerData {
+        return PlayerData(
             "player2",
             Coordinates.fromRowAndValue(0, 2),
             Coordinates.fromRowAndValue(3,3),
@@ -122,8 +130,8 @@ object TestData {
         )
     }
 
-    fun createPlayer3(): Player {
-        return Player(
+    fun createPlayer3(): PlayerData {
+        return PlayerData(
             "player3",
             Coordinates.fromRowAndValue(6,6),
             Coordinates.fromRowAndValue(5,5),

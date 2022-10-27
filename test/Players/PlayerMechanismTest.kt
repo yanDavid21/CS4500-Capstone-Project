@@ -51,14 +51,14 @@ internal class PlayerMechanismTest {
     fun proposeBoardInvalid() {
         val player1 = createPlayerMechanism(5L)
 
-        assertThrows()c
+       // assertThrows()c
     }
 
     @Test
     fun setupAndUpdateGoalHome() {
 
         val player = createPlayerMechanism()
-        player.setupAndUpdateGoal(PublicGameState, )
+        //player.setupAndUpdateGoal(PublicGameState, )
     }
 
     @Test
@@ -83,7 +83,7 @@ internal class PlayerMechanismTest {
 
     companion object {
         fun createPlayerMechanism(): PlayerMechanism {
-            return RandomBoardRiemannPlayerMechanism("Jose", , Riemann()0L)
+            return RandomBoardRiemannPlayerMechanism("Jose")
         }
 
         fun createPlayerMechanismRandom(): PlayerMechanism {

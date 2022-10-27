@@ -1,26 +1,18 @@
 package Players
 
-import Common.*
+import Common.GameState
+import Common.TestData
 import Common.board.Board
-import Common.board.Coordinates
-import Common.board.Position
-import Common.tile.GameTile
+import Players.SamplePlayerMechanisms.MisbehavingOnBoardRequest
+import Players.SamplePlayerMechanisms.MisbehavingOnRound
+import Players.SamplePlayerMechanisms.MisbehavingOnSetup
+import Players.SamplePlayerMechanisms.PassingPlayerMechanism
 import org.junit.jupiter.api.Test
-import org.mockito.Mock
-import org.mockito.Mockito.*
+import org.junit.jupiter.api.assertDoesNotThrow
+import kotlin.test.assertEquals
 
 internal class RefereeTest {
 
-    @Mock
-    val playerMechanism1 = mock(PlayerMechanism::class.java)
-
-    @Mock
-    val playerMechanism2 = mock(PlayerMechanism::class.java)
-
-    @Mock
-    val playerMechanism3 = mock(PlayerMechanism::class.java)
-
-    val playerMechanisms = listOf(playerMechanism1, playerMechanism2, playerMechanism3)
 
     val player1 = TestData.createPlayer1()
     val player2 = TestData.createPlayer2()
@@ -30,11 +22,6 @@ internal class RefereeTest {
 
     val referee = TestableReferee()
 
-    init {
-        `when`(playerMechanism1.name).thenReturn(player1.id)
-        `when`(playerMechanism2.name).thenReturn(player2.id)
-        `when`(playerMechanism3.name).thenReturn(player3.id)
-    }
 
     /**
      * Test cases:
@@ -56,51 +43,60 @@ internal class RefereeTest {
         )
 
         referee.startGame(willAlwaysPassPlayers)
-        // TODO: should we even do?
-        `when`(playerMechanism1.proposeBoard0(Position.WIDTH, Position.HEIGHT)).thenReturn(TestData.createTiles())
-        `when`(playerMechanism2.proposeBoard0(Position.WIDTH, Position.HEIGHT)).thenReturn(TestData.createTiles())
-        `when`(playerMechanism3.proposeBoard0(Position.WIDTH, Position.HEIGHT)).thenReturn(TestData.createTiles())
+
+        assertEquals(listOf(initialPublicState, initialPublicState, initialPublicState), willAlwaysPassPlayers.map { it.receivedState })
+    }
+
+    @Test
+    fun testPlayersWhoThrowExceptionDuringBoardRequestNotIncluded() {
+        val playerMechanisms = listOf(
+            PassingPlayerMechanism("player1"), MisbehavingOnBoardRequest("player2"), PassingPlayerMechanism("player3")
+        )
 
         referee.startGame(playerMechanisms)
 
-        verify(playerMechanism1, times(1)).proposeBoard0(Position.WIDTH, Position.HEIGHT)
-        verify(playerMechanism1, times(1))
-            .setupAndUpdateGoal(initialPublicState, player1.goalPosition)
+        val expectedState = TestData.createRefereeWithPlayers(player1, player3).toPublicState()
+        // second player never received message
+        assertEquals(
+            listOf(expectedState, null, expectedState),
+            playerMechanisms.map { it.receivedState }
+        )
+    }
 
-        verify(playerMechanism2, times(1)).proposeBoard0(Position.WIDTH, Position.HEIGHT)
-        verify(playerMechanism2, times(1))
-            .setupAndUpdateGoal(initialPublicState, player2.goalPosition)
+    @Test
+    fun testPlayersWhoThrowExceptionDuringInitialStateTransmissionDoNotPlay() {
+        val playerMechanisms = listOf(
+            PassingPlayerMechanism("player1"), PassingPlayerMechanism("player2"), MisbehavingOnSetup("player3")
+        )
 
-        verify(playerMechanism3, times(1)).proposeBoard0(Position.WIDTH, Position.HEIGHT)
-        verify(playerMechanism3, times(1))
-            .setupAndUpdateGoal(initialPublicState, player3.goalPosition)
+        referee.startGame(playerMechanisms)
+
+        val expectedState = TestData.createRefereeWithPlayers(player1, player2, player3).toPublicState()
+
+        assertEquals(
+            listOf(expectedState, expectedState, null),
+            playerMechanisms.map { it.receivedState }
+        )
+    }
+
+    @Test
+    fun testPlayersWhoThrowExceptionDuringGameIsKickedOut() {
+        val playerMechanism = listOf(
+            MisbehavingOnRound("player1"), PassingPlayerMechanism("player2"), PassingPlayerMechanism("player3")
+        )
+
+        assertDoesNotThrow { referee.startGame(playerMechanism) }
     }
 }
 
 
 class TestableReferee: Referee() {
     override fun createStateFromChosenBoard(suggestedBoards: List<Board>, players: List<PlayerMechanism>): GameState {
-        val board = if (suggestedBoards.isEmpty()) suggestedBoards.first() else TestData.createBoard()
-        return TestData.createReferee(board)
+        val testPlayers = listOf(TestData.createPlayer1(), TestData.createPlayer2(), TestData.createPlayer3())
+            .associateBy { it.id }
+        val playerData = players.map { testPlayers[it.name] ?: throw IllegalStateException("Need test data for $it.name") }
 
+        return TestData.createRefereeWithPlayers(playerData)
     }
 }
 
-class PassingPlayerMechanism(override val name: String): PlayerMechanism {
-    override fun proposeBoard0(rows: Int, columns: Int): Array<Array<GameTile>> {
-        return TestData.createTiles()
-    }
-
-    override fun setupAndUpdateGoal(state: PublicGameState?, goal: Coordinates) {
-
-    }
-
-    override fun takeTurn(state: PublicGameState): Action {
-        return Skip
-    }
-
-    override fun won(hasPlayerWon: Boolean) {
-
-    }
-
-}

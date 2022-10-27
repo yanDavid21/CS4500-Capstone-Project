@@ -7,7 +7,7 @@ import Common.Skip
 import Common.board.Board
 import Common.board.Coordinates
 import Common.player.Color
-import Common.player.Player
+import Common.player.PlayerData
 import Players.Euclid
 import Players.MazeStrategy
 import Players.Riemann
@@ -48,11 +48,11 @@ fun getPlayerState(state: State): PublicGameState {
     return PublicGameState(currentBoard, spare, lastAction, mapOf())
 }
 
-fun getCurrentPlayer(playerData: PlayerTest, target: Coordinates): Player {
+fun getCurrentPlayer(playerData: PlayerTest, target: Coordinates): PlayerData {
     val id = UUID.randomUUID().toString()
     val playerCoord = Coordinates.fromRowAndValue(playerData.current.`row#`, playerData.current.`column#`)
     val homeCoord = Coordinates.fromRowAndValue(playerData.home.`row#`, playerData.home.`column#`)
-    return Player(id, playerCoord, target, homeCoord, Color.valueOf(playerData.color))
+    return PlayerData(id, playerCoord, target, homeCoord, Color.valueOf(playerData.color))
 }
 
 fun serializeChoice(choice: Common.Action, gson: Gson): JsonElement {
@@ -82,7 +82,7 @@ fun serializeChoice(choice: Common.Action, gson: Gson): JsonElement {
 enum class StrategyDesignation {
     Riemann, Euclid;
 
-    fun getStrategy(player: Player): MazeStrategy {
+    fun getStrategy(player: PlayerData): MazeStrategy {
         return when(this) {
             Riemann -> Riemann(player)
             Euclid -> Euclid(player)

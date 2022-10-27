@@ -41,36 +41,38 @@ abstract class Referee {
      * plays one full game, and sends winning player data to players.
      */
     fun startGame(players: List<PlayerMechanism>) {
-        val gameState = setup(players)
+        val (gameState, playersThatSuggestedBoard) = setup(players)
 
-        sendInitialGameStateData(gameState, players)
+        val playersThatResponded = sendInitialGameStateData(gameState, playersThatSuggestedBoard)
 
-        val endGameData =  playGame(gameState, players)
+        val endGameData =  playGame(gameState, playersThatResponded)
 
-        sendGameOverInformation(endGameData, players)
+        sendGameOverInformation(endGameData, playersThatResponded)
     }
 
     /**
      * Get board suggests from all players, creates a game with the chosen one.
      */
-    private fun setup(players: List<PlayerMechanism>): GameState {
-        val suggestedBoards = players.map {
+    private fun setup(players: List<PlayerMechanism>): Pair<GameState, List<PlayerMechanism>> {
+        val (suggestedBoards, playersInGame) = queryAllPlayers(players) {
             it.proposeBoard0(Position.WIDTH, Position.HEIGHT)
         }
-        return createStateFromChosenBoard(
-            validateBoards(suggestedBoards), players
+        val gameState = createStateFromChosenBoard(
+            validateBoards(suggestedBoards), playersInGame
         )
+        return Pair(gameState, playersInGame)
     }
 
     /**
      * Transmits initial game data to all players, including the public game state and the player's goal.
      */
-    private fun sendInitialGameStateData(gameState: GameState, players: List<PlayerMechanism>) {
+    private fun sendInitialGameStateData(gameState: GameState, players: List<PlayerMechanism>): List<PlayerMechanism> {
         val initialPlayerState = gameState.toPublicState()
-        players.forEach { player ->
+        val (_, playersThatResponded) = queryAllPlayers(players) { player ->
             val goal = gameState.getPlayerGoal(player.name)
             player.setupAndUpdateGoal(initialPlayerState, goal)
         }
+        return playersThatResponded
     }
 
 
@@ -83,9 +85,11 @@ abstract class Referee {
         var roundCount = 0
         while (!state.isGameOver() && roundCount < MAX_ROUNDS) {
             val currentPlayer = state.getActivePlayer()
-            val currentMechanism = playerData[currentPlayer.id] ?: throw IllegalStateException("Invalid player.")
 
-            state = runRoundSafelyWithTimeout(currentPlayer, currentMechanism, state)
+            state = playerData[currentPlayer.id]?.let { playerMechanism ->
+                runRoundSafelyWithTimeout(currentPlayer, playerMechanism, state)
+            } ?: state.kickOutActivePlayer()
+
             roundCount++
         }
 
@@ -101,20 +105,34 @@ abstract class Referee {
         }
     }
 
+    private fun <T> queryAllPlayers(players: List<PlayerMechanism>, action: (PlayerMechanism) -> T): Pair<List<T>, List<PlayerMechanism>> {
+        val answers = mutableListOf<T>()
+        val playersThatResponded = mutableListOf<PlayerMechanism>()
+        for (player in players) {
+            val playerAnswer = safelyQueryPlayer(player, action)
+            playerAnswer?.let { answers.add(it) ; playersThatResponded.add(player) }
+        }
+        return Pair(answers, playersThatResponded)
+    }
+
+    private fun <T> safelyQueryPlayer(player: PlayerMechanism, action: (PlayerMechanism) -> T): T? {
+        return try {
+            runBlocking { withTimeout(TIMEOUT) {
+                action(player)
+            } }
+        } catch (_: Exception) {
+            null
+        }
+    }
+
     /**
      * Runs a single round. If the player API call takes longer than TIMEOUT seconds, or throws an exception, the player
      * will be removed from the game.
      */
     private fun runRoundSafelyWithTimeout(currentPlayer: PlayerData, currentMechanism: PlayerMechanism, state: GameState): GameState {
-        return runBlocking {
-            withTimeout(TIMEOUT) {
-                try {
-                    playOneRound(currentPlayer, currentMechanism, state)
-                } catch (exception: Exception) {
-                    state.kickOutActivePlayer()
-                }
-            }
-        }
+        return safelyQueryPlayer(currentMechanism) {
+            playOneRound(currentPlayer, currentMechanism, state)
+        } ?: state.kickOutActivePlayer()
     }
 
     /**

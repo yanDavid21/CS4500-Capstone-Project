@@ -4,7 +4,7 @@ import Common.RowAction
 import Common.TestData
 import Common.board.Coordinates
 import Common.board.RowPosition
-import Common.player.Player
+import Common.player.PlayerData
 import Common.tile.Degree
 import Common.tile.HorizontalDirection
 import Common.tile.Path
@@ -56,7 +56,7 @@ internal class RiemannTest: AbstractOrderingStrategyTests() {
         assertEquals(expected, move)
     }
 
-    override fun createStrategy(player: Player): MazeStrategy {
+    override fun createStrategy(player: PlayerData): MazeStrategy {
         return Riemann(player)
     }
 }
