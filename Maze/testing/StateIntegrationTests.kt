@@ -6,7 +6,7 @@ import Common.board.ColumnPosition
 import Common.board.Coordinates
 import Common.board.RowPosition
 import Common.player.Color
-import Common.player.Player
+import Common.player.PlayerData
 import Common.tile.Degree
 import Common.tile.HorizontalDirection
 import Common.tile.VerticalDirection
@@ -41,7 +41,7 @@ fun main() {
         val goal = Treasure(Gem.GROSSULAR_GARNET, Gem.HACKMANITE) // random treasure
         val playerCoord = Coordinates.fromRowAndValue(it.current.`row#`, it.current.`column#`)
         val homeCoord = Coordinates.fromRowAndValue(it.home.`row#`, it.home.`column#`)
-        val player = Player(id, playerCoord, Coordinates.fromRowAndValue(0,0), homeCoord, Color.valueOf(it.color))
+        val player = PlayerData(id, playerCoord, Coordinates.fromRowAndValue(0,0), homeCoord, Color.valueOf(it.color))
 
         player
     }

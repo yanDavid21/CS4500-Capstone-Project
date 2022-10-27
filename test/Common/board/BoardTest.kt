@@ -129,5 +129,10 @@ internal class BoardTest {
             Coordinates.fromRowAndValue(6, 4), Coordinates.fromRowAndValue(6,5),
         Coordinates.fromRowAndValue(6,6)), reachableFromTopRight)
     }
+
+    @Test
+    fun testBoardEquals() {
+        assert(createBoard() == createBoard())
+    }
 }
 

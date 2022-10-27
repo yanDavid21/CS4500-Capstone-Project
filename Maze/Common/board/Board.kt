@@ -211,6 +211,18 @@ class Board(private val tiles: Array<Array<GameTile>>) {
         }
     }
 
+    override fun equals(other: Any?): Boolean {
+        if (other !is Board) {
+            return false
+        }
+        val otherTiles = other.tiles
+        if (this.tiles.size != otherTiles.size || this.tiles[0].size != otherTiles[0].size) {
+            return false
+        }
+
+        return this.tiles.mapIndexed{ index, row -> row.contentEquals(otherTiles[index])}.reduceRight{ a,b -> a && b}
+    }
+
     companion object {
         /**
          * Returns if the given 2d array of tiles are unique.

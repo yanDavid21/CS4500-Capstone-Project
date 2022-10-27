@@ -10,7 +10,6 @@ import Common.player.PlayerData
 import Common.player.PublicPlayerData
 import Common.tile.*
 import java.util.*
-import org.junit.jupiter.api.Test
 import org.junit.Assert.assertArrayEquals
 import org.junit.Assert.assertFalse
 import Common.tile.treasure.Gem
@@ -19,6 +18,9 @@ import org.junit.jupiter.api.assertThrows
 import java.lang.IllegalArgumentException
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
+import Common.TestData
+import Common.tile.GameTile
+import org.junit.jupiter.api.Test
 
 
 internal class PlayerMechanismTest {
@@ -73,7 +75,7 @@ internal class PlayerMechanismTest {
 
     @Test
     fun setupAndUpdateGoalHome() {
-        val player = RandomBoardRiemannPlayerMechanism("Jose")
+        val player = RandomBoardRiemannPlayerMechanism("Jose", Coordinates.fromRowAndValue(0,1) )
         player.setupAndUpdateGoal(gamestate.toPublicState(), Coordinates.fromRowAndValue(0,2))
         val newGamestate = gamestate.slideColumnAndInsertSpare(ColumnPosition(6), VerticalDirection.DOWN,Degree.TWO_SEVENTY, Coordinates.fromRowAndValue(0,2))
         assertEquals(newGamestate.getActivePlayer().getGoal(), player.nextGoal)
@@ -81,7 +83,7 @@ internal class PlayerMechanismTest {
 
     @Test
     fun setupAndUpdateGoalTreasure() {
-        val player = RandomBoardRiemannPlayerMechanism("Jose")
+        val player = RandomBoardRiemannPlayerMechanism("Jose", Coordinates.fromRowAndValue(0,1))
         player.setupAndUpdateGoal(PublicGameState(
             createBoard(), tile1,
             null, mapOf(Pair("Jose", publicPlayerData))), Coordinates.fromRowAndValue(0,2))
@@ -108,7 +110,7 @@ internal class PlayerMechanismTest {
 
     @Test
     fun testWon() {
-        val player = createRandomPlayerMechanism()
+        val player = createTypedRandomPlayerMechanism()
         player.won(true)
         assertTrue(player.hasWon)
         player.won(false)
@@ -117,19 +119,19 @@ internal class PlayerMechanismTest {
 
     companion object {
         fun createPlayerMechanism(): PlayerMechanism {
-            return RandomBoardRiemannPlayerMechanism("Jose", 0L)
+            return RandomBoardRiemannPlayerMechanism("Jose", Coordinates.fromRowAndValue(0,0), 0L)
         }
 
         fun createPlayerMechanismRandom(): PlayerMechanism {
-            return RandomBoardRiemannPlayerMechanism("Jose", Random().nextLong())
+            return RandomBoardRiemannPlayerMechanism("Jose", TestData.createPlayer1().goalPosition, Random().nextLong())
         }
 
         fun createPlayerMechanismWithSeed(randomSeed: Long): PlayerMechanism {
-            return RandomBoardRiemannPlayerMechanism("Jose", randomSeed)
+            return RandomBoardRiemannPlayerMechanism("Jose", Coordinates.fromRowAndValue(0,0), randomSeed)
         }
 
-        fun createRandomPlayerMechanism(): RandomBoardRiemannPlayerMechanism {
-            return RandomBoardRiemannPlayerMechanism("Jose", 0L)
+        fun createTypedRandomPlayerMechanism(): RandomBoardRiemannPlayerMechanism {
+            return RandomBoardRiemannPlayerMechanism("Jose", Coordinates.fromRowAndValue(0,0), 0L)
         }
 
         val tile1 = GameTile(Path.T, Degree.TWO_SEVENTY, Treasure(Gem.RAW_BERYL, Gem.ZIRCON))

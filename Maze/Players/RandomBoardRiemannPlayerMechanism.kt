@@ -16,11 +16,11 @@ import java.util.*
  * An implementation of PlayerMechanism that generates a random board when prompted using the strategy given.
  * randomSeed to be used for testing.
  */
-class RandomBoardRiemannPlayerMechanism(override val name: String, randomSeed: Long = 0L): PlayerMechanism {
+class RandomBoardRiemannPlayerMechanism(override val name: String, var nextGoal: Coordinates, randomSeed: Long = 0L): PlayerMechanism {
     private val randomObj: Random = Random(randomSeed)
     var hasWon: Boolean = false
     private var hasFoundTreasure: Boolean = false
-    lateinit var nextGoal: Coordinates
+
 
     /**
      * Produces a random board given the dimensions.
