@@ -16,7 +16,19 @@ import java.util.*
  * Abstraction layer class denoting a player's API, to be used to represent a player connecting to the game and the
  * API expected from it. RandomSeed is used for testing.
  */
-class PlayerMechanism(val name: String, randomSeed: Long = 0L) {
+interface PlayerMechanism {
+    val name: String
+
+    fun proposeBoard0(rows: Int, columns: Int): Array<Array<GameTile>>
+
+    fun setupAndUpdateGoal(state: PublicGameState?, goal: Coordinates)
+
+    fun takeTurn(state: PublicGameState): Action
+
+    fun won(hasPlayerWon: Boolean)
+}
+
+class PlayerMechanismImpl(val name: String, randomSeed: Long = 0L) {
     private val randomObj: Random = Random(randomSeed)
     private var hasWon: Boolean = false
     private var hasFoundTreasure: Boolean = false

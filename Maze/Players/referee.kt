@@ -1,4 +1,4 @@
-package Referee
+package Players
 
 import Common.*
 import Common.board.Board
@@ -6,7 +6,6 @@ import Common.board.Position
 import Common.player.Player
 import Common.tile.GameTile
 import Common.tile.treasure.Treasure
-import Players.PlayerMechanism
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withTimeout
 import kotlin.math.abs
