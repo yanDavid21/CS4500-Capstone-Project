@@ -5,15 +5,11 @@ import java.util.*
 import org.junit.jupiter.api.Test
 import org.junit.Assert.assertArrayEquals
 import org.junit.Assert.assertFalse
+import Common.tile.GameTile
 
 
 
 internal class PlayerMechanismTest {
-    private val randomObj: Random = Random(randomSeed)
-    private var hasWon: Boolean = false
-    private var hasFoundTreasure: Boolean = false
-    private lateinit var nextGoal: Coordinates
-    private lateinit var playerData: Player
 
 
     //checks all tiles are unique
@@ -21,11 +17,11 @@ internal class PlayerMechanismTest {
     fun proposeBoardValid() {
         val player = createPlayerMechanismRandom()
         val board = player.proposeBoard0(7,7)
-        val seenBefore = mutableSetOf()
-        for (row in 0 until board.size) {
+        val seenBefore = mutableSetOf<GameTile>()
+        for (element in board) {
             for (col in 0 until board[0].size) {
-                val tile = board[row][col]
-                if (seenBefore.has(tile)) {
+                val tile = element[col]
+                if (seenBefore.contains(tile)) {
                     throw IllegalStateException("All tiles must be unique.")
                 } else {
                     seenBefore.add(tile)
@@ -41,14 +37,14 @@ internal class PlayerMechanismTest {
 
         val player1 = createPlayerMechanism(5L)
         val player2 = createPlayerMechanism(1L)
-        val player3 = createPlayerMechanism()(1L)
+        val player3 = createPlayerMechanism(1L)
 
         val board1 = player1.proposeBoard0(5,5)
         val board2 = player1.proposeBoard0(5,5)
         val board3 = player1.proposeBoard0(5,5)
 
         assertArrayEquals(board2, board3)
-        assertFalse(Arrays.equals(board1, board2))
+        assertFalse(board1.contentEquals(board2))
     }
 
     @Test

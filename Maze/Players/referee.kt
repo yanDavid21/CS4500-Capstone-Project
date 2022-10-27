@@ -3,9 +3,8 @@ package Players
 import Common.*
 import Common.board.Board
 import Common.board.Position
-import Common.player.Player
+import Common.player.PlayerData
 import Common.tile.GameTile
-import Common.tile.treasure.Treasure
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withTimeout
 import kotlin.math.abs
@@ -106,7 +105,7 @@ abstract class Referee {
      * Runs a single round. If the player API call takes longer than TIMEOUT seconds, or throws an exception, the player
      * will be removed from the game.
      */
-    private fun runRoundSafelyWithTimeout(currentPlayer: Player, currentMechanism: PlayerMechanism, state: GameState): GameState {
+    private fun runRoundSafelyWithTimeout(currentPlayer: PlayerData, currentMechanism: PlayerMechanism, state: GameState): GameState {
         return runBlocking {
             withTimeout(TIMEOUT) {
                 try {
@@ -122,7 +121,7 @@ abstract class Referee {
      * Plays an entire round with the currentPlayer. Receives a move from players, if it is valid it executes it,
      * otherwise kick out the player. If the player reached the treasure, it will send it its home.
      */
-    private fun playOneRound(currentPlayer:Player, currentMechanism: PlayerMechanism, state: GameState): GameState {
+    private fun playOneRound(currentPlayer: PlayerData, currentMechanism: PlayerMechanism, state: GameState): GameState {
         val suggestedMove = currentMechanism.takeTurn(state.toPublicState())
         val newState = if (isMoveValid(suggestedMove, state)) {
             performMove(suggestedMove, state)
@@ -159,20 +158,26 @@ abstract class Referee {
         val minimumDistance = playersData.values.minOfOrNull { it.getGoal().euclidDistanceTo(it.currentPosition) }!!
 
         return if (didAPlayerFindTreasure(playersData)) {
-            findWinnersWhoFoundClosestToHomeTreasure(playersData.values, minimumDistance)
+            findPlayersWhoFoundClosestToHomeAfterFindingTreasure(playersData.values, minimumDistance)
         } else {
-            findWinnersWhoWereClosestToTreasure(playersData.values, minimumDistance)
+            findPlayersWhoWereClosestToTreasure(playersData.values, minimumDistance)
         }
     }
 
-    private fun findWinnersWhoFoundClosestToHomeTreasure(players: Collection<Player>, minDistance: Double): Map<String, Boolean> {
+    /**
+     * Returns the players who have found their respective treasure that are the closest to their home tile.
+     */
+    private fun findPlayersWhoFoundClosestToHomeAfterFindingTreasure(players: Collection<PlayerData>, minDistance: Double): Map<String, Boolean> {
         return players.associate {
             val isClosest = it.currentPosition.euclidDistanceTo(it.goalPosition).equalsDelta(minDistance)
             Pair(it.id, it.treasureFound && isClosest)
         }
     }
-    
-    private fun findWinnersWhoWereClosestToTreasure(players: Collection<Player>, minDistance: Double): Map<String, Boolean> {
+
+    /**
+     * Returns the players that were closest to their respective treasure.
+     */
+    private fun findPlayersWhoWereClosestToTreasure(players: Collection<PlayerData>, minDistance: Double): Map<String, Boolean> {
         return players.associate {
             Pair(it.id, it.currentPosition.euclidDistanceTo(it.homePosition).equalsDelta(minDistance))
         }
@@ -190,6 +195,9 @@ abstract class Referee {
         return false
     }
 
+    /**
+     * Returns if the move is valid based on the current state.
+     */
     private fun isMoveValid(action: Action, state: GameState): Boolean {
         return when(action) {
             is Skip -> true
@@ -199,6 +207,9 @@ abstract class Referee {
         }
     }
 
+    /**
+     * Perform the move on behalf of player and returns the resulting GameState.
+     */
     private fun performMove(action: Action, state: GameState): GameState {
         return when(action) {
             is Skip -> state.passCurrentPlayer()
@@ -208,10 +219,13 @@ abstract class Referee {
         }
     }
 
+    /**
+     * Given a list of 2d arrays of tiles, returns the boards that are valid.
+     */
     private fun validateBoards(suggestedBoardTiles: List<Array<Array<GameTile>>>): List<Board> {
         val validBoards = mutableListOf<Board>()
         for (suggestedTiles in suggestedBoardTiles) {
-            if (tilesAreValid(suggestedTiles)) {
+            if (Board.tilesAreValid(suggestedTiles)) {
                 validBoards.add(Board(suggestedTiles))
             }
         }
@@ -224,6 +238,6 @@ abstract class Referee {
         const val TIMEOUT = 15L // in seconds
         const val MAX_ROUNDS = 10000
         private const val DELTA = 0.000001
-        fun Double.equalsDelta(other: Double) = abs(this - other) < DELTA
+        fun Double.equalsDelta(other: Double) = abs(this - other) < DELTA // equality check for Doubles using DELTA
     }
 }

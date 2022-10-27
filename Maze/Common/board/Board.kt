@@ -4,8 +4,8 @@ import Common.tile.Direction
 import Common.tile.GameTile
 import Common.tile.HorizontalDirection
 import Common.tile.VerticalDirection
+import Common.tile.treasure.Treasure
 import java.util.*
-import kotlin.collections.HashSet
 
 /**
  * A Maze board that supports player operations on 2d representation of Maze game tiles.
@@ -208,6 +208,22 @@ class Board(private val tiles: Array<Array<GameTile>>) {
         return Array(this.height) { row -> Array(this.width) { col ->
             getTile(Coordinates.fromRowAndValue(row, col)).copy()
             }
+        }
+    }
+
+    companion object {
+        /**
+         * Returns if the given 2d array of tiles are unique.
+         */
+        fun tilesAreValid(tiles: Array<Array<GameTile>>): Boolean {
+            if (tiles.size != Position.MAX_COL_INDEX + 1) {
+                return false
+            }
+            if (tiles[0].size != Position.MAX_ROW_INDEX + 1) {
+                return false
+            }
+            val gems = tiles.flatten().map { it.treasure }
+            return Treasure.allTreasuresAreUnique(gems)
         }
     }
 }
