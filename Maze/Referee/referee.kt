@@ -88,7 +88,7 @@ abstract class Referee {
                 runRoundSafelyWithTimeout(currentPlayer, playerMechanism, state)
             } ?: state.kickOutActivePlayer()
 
-            roundCount++
+            roundCount += 1
         }
 
         return getWinners(state)
@@ -185,7 +185,7 @@ abstract class Referee {
      */
     private fun findPlayersWhoFoundClosestToHomeAfterFindingTreasure(players: Collection<PlayerData>, minDistance: Double): Map<String, Boolean> {
         return players.associate {
-            val isClosest = it.currentPosition.euclidDistanceTo(it.goalPosition).equalsDelta(minDistance)
+            val isClosest = it.currentPosition.euclidDistanceTo(it.homePosition).equalsDelta(minDistance)
             Pair(it.id, it.treasureFound && isClosest)
         }
     }
@@ -195,7 +195,7 @@ abstract class Referee {
      */
     private fun findPlayersWhoWereClosestToTreasure(players: Collection<PlayerData>, minDistance: Double): Map<String, Boolean> {
         return players.associate {
-            Pair(it.id, it.currentPosition.euclidDistanceTo(it.homePosition).equalsDelta(minDistance))
+            Pair(it.id, it.currentPosition.euclidDistanceTo(it.goalPosition).equalsDelta(minDistance))
         }
     }
 

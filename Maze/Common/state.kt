@@ -43,7 +43,7 @@ data class GameState(
         val potentialWinner = checkActivePlayerWon(playersAfterActivePlayerMove)
 
         val movingAction = RowAction(rowPosition, direction, degree, to)
-        return GameState(board, spareTile, playersAfterActivePlayerMove, movingAction, potentialWinner)
+        return GameState(board, spareTile, playersAfterActivePlayerMove, movingAction, potentialWinner, 0)
     }
 
     /**
@@ -59,19 +59,21 @@ data class GameState(
         val potentialWinner = checkActivePlayerWon(playersAfterActivePlayerMove)
 
         val movingAction = ColumnAction(columnPosition, direction, degree, to)
-        return GameState(board, spareTile, playersAfterActivePlayerMove, movingAction, potentialWinner)
+        return GameState(board, spareTile, playersAfterActivePlayerMove, movingAction, potentialWinner, 0)
     }
 
     fun isValidRowMove(rowPosition: RowPosition, direction: HorizontalDirection, degree: Degree, to: Coordinates): Boolean {
         val (board, _) = board.slideRowAndInsert(rowPosition, direction, spareTile.rotate(degree))
         val playersAfterRowSlide = movePlayersAfterRowSlide(rowPosition, direction)
-        return canPlayerReachTile(getActivePlayer(playersAfterRowSlide), to, board)
+        val activePlayer = getActivePlayer(playersAfterRowSlide)
+        return to != activePlayer.currentPosition && canPlayerReachTile(activePlayer, to, board)
     }
 
     fun isValidColumnMove(columnPosition: ColumnPosition, direction: VerticalDirection, degree: Degree, to: Coordinates): Boolean {
         val (board, _) = board.slideColAndInsert(columnPosition, direction, spareTile.rotate(degree))
         val playersAfterColumnSlide = movePlayersAfterColumnSlide(columnPosition, direction)
-        return canPlayerReachTile(getActivePlayer(playersAfterColumnSlide), to, board)
+        val activePlayer = getActivePlayer(playersAfterColumnSlide)
+        return to != activePlayer.currentPosition && canPlayerReachTile(activePlayer, to, board)
     }
 
     /**
@@ -113,7 +115,6 @@ data class GameState(
      */
     fun passCurrentPlayer(): GameState {
         return this.copy(
-            players = this.players.popFirstAndMoveToLast(),
             consecutiveSkips = this.consecutiveSkips + 1
         )
     }

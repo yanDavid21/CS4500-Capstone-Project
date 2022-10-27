@@ -3,6 +3,14 @@ package Players
 import Common.GameState
 import Common.TestData
 import Common.board.Board
+import Common.board.Coordinates
+import Common.player.BaseColor
+import Common.player.PlayerData
+import Common.tile.Degree
+import Common.tile.GameTile
+import Common.tile.Path
+import Common.tile.treasure.Gem
+import Common.tile.treasure.Treasure
 import Players.SamplePlayerMechanisms.MisbehavingOnBoardRequest
 import Players.SamplePlayerMechanisms.MisbehavingOnRound
 import Players.SamplePlayerMechanisms.MisbehavingOnSetup
@@ -22,11 +30,6 @@ internal class RefereeTest {
 
     val referee = TestableReferee()
 
-    val riemannPlayers = listOf(
-        RandomBoardRiemannPlayerMechanism("player1", player1.getGoal()),
-        RandomBoardRiemannPlayerMechanism("player2", player2.getGoal()),
-        RandomBoardRiemannPlayerMechanism("player3", player3.getGoal()),
-    )
 
     /**
      * Test cases:
@@ -95,14 +98,154 @@ internal class RefereeTest {
 
     @Test
     fun testPlayer1WinsEasily() {
+        val riemannPlayers = createRiemannPlayers()
         val winabbleBoard = TestData.createBoard(TestData.easyToWinBoard)
         val gameState = GameState(winabbleBoard,
             TestData.createSpareTile(),
             listOf(player1, player2, player3),
         )
 
-        referee.playGame(gameState, riemannPlayers)
+        val winningData = referee.playGame(gameState, riemannPlayers)
+
+        assertEquals(
+            mapOf("player1" to true, "player2" to false, "player3" to false),
+            winningData
+        )
     }
+
+    @Test
+    fun testPlayersAllPassNoOneFoundTreasure() {
+        val stuckPlayers = listOf(
+            PassingPlayerMechanism("player1"), PassingPlayerMechanism("player2"), PassingPlayerMechanism("player3")
+        )
+        val impossibleBoard = TestData.createBoard(TestData.impossibleBoard)
+
+        val gameState = GameState(impossibleBoard, GameTile(Path.UP_RIGHT, Degree.NINETY,
+            Treasure(Gem.GROSSULAR_GARNET, Gem.GOLDSTONE)),
+            createStuckPlayersClosestToTreasure()
+        )
+
+        val endgameData = referee.playGame(gameState, stuckPlayers)
+
+        assertEquals(
+            mapOf("player1" to true, "player2" to false, "player3" to false),
+            endgameData
+        )
+    }
+
+    @Test
+    fun testEveryPlayerGetsKickedOut() {
+        val badPlayers = listOf(
+            MisbehavingOnRound("player1"), MisbehavingOnRound("player2"), MisbehavingOnRound("player3")
+        )
+
+        val noWinners = referee.playGame(state, badPlayers)
+
+        assertEquals(mapOf(), noWinners)
+    }
+
+    @Test
+    fun testOnePlayerGetsKickedOut() {
+        val players = listOf(
+            RandomBoardRiemannPlayerMechanism("player1", player1.getGoal()),
+            MisbehavingOnRound("player2"),
+            PassingPlayerMechanism("player3")
+        )
+
+        val easyBoard = TestData.createBoard(TestData.easyToWinBoard)
+        val state = GameState(easyBoard,
+            TestData.createSpareTile(),
+            listOf(player1, player2, player3))
+
+        val endgame = referee.playGame(state, players)
+
+        assertEquals(
+            mapOf("player1" to true, "player3" to false),
+            endgame
+        )
+    }
+
+    @Test
+    fun testAllPlayersPassWinnerFoundTreasureTied() {
+        val stuckPlayers = listOf(
+            PassingPlayerMechanism("player1"), PassingPlayerMechanism("player2"), PassingPlayerMechanism("player3")
+        )
+        val impossibleBoard = TestData.createBoard(TestData.impossibleBoard)
+
+        val gameState = GameState(impossibleBoard, GameTile(Path.UP_RIGHT, Degree.NINETY,
+            Treasure(Gem.GROSSULAR_GARNET, Gem.GOLDSTONE)),
+            createStuckPlayersClosestToHome()
+        )
+
+        val endgameData = referee.playGame(gameState, stuckPlayers)
+
+        assertEquals(
+            mapOf("player3" to true, "player2" to true, "player1" to false),
+            endgameData
+        )
+    }
+
+    fun createRiemannPlayers(): List<RandomBoardRiemannPlayerMechanism> {
+        return listOf(
+            RandomBoardRiemannPlayerMechanism("player1", player1.getGoal()),
+            RandomBoardRiemannPlayerMechanism("player2", player2.getGoal()),
+            RandomBoardRiemannPlayerMechanism("player3", player3.getGoal()),
+        )
+    }
+
+    private fun createStuckPlayersClosestToTreasure(): List<PlayerData> {
+        return listOf(
+            PlayerData("player1",
+                Coordinates.fromRowAndValue(1, 1),
+                Coordinates.fromRowAndValue(3, 3),
+                Coordinates.fromRowAndValue(1, 1),
+                BaseColor.BLACK
+            ),
+            PlayerData(
+                "player2",
+                Coordinates.fromRowAndValue(1, 5),
+                Coordinates.fromRowAndValue(1, 1),
+                Coordinates.fromRowAndValue(1, 5),
+                BaseColor.PURPLE
+            ),
+            PlayerData(
+                "player3",
+                Coordinates.fromRowAndValue(5, 5),
+                Coordinates.fromRowAndValue(1, 1),
+                Coordinates.fromRowAndValue(5, 5),
+                BaseColor.RED
+            )
+        )
+    }
+
+    private fun createStuckPlayersClosestToHome(): List<PlayerData> {
+        return listOf(
+            PlayerData("player3",
+                Coordinates.fromRowAndValue(1, 1),
+                Coordinates.fromRowAndValue(1, 1),
+                Coordinates.fromRowAndValue(3, 3),
+                BaseColor.BLACK,
+                treasureFound = true
+            ),
+            PlayerData(
+                "player1",
+                Coordinates.fromRowAndValue(1, 5),
+                Coordinates.fromRowAndValue(1, 1),
+                Coordinates.fromRowAndValue(1, 5),
+                BaseColor.PURPLE
+            ),
+            PlayerData(
+                "player2",
+                Coordinates.fromRowAndValue(3, 3),
+                Coordinates.fromRowAndValue(5, 5),
+                Coordinates.fromRowAndValue(1, 1),
+                BaseColor.RED,
+                treasureFound = true
+            )
+        )
+    }
+
+
 }
 
 

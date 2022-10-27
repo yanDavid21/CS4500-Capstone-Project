@@ -91,6 +91,16 @@ object TestData {
         listOf("┘", "┘", "┘", "┘", "┘", "┘", "┘"),
     )
 
+    val impossibleBoard = listOf(
+        listOf("┘", "─", "└", "│", "┘", "─", "└"),
+        listOf("│", "─", "│", "│", "│", "─", "│"),
+        listOf("┐", "─", "┌", "│", "┐", "─", "┌"),
+        listOf("─", "─", "─", "─", "─", "─", "─"),
+        listOf("┘", "─", "└", "│", "┘", "─", "└"),
+        listOf("│", "─", "│", "│", "│", "─", "│"),
+        listOf("┐", "─", "┌", "│", "┐", "─", "┌")
+    )
+
     val treasureStrings = listOf(
         listOf(listOf("grossular-garnet", "black-obsidian"), listOf("tigers-eye", "yellow-beryl-oval"),listOf("chrysoberyl-cushion", "color-change-oval"), listOf("sunstone", "prasiolite"),
             listOf("citrine", "purple-oval"), listOf("emerald", "heliotrope"), listOf("zircon", "pink-spinel-cushion")),
