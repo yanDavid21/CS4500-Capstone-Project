@@ -161,12 +161,27 @@ internal class StateTests {
 
     @Test
     fun testGameOverAfterConsecutivePasses() {
+        val player1 = TestData.createPlayer1()
+        val player2 = TestData.createPlayer2()
+        val player3 = TestData.createPlayer3()
 
+        val state = GameState(TestData.createBoard(), TestData.createSpareTile(), listOf(player1, player2, player3))
+
+        val finalState = state.passCurrentPlayer().passCurrentPlayer().passCurrentPlayer()
+        assert(finalState.isGameOver())
     }
 
     @Test
     fun testGameOverAfterConsecutivePassesWithKickingPlayer() {
+        val player1 = TestData.createPlayer1()
+        val player2 = TestData.createPlayer2()
+        val player3 = TestData.createPlayer3()
 
+        val state = GameState(TestData.createBoard(), TestData.createSpareTile(), listOf(player1, player2, player3))
+
+        val removedPlayer1 = state.kickOutActivePlayer()
+        val finalState = removedPlayer1.passCurrentPlayer().passCurrentPlayer()
+        assert(finalState.isGameOver())
     }
     /*
 

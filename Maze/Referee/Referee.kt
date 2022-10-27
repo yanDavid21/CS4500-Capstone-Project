@@ -38,6 +38,10 @@ abstract class Referee {
      */
     abstract fun createStateFromChosenBoard(suggestedBoards: List<Board>, players: List<PlayerMechanism>): GameState
 
+    /**
+     * Begins a game given a list of players (ordered by player age). Sets initial game data to all players,
+     * plays one full game, and sends winning player data to players.
+     */
     fun startGame(players: List<PlayerMechanism>) {
         val gameState = setup(players)
 
@@ -115,6 +119,10 @@ abstract class Referee {
         }
     }
 
+    /**
+     * Plays an entire round with the currentPlayer. Receives a move from players, if it is valid it executes it,
+     * otherwise kick out the player. If the player reached the treasure, it will send it its home.
+     */
     private fun playOneRound(currentPlayer:Player, currentMechanism: PlayerMechanism, state: GameState): GameState {
         val suggestedMove = currentMechanism.takeTurn(state.toPublicState())
         val newState = if (isMoveValid(suggestedMove, state)) {
@@ -128,12 +136,21 @@ abstract class Referee {
         return newState.endActivePlayerRound()
     }
 
+    /**
+     * Finds winning information from a final game state.
+     * If there is a winner, marks the single player as winner, everyone else as a loser.
+     * Otherwise, it marks the players closest to winning.
+     */
     private fun getWinners(state: GameState): Map<String, Boolean> {
         return state.winner?.let { winner ->
             state.getPlayersData().mapValues { (_, player) -> player == winner }
         } ?:  getPlayersClosestToWinning(state)
     }
 
+    /**
+     * Gets the players who share the smallest euclidian distance to their home tile (if they found their treasure),
+     * or the players who share the smallest Euclidian distance to their treasure tile
+     */
     private fun getPlayersClosestToWinning(state: GameState): Map<String, Boolean> {
         val playersData = state.getPlayersData()
         if (playersData.isEmpty()) {

@@ -21,21 +21,19 @@ object TestData {
         return GameState(board, createSpareTile(), players.toList())
     }
 
-    fun createReferee(tiles: Array<Array<GameTile>>): GameState {
+    fun createReferee(board: Board): GameState {
         val player1 = createPlayer1()
 
         val player2 = createPlayer2()
 
         val player3 = createPlayer3()
-
-        val board = createBoard(tiles)
         return GameState(board, createSpareTile(), listOf(player1, player2, player3))
     }
 
-    fun createReferee(): GameState {
-        val tiles = createTiles()
-        return createReferee(tiles)
+    fun createReferee(tiles: Array<Array<GameTile>>): GameState {
+        return createReferee(createBoard(tiles))
     }
+
 
     fun createTiles(): Array<Array<GameTile>> {
         return TestUtils.getTilesFromConnectorsAndTreasures(board,
