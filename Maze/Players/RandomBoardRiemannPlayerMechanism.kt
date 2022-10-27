@@ -9,6 +9,7 @@ import Common.tile.GameTile
 import Common.tile.Path
 import Common.tile.treasure.Gem
 import Common.tile.treasure.Treasure
+import java.lang.Math.abs
 import java.util.*
 
 /**
@@ -84,7 +85,7 @@ class RandomBoardRiemannPlayerMechanism(override val name: String, var nextGoal:
      * Get a random Degree based on this player mechanism's random object.
      */
     private fun getRandomDegree(): Degree {
-        val randomIndex = this.randomObj.nextInt()
+        val randomIndex = getRandomInt(Degree.values().size)
         return Degree.values()[randomIndex]
     }
 
@@ -92,8 +93,15 @@ class RandomBoardRiemannPlayerMechanism(override val name: String, var nextGoal:
      * Get a random Path based on this player mechanism's random object.
      */
     private fun getRandomPath(): Path {
-        val randomIndex = this.randomObj.nextInt()
+        val randomIndex = getRandomInt(Path.values().size)
         return Path.values()[randomIndex]
+    }
+
+    /**
+     * Returns a random int between 0 and the given int (exclusive).
+     */
+    private fun getRandomInt(mod: Int): Int {
+        return abs(this.randomObj.nextInt() % mod)
     }
 
     /**

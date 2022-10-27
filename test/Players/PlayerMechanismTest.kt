@@ -19,6 +19,7 @@ import java.lang.IllegalArgumentException
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 import Common.TestData
+import Common.TestData.impossibleBoard
 import Common.tile.GameTile
 import org.junit.jupiter.api.Test
 
@@ -54,8 +55,8 @@ internal class PlayerMechanismTest {
         val player3 = createPlayerMechanismWithSeed(1L)
 
         val board1 = player1.proposeBoard0(5,5)
-        val board2 = player1.proposeBoard0(5,5)
-        val board3 = player1.proposeBoard0(5,5)
+        val board2 = player2.proposeBoard0(5,5)
+        val board3 = player3.proposeBoard0(5,5)
 
         assertArrayEquals(board2, board3)
         assertFalse(board1.contentEquals(board2))
@@ -75,8 +76,8 @@ internal class PlayerMechanismTest {
 
     @Test
     fun setupAndUpdateGoalHome() {
-        val player = RandomBoardRiemannPlayerMechanism("Jose", Coordinates.fromRowAndValue(0,1) )
-        player.setupAndUpdateGoal(gamestate.toPublicState(), Coordinates.fromRowAndValue(0,2))
+        val player = RandomBoardRiemannPlayerMechanism("Jose", Coordinates.fromRowAndValue(0,5) )
+        player.setupAndUpdateGoal(gamestate.toPublicState(), Coordinates.fromRowAndValue(0,1))
         val newGamestate = gamestate.slideColumnAndInsertSpare(ColumnPosition(6), VerticalDirection.DOWN,Degree.TWO_SEVENTY, Coordinates.fromRowAndValue(0,2))
         assertEquals(newGamestate.getActivePlayer().getGoal(), player.nextGoal)
     }
@@ -100,9 +101,9 @@ internal class PlayerMechanismTest {
     @Test
     fun testTakeTurnPass() {
         val player1 = createPlayerMechanism()
-        val playerData1 = PlayerData("Jose", Coordinates.fromRowAndValue(0,6),
+        val playerData1 = PlayerData("Jose", Coordinates.fromRowAndValue(1,1),
             Coordinates.fromRowAndValue(0,1), Coordinates.fromRowAndValue(0,1),BaseColor.PURPLE)
-        val gamestate = GameState(createBoard(), tile1, listOf(playerData1, playerData),
+        val gamestate = GameState(createBoard(impossibleBoard), tile1, listOf(playerData1, playerData),
             null)
 
         assertEquals(player1.takeTurn(gamestate.toPublicState()), Skip)
