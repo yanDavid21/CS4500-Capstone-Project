@@ -14,13 +14,20 @@ interface/custom programs to play Maze. Here is our proposal for a client progra
 interface:
 
 ## Maze Client
-This client shall be split into three sections: Model, View, Controller
+This client shall be split into two sections: View, Controller.
 
-### Model
-Keeps track of the known public game state and the private game knowledge specific
-to the client/user. The model will have methods to act upon the data, such as reading, updating,
-deletion, etc. 
-- getPlayerHome(): Coordinates
-- updatePlayerHome(coords: Coordinates): Unit
-- updateBoardKnowledge(state: PublicGameState): Unit
-- getCurrentLocation(): 
+### Controller
+The controller is the entry point of the program that starts communication with the server through maintaining
+a TCP connection
+ and starting the graphical user interface (GUI). The controller updates the view whenever
+the server sends new information. The controller will implement certain functions of an interface that the
+view can call. The view can call methods when the user is ready to communicate with the server namely,
+submitting a move/pass to the server or leaving the game.
+
+
+### View
+The view can be a graphical user interface. The board should be displayed with tiles, paths, rotated by its degrees,
+player homes, treasures, and player positions.
+Additionally, the spare tile should be displayed. Buttons to slide rows/cols and rotate the spare tile should
+be presented; these buttons are clickable when it is a player's turn along with a button to submit a move 
+when a valid move has been inputted. Additionally, a player can submit their name on startup. 

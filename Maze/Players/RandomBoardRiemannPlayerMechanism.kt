@@ -18,9 +18,9 @@ import java.util.*
  */
 class RandomBoardRiemannPlayerMechanism(override val name: String, randomSeed: Long = 0L): PlayerMechanism {
     private val randomObj: Random = Random(randomSeed)
-    private var hasWon: Boolean = false
+    var hasWon: Boolean = false
     private var hasFoundTreasure: Boolean = false
-    private lateinit var nextGoal: Coordinates
+    lateinit var nextGoal: Coordinates
 
     /**
      * Produces a random board given the dimensions.
