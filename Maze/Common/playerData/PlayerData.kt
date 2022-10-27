@@ -5,7 +5,7 @@ import Common.board.Coordinates
 /**
  * Represents a Maze player, every player has a treasure goal, position and color for home tile.
  */
-data class Player(
+data class PlayerData(
     val id: String,
     val currentPosition: Coordinates,
     val goalPosition: Coordinates,

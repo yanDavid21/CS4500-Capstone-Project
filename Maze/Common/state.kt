@@ -4,7 +4,7 @@ import Common.board.Board
 import Common.board.ColumnPosition
 import Common.board.Coordinates
 import Common.board.RowPosition
-import Common.player.Player
+import Common.player.PlayerData
 import Common.player.PublicPlayerData
 import Common.tile.Degree
 import Common.tile.GameTile
@@ -18,9 +18,9 @@ import Common.tile.VerticalDirection
 data class GameState(
     private val board: Board,
     private val spareTile: GameTile,
-    private val players: List<Player>,
+    private val players: List<PlayerData>,
     private val lastMovingAction: MovingAction? = null,
-    val winner: Player? = null,
+    val winner: PlayerData? = null,
     private val consecutiveSkips: Int = 0
 ) {
     /**
@@ -83,7 +83,7 @@ data class GameState(
         }
     }
 
-    fun getPlayersData(): Map<String, Player> {
+    fun getPlayersData(): Map<String, PlayerData> {
         return players.associateBy { it.id }
     }
 
@@ -92,14 +92,14 @@ data class GameState(
      *
      * Throws IllegalArgumentException if the given tile is not reachable.
      */
-    private fun moveActivePlayer(players: List<Player>, to:Coordinates, board: Board): List<Player> {
+    private fun moveActivePlayer(players: List<PlayerData>, to:Coordinates, board: Board): List<PlayerData> {
         val activePlayer = getActivePlayer(players)
         checkActivePlayerMove(activePlayer, activePlayer.currentPosition, to, board)
         val playerAfterMove = activePlayer.move(to)
         return listOf(playerAfterMove).plus(players.getNext())
     }
 
-    private fun checkActivePlayerWon(players: List<Player>): Player? {
+    private fun checkActivePlayerWon(players: List<PlayerData>): PlayerData? {
         val activePlayer = getActivePlayer(players)
         return if (activePlayer.treasureFound && activePlayer.currentPosition == activePlayer.homePosition) {
             activePlayer
@@ -156,7 +156,7 @@ data class GameState(
     /**
      * Moves all players in the queue when a row is slid left or right.
      */
-    private fun movePlayersAfterRowSlide(rowBeingSlidPosition: RowPosition, direction: HorizontalDirection): List<Player>{
+    private fun movePlayersAfterRowSlide(rowBeingSlidPosition: RowPosition, direction: HorizontalDirection): List<PlayerData>{
         return players.map { player ->
             if (player.currentPosition.row == rowBeingSlidPosition) {
                 val newColumnPosition: ColumnPosition? = player.currentPosition.col.nextPosition(direction)
@@ -172,7 +172,7 @@ data class GameState(
     /**
      * Moves all players in thr queue when a column is slide up or down.
      */
-    private fun movePlayersAfterColumnSlide(columnBeingSlidPosition: ColumnPosition, direction: VerticalDirection): List<Player> {
+    private fun movePlayersAfterColumnSlide(columnBeingSlidPosition: ColumnPosition, direction: VerticalDirection): List<PlayerData> {
         return players.map { player ->
             if (player.currentPosition.col == columnBeingSlidPosition) {
                 val newRowPosition = player.currentPosition.row.nextPosition(direction)
@@ -185,22 +185,22 @@ data class GameState(
         }
     }
 
-    private fun canPlayerReachTile(player: Player, location: Coordinates, board: Board): Boolean {
+    private fun canPlayerReachTile(player: PlayerData, location: Coordinates, board: Board): Boolean {
         return board.getReachableTiles(player.currentPosition).contains(location)
     }
 
 
-    private fun checkActivePlayerMove(activePlayer: Player, currentPosition: Coordinates, to: Coordinates, board: Board) {
+    private fun checkActivePlayerMove(activePlayer: PlayerData, currentPosition: Coordinates, to: Coordinates, board: Board) {
         if (!canPlayerReachTile(activePlayer, to, board)) {
             throw IllegalArgumentException("Can not move active player to $to.")
         }
     }
 
-    fun getActivePlayer(): Player {
+    fun getActivePlayer(): PlayerData {
         return getActivePlayer(this.players)
     }
 
-    private fun getActivePlayer(players: List<Player> = this.players): Player {
+    private fun getActivePlayer(players: List<PlayerData> = this.players): PlayerData {
         if (players.isEmpty()) {
             throw IllegalStateException("All playrs have been kicked out, could not get active player.")
         }
