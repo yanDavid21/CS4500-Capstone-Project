@@ -18,7 +18,7 @@ data class PlayerData(
     }
 
     override fun equals(other: Any?): Boolean {
-        return other is Player && other.id == this.id
+        return other is PlayerData && other.id == this.id
     }
 
     override fun hashCode(): Int {
@@ -29,7 +29,7 @@ data class PlayerData(
         return PublicPlayerData(id, currentPosition, homePosition, color)
     }
 
-    fun move(newCoords: Coordinates): Player {
+    fun move(newCoords: Coordinates): PlayerData {
         return this.copy(
             currentPosition = newCoords,
             treasureFound = treasureFound || newCoords == goalPosition

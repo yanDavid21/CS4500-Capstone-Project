@@ -9,4 +9,5 @@ import Common.PublicGameState
  */
 interface MazeStrategy {
     fun decideMove(playerState: PublicGameState): Action
+
 }

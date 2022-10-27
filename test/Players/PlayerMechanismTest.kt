@@ -1,18 +1,8 @@
 package Players
 
-import Common.Action
 import Common.PublicGameState
-import Common.board.Coordinates
-import Common.player.Player
-import Common.tile.Degree
-import Common.tile.GameTile
-import Common.tile.Path
-import Common.tile.treasure.Gem
-import Common.tile.treasure.Treasure
 import java.util.*
 import org.junit.jupiter.api.Test
-import kotlin.test.assertEquals
-import Players.player
 import org.junit.Assert.assertArrayEquals
 import org.junit.Assert.assertFalse
 
@@ -97,15 +87,15 @@ internal class PlayerMechanismTest {
 
     companion object {
         fun createPlayerMechanism(): PlayerMechanism {
-            return PlayerMechanismImpl("Jose", 0L)
+            return RandomBoardRiemannPlayerMechanism("Jose", , Riemann()0L)
         }
 
         fun createPlayerMechanismRandom(): PlayerMechanism {
-            return PlayerMechanismImpl("Jose", Random().nextLong())
+            return RandomBoardRiemannPlayerMechanism("Jose", Random().nextLong())
         }
 
         fun createPlayerMechanism(randomSeed: Long): PlayerMechanism {
-            return PlayerMechanismImpl("Jose", randomSeed)
+            return RandomBoardRiemannPlayerMechanism("Jose", randomSeed)
         }
     }
 }

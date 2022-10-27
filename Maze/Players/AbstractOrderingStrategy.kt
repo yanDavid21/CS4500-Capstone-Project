@@ -5,7 +5,7 @@ import Common.board.ColumnPosition
 import Common.board.Coordinates
 import Common.board.Position
 import Common.board.RowPosition
-import Common.player.Player
+import Common.player.PlayerData
 import Common.tile.Degree
 import Common.tile.HorizontalDirection
 import Common.tile.VerticalDirection
@@ -20,7 +20,7 @@ import Common.tile.VerticalDirection
  */
 abstract class AbstractOrderingStrategy(
     private val comparator: Comparator<Coordinates>,
-    private val player: Player
+    private val player: PlayerData
 ) : MazeStrategy {
 
     override fun decideMove(playerState: PublicGameState): Action {
@@ -86,7 +86,7 @@ abstract class AbstractOrderingStrategy(
     private fun isRowSlideValidMove(playerState: PublicGameState, position: RowPosition,
                                     direction: HorizontalDirection, degree: Degree,
                                     goalPosition: Coordinates): MovingAction? {
-        return checkSlideAction(playerState, player.copy(),
+        return checkSlideAction(playerState,
             checkAction = { state -> state.isValidRowMove(position, direction, degree, goalPosition) },
             RowAction(position, direction, degree, goalPosition))
     }
@@ -97,7 +97,7 @@ abstract class AbstractOrderingStrategy(
     private fun isColumnSlideValidMove(playerState: PublicGameState, position: ColumnPosition,
                                        direction: VerticalDirection, degree: Degree,
                                        goalPosition: Coordinates): MovingAction? {
-        return checkSlideAction(playerState, player.copy(),
+        return checkSlideAction(playerState,
             checkAction = { state -> state.isValidColumnMove(position, direction, degree, goalPosition) },
             ColumnAction(position, direction, degree, goalPosition))
     }
@@ -107,7 +107,6 @@ abstract class AbstractOrderingStrategy(
      */
     private fun checkSlideAction(
         playerState: PublicGameState,
-        player: Player,
         checkAction: (GameState) -> Boolean,
         action: MovingAction,
     ): MovingAction? {

@@ -1,13 +1,20 @@
 package Players
 
 import Common.board.Coordinates
-import Common.player.Player
+import Common.player.PlayerData
 
-class Euclid(player: Player): AbstractOrderingStrategy(
+/**
+ * The ordering strategy that weighs alternative tiles based on their distance to the player's goal tile.
+ */
+class Euclid(player: PlayerData): AbstractOrderingStrategy(
     compareBy({ coord -> euclidDistanceFromGoal(coord, player) }, { it.row.value }, { it.col.value }),
     player)
 
-fun euclidDistanceFromGoal(targetCoords: Coordinates, player: Player): Double {
+
+/**
+ * Computes the distance to the player's goal tile.
+ */
+fun euclidDistanceFromGoal(targetCoords: Coordinates, player: PlayerData): Double {
     val goalPosition = player.getGoal()
     return targetCoords.euclidDistanceTo(goalPosition)
 }

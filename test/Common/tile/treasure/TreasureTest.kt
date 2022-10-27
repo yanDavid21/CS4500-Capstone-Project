@@ -55,4 +55,9 @@ internal class TreasureTest {
         assert(treasure1 != treasure4)
     }
 
+    @Test
+    fun testAreAllTreasuresUnique() {
+        assert(false)
+    }
+
 }

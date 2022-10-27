@@ -1,9 +1,10 @@
 package Players
 
-import Common.GameState
-import Common.TestData
+import Common.*
 import Common.board.Board
+import Common.board.Coordinates
 import Common.board.Position
+import Common.tile.GameTile
 import org.junit.jupiter.api.Test
 import org.mockito.Mock
 import org.mockito.Mockito.*
@@ -50,6 +51,11 @@ internal class RefereeTest {
 
     @Test
     fun testSendProposeBoard() {
+        val willAlwaysPassPlayers = listOf(
+            PassingPlayerMechanism("player1"), PassingPlayerMechanism("player2"), PassingPlayerMechanism("player3")
+        )
+
+        referee.startGame(willAlwaysPassPlayers)
         // TODO: should we even do?
         `when`(playerMechanism1.proposeBoard0(Position.WIDTH, Position.HEIGHT)).thenReturn(TestData.createTiles())
         `when`(playerMechanism2.proposeBoard0(Position.WIDTH, Position.HEIGHT)).thenReturn(TestData.createTiles())
@@ -78,4 +84,23 @@ class TestableReferee: Referee() {
         return TestData.createReferee(board)
 
     }
+}
+
+class PassingPlayerMechanism(override val name: String): PlayerMechanism {
+    override fun proposeBoard0(rows: Int, columns: Int): Array<Array<GameTile>> {
+        return TestData.createTiles()
+    }
+
+    override fun setupAndUpdateGoal(state: PublicGameState?, goal: Coordinates) {
+
+    }
+
+    override fun takeTurn(state: PublicGameState): Action {
+        return Skip
+    }
+
+    override fun won(hasPlayerWon: Boolean) {
+
+    }
+
 }

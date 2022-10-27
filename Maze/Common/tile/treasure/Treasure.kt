@@ -15,4 +15,21 @@ data class Treasure(val gem1: Gem, val gem2: Gem) {
     override fun hashCode(): Int {
         return gem1.hashCode() + gem2.hashCode()
     }
+
+    companion object {
+        /**
+         *
+         */
+        fun allTreasuresAreUnique(gems: List<Treasure>): Boolean {
+            val setOfGems = mutableSetOf<Treasure>()
+            for (gem in gems) {
+                if (!setOfGems.contains(gem)) {
+                    setOfGems.add(gem)
+                } else {
+                    return false
+                }
+            }
+            return true
+        }
+    }
 }

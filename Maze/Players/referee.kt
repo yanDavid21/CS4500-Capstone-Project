@@ -35,7 +35,7 @@ abstract class Referee {
     /**
      * Selects a suggested board and creates a game from it.
      */
-    abstract fun createStateFromChosenBoard(suggestedBoards: List<Board>, players: List<PlayerMechanism>): GameState
+    protected abstract fun createStateFromChosenBoard(suggestedBoards: List<Board>, players: List<PlayerMechanism>): GameState
 
     /**
      * Begins a game given a list of players (ordered by player age). Sets initial game data to all players,
@@ -178,7 +178,10 @@ abstract class Referee {
         }
     }
 
-    private fun didAPlayerFindTreasure(players: Map<String, Player>): Boolean {
+    /**
+     * Returns whether at least one player has found their respective treasure.
+     */
+    private fun didAPlayerFindTreasure(players: Map<String, PlayerData>): Boolean {
         for (player in players.values) {
             if (player.treasureFound) {
                 return true
@@ -215,31 +218,10 @@ abstract class Referee {
         return validBoards
     }
 
-    private fun tilesAreValid(tiles: Array<Array<GameTile>>): Boolean {
-        if (tiles.size != Position.MAX_COL_INDEX + 1) {
-            return false
-        }
-        if (tiles[0].size != Position.MAX_ROW_INDEX + 1) {
-            return false
-        }
-        val gems = tiles.flatten().map { it.treasure }
-        return allGemsAreUnique(gems)
-    }
 
-    private fun allGemsAreUnique(gems: List<Treasure>): Boolean {
-        val setOfGems = mutableSetOf<Treasure>()
-        for (gem in gems) {
-            if (!setOfGems.contains(gem)) {
-                setOfGems.add(gem)
-            } else {
-                return false
-            }
-        }
-        return true
-    }
 
     companion object {
-        const val TIMEOUT = 4L // in seconds
+        const val TIMEOUT = 15L // in seconds
         const val MAX_ROUNDS = 10000
         private const val DELTA = 0.000001
         fun Double.equalsDelta(other: Double) = abs(this - other) < DELTA
