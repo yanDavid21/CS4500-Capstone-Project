@@ -5,8 +5,6 @@ import Common.board.Board
 import Common.board.Position
 import Common.player.PlayerData
 import Common.tile.GameTile
-import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.withTimeout
 import kotlin.math.abs
 
 /**
@@ -79,7 +77,7 @@ abstract class Referee {
     /**
      * Runs a single game of maze to completion.
      */
-    private fun playGame(initialState: GameState, players: List<PlayerMechanism>): Map<String, Boolean> {
+    fun playGame(initialState: GameState, players: List<PlayerMechanism>): Map<String, Boolean> {
         val playerData = players.associateBy { it.name }
         var state = initialState
         var roundCount = 0
@@ -117,9 +115,9 @@ abstract class Referee {
 
     private fun <T> safelyQueryPlayer(player: PlayerMechanism, action: (PlayerMechanism) -> T): T? {
         return try {
-            runBlocking { withTimeout(TIMEOUT) {
+            //runBlocking { withTimeout(TIMEOUT) {
                 action(player)
-            } }
+            //} }
         } catch (_: Exception) {
             null
         }

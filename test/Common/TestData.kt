@@ -81,6 +81,16 @@ object TestData {
             listOf("┘", "┌", "│",  "┐", "└", "─", "┬")
     )
 
+    val easyToWinBoard = listOf(
+        listOf("┼", "┼", "┼", "┼", "┼", "┼", "┼"),
+        listOf("┼", "┼", "┼", "┼", "┼", "┼", "┼"),
+        listOf("┼", "┼", "┼", "┼", "┼", "┼", "┼"),
+        listOf("┘", "┘", "┘", "┘", "┘", "┘", "┘"),
+        listOf("┘", "┘", "┘", "┘", "┘", "┘", "┘"),
+        listOf("┘", "┘", "┘", "┘", "┘", "┘", "┘"),
+        listOf("┘", "┘", "┘", "┘", "┘", "┘", "┘"),
+    )
+
     val treasureStrings = listOf(
         listOf(listOf("grossular-garnet", "black-obsidian"), listOf("tigers-eye", "yellow-beryl-oval"),listOf("chrysoberyl-cushion", "color-change-oval"), listOf("sunstone", "prasiolite"),
             listOf("citrine", "purple-oval"), listOf("emerald", "heliotrope"), listOf("zircon", "pink-spinel-cushion")),
@@ -115,7 +125,7 @@ object TestData {
             "player1",
             Coordinates.fromRowAndValue(0,0),
             Coordinates.fromRowAndValue(1,1),
-            Coordinates.fromRowAndValue(5, 5),
+            Coordinates.fromRowAndValue(1, 3),
             BaseColor.PURPLE
         )
     }

@@ -1,11 +1,11 @@
 package Players
 
-import Common.PublicGameState
-import java.util.*
-import org.junit.jupiter.api.Test
+import Common.TestData
+import Common.tile.GameTile
 import org.junit.Assert.assertArrayEquals
 import org.junit.Assert.assertFalse
-import Common.tile.GameTile
+import org.junit.jupiter.api.Test
+import java.util.*
 
 
 
@@ -83,15 +83,15 @@ internal class PlayerMechanismTest {
 
     companion object {
         fun createPlayerMechanism(): PlayerMechanism {
-            return RandomBoardRiemannPlayerMechanism("Jose")
+            return RandomBoardRiemannPlayerMechanism("Jose", TestData.createPlayer1().goalPosition)
         }
 
         fun createPlayerMechanismRandom(): PlayerMechanism {
-            return RandomBoardRiemannPlayerMechanism("Jose", Random().nextLong())
+            return RandomBoardRiemannPlayerMechanism("Jose", TestData.createPlayer1().goalPosition, Random().nextLong())
         }
 
         fun createPlayerMechanism(randomSeed: Long): PlayerMechanism {
-            return RandomBoardRiemannPlayerMechanism("Jose", randomSeed)
+            return RandomBoardRiemannPlayerMechanism("Jose", TestData.createPlayer1().goalPosition, randomSeed)
         }
     }
 }

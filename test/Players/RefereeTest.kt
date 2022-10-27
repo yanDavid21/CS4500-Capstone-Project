@@ -22,6 +22,11 @@ internal class RefereeTest {
 
     val referee = TestableReferee()
 
+    val riemannPlayers = listOf(
+        RandomBoardRiemannPlayerMechanism("player1", player1.getGoal()),
+        RandomBoardRiemannPlayerMechanism("player2", player2.getGoal()),
+        RandomBoardRiemannPlayerMechanism("player3", player3.getGoal()),
+    )
 
     /**
      * Test cases:
@@ -86,6 +91,17 @@ internal class RefereeTest {
         )
 
         assertDoesNotThrow { referee.startGame(playerMechanism) }
+    }
+
+    @Test
+    fun testPlayer1WinsEasily() {
+        val winabbleBoard = TestData.createBoard(TestData.easyToWinBoard)
+        val gameState = GameState(winabbleBoard,
+            TestData.createSpareTile(),
+            listOf(player1, player2, player3),
+        )
+
+        referee.playGame(gameState, riemannPlayers)
     }
 }
 
