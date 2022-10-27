@@ -37,7 +37,7 @@ fun main() {
         TestUtils.getTreasureFromString(spareTest.image1, spareTest.image2))
 
     val players = state.plmt.map {
-        val id = UUID.randomUUID()
+        val id = UUID.randomUUID().toString()
         val goal = Treasure(Gem.GROSSULAR_GARNET, Gem.HACKMANITE) // random treasure
         val playerCoord = Coordinates.fromRowAndValue(it.current.`row#`, it.current.`column#`)
         val homeCoord = Coordinates.fromRowAndValue(it.home.`row#`, it.home.`column#`)
@@ -47,13 +47,12 @@ fun main() {
     }
     val referee = GameState(board, spareTile, players)
 
-    //val lastAction = state.last
-
+    val position = players[0].currentPosition
     when(direction) {
-        DirectionTest.LEFT -> referee.slideRowAndInsertSpare(RowPosition(index), HorizontalDirection.LEFT, degree)
-        DirectionTest.RIGHT -> referee.slideRowAndInsertSpare(RowPosition(index), HorizontalDirection.RIGHT, degree)
-        DirectionTest.UP -> referee.slideColumnAndInsertSpare(ColumnPosition(index), VerticalDirection.UP, degree)
-        DirectionTest.DOWN -> referee.slideColumnAndInsertSpare(ColumnPosition(index), VerticalDirection.DOWN, degree)
+        DirectionTest.LEFT -> referee.slideRowAndInsertSpare(RowPosition(index), HorizontalDirection.LEFT, degree, position)
+        DirectionTest.RIGHT -> referee.slideRowAndInsertSpare(RowPosition(index), HorizontalDirection.RIGHT, degree, position)
+        DirectionTest.UP -> referee.slideColumnAndInsertSpare(ColumnPosition(index), VerticalDirection.UP, degree, position)
+        DirectionTest.DOWN -> referee.slideColumnAndInsertSpare(ColumnPosition(index), VerticalDirection.DOWN, degree, position)
     }
 
     val reachablePositions = referee.getBoard().getReachableTiles(players[0].currentPosition).map { TestCoordinate.fromCoordinates(it) }

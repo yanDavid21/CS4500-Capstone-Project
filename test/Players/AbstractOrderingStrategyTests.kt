@@ -41,12 +41,11 @@ abstract class AbstractOrderingStrategyTests {
             Coordinates.fromRowAndValue(1, 3),
             Coordinates.fromRowAndValue(1, 4),
             Coordinates.fromRowAndValue(1,2)
-        )
-        player.treasureFound = true
+        ).copy(treasureFound  = true)
 
         val strategy = Riemann(player)
 
-        val move = strategy.decideMove(PlayerState(board, TestData.createSpareTile(), null))
+        val move = strategy.decideMove(PublicGameState(board, TestData.createSpareTile(), null, mapOf("player1" to player.toPublicPlayerData())))
 
         val expectedMove = RowAction(RowPosition(0), HorizontalDirection.LEFT, Degree.ZERO,
             Coordinates.fromRowAndValue(1, 2))
@@ -127,12 +126,13 @@ abstract class AbstractOrderingStrategyTests {
         spare: GameTile,
         lastAction: MovingAction?
     ): Action {
-        val state = PlayerState(board, spare, lastAction)
         val player = TestData.createPlayer(
             playerPosition,
             treasurePosition,
             homePosition
         )
+
+        val state = PublicGameState(board, spare, lastAction, mapOf("player1" to player.toPublicPlayerData()))
 
         val strategy = createStrategy(player)
 

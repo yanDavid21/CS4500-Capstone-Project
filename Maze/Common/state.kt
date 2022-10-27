@@ -5,7 +5,7 @@ import Common.board.ColumnPosition
 import Common.board.Coordinates
 import Common.board.RowPosition
 import Common.player.Player
-import Common.player.PlayerQueue
+import Common.player.PublicPlayerData
 import Common.tile.Degree
 import Common.tile.GameTile
 import Common.tile.HorizontalDirection
@@ -15,86 +15,156 @@ import Common.tile.VerticalDirection
  * Contains all knowledge about the game state. Including all Player state (player id, goal tile, home tile),
  * tiles on the board, what the current spare tile is, whose turn it is, if there is a winner.
  */
-class GameState(
-    private var board: Board,
-    private var spareTile: GameTile,
-    players: List<Player>
+data class GameState(
+    private val board: Board,
+    private val spareTile: GameTile,
+    private val players: List<Player>,
+    private val lastMovingAction: MovingAction? = null,
+    val winner: Player? = null,
+    private val consecutiveSkips: Int = 0
 ) {
-    private val playerQueue = PlayerQueue(players.toMutableList())
-    private var winner: Player? = null
-    private var lastAction: MovingAction? = null
+    /**
+     * Returns whether the active player reached its goal.
+     */
+    fun hasActivePlayerReachedTreasure(): Boolean {
+        return getActivePlayer().treasureFound
+    }
+
+    /**
+     * Slides a row in the board in the provided direction, then rotates and inserts the spare tile into the vacant spot.
+     */
+    fun slideRowAndInsertSpare(rowPosition: RowPosition, direction: HorizontalDirection, degree: Degree, to: Coordinates): GameState {
+        val rotatedSpare = this.spareTile.rotate(degree)
+        val (board, spareTile) = board.slideRowAndInsert(rowPosition,direction, rotatedSpare)
+
+        val playersAfterRowSlide = movePlayersAfterRowSlide(rowPosition, direction)
+        val playersAfterActivePlayerMove = moveActivePlayer(playersAfterRowSlide, to, board)
+
+        val potentialWinner = checkActivePlayerWon(playersAfterActivePlayerMove)
+
+        val movingAction = RowAction(rowPosition, direction, degree, to)
+        return GameState(board, spareTile, playersAfterActivePlayerMove, movingAction, potentialWinner)
+    }
+
+    /**
+     * Slides a column in the board in the provided direction, then rotates and inserts the spare tile into the vacant spot.
+     */
+    fun slideColumnAndInsertSpare(columnPosition: ColumnPosition, direction: VerticalDirection, degree: Degree, to: Coordinates): GameState {
+        val rotatedSpare = this.spareTile.rotate(degree)
+        val (board, spareTile) = board.slideColAndInsert(columnPosition, direction, rotatedSpare)
+
+        val playersAfterColumnSlide = movePlayersAfterColumnSlide(columnPosition, direction)
+        val playersAfterActivePlayerMove = moveActivePlayer(playersAfterColumnSlide, to, board)
+
+        val potentialWinner = checkActivePlayerWon(playersAfterActivePlayerMove)
+
+        val movingAction = ColumnAction(columnPosition, direction, degree, to)
+        return GameState(board, spareTile, playersAfterActivePlayerMove, movingAction, potentialWinner)
+    }
+
+    fun isValidRowMove(rowPosition: RowPosition, direction: HorizontalDirection, degree: Degree, to: Coordinates): Boolean {
+        val (board, _) = board.slideRowAndInsert(rowPosition, direction, spareTile.rotate(degree))
+        val playersAfterRowSlide = movePlayersAfterRowSlide(rowPosition, direction)
+        return canPlayerReachTile(getActivePlayer(playersAfterRowSlide), to, board)
+    }
+
+    fun isValidColumnMove(columnPosition: ColumnPosition, direction: VerticalDirection, degree: Degree, to: Coordinates): Boolean {
+        val (board, _) = board.slideColAndInsert(columnPosition, direction, spareTile.rotate(degree))
+        val playersAfterColumnSlide = movePlayersAfterColumnSlide(columnPosition, direction)
+        return canPlayerReachTile(getActivePlayer(playersAfterColumnSlide), to, board)
+    }
+
+    /**
+     * Returns a mapping of all the player's current goal positions.
+     */
+    fun getPlayerGoal(playerName: String): Coordinates {
+        return playerGoals().getOrElse(playerName) {
+            throw IllegalArgumentException("Could not find goal for player: $playerName")
+        }
+    }
+
+    fun getPlayersData(): Map<String, Player> {
+        return players.associateBy { it.id }
+    }
 
     /**
      * Moves the currently active player from it tile to a given destination.
      *
      * Throws IllegalArgumentException if the given tile is not reachable.
      */
-    fun moveActivePlayer(to: Coordinates) {
-        val activePlayer = playerQueue.getCurrentPlayer()
-        checkActiveMovePlayer(activePlayer, activePlayer.currentPosition, to)
-
-        movePlayerAcrossBoard(activePlayer, to)
-        playerQueue.getNextPlayer()
+    private fun moveActivePlayer(players: List<Player>, to:Coordinates, board: Board): List<Player> {
+        val activePlayer = getActivePlayer(players)
+        checkActivePlayerMove(activePlayer, activePlayer.currentPosition, to, board)
+        val playerAfterMove = activePlayer.move(to)
+        return listOf(playerAfterMove).plus(players.getNext())
     }
 
-
-    /**
-     * Returns whether the active player reached its goal.
-     */
-    fun hasActivePlayerReachedGoal(): Boolean {
-        return playerQueue.getCurrentPlayer().treasureFound
-    }
-
-    /**
-     * Slides a row in the board in the provided direction, then rotates and inserts the spare tile into the vacant spot.
-     */
-    fun slideRowAndInsertSpare(rowPosition: RowPosition, direction: HorizontalDirection, degree: Degree) {
-        val rotatedSpare = this.spareTile.rotate(degree)
-        val (board, spareTile) = board.slideRowAndInsert(rowPosition,direction, rotatedSpare)
-        this.board = board
-        this.spareTile = spareTile
-        movePlayersAfterRowSlide(rowPosition, direction)
-    }
-
-    /**
-     * Slides a column in the board in the provided direction, then rotates and inserts the spare tile into the vacant spot.
-     */
-    fun slideColumnAndInsertSpare(columnPosition: ColumnPosition, direction: VerticalDirection, degree: Degree) {
-        val rotatedSpare = this.spareTile.rotate(degree)
-        val (board, spareTile) = board.slideColAndInsert(columnPosition, direction, rotatedSpare)
-        this.board = board
-        this.spareTile = spareTile
-        movePlayersAfterColumnSlide(columnPosition, direction)
+    private fun checkActivePlayerWon(players: List<Player>): Player? {
+        val activePlayer = getActivePlayer(players)
+        return if (activePlayer.treasureFound && activePlayer.currentPosition == activePlayer.homePosition) {
+            activePlayer
+        } else {
+            null
+        }
     }
 
     /**
      * Passes the current player.
      */
-    fun passCurrentPlayer() {
-        this.playerQueue.getNextPlayer()
+    fun passCurrentPlayer(): GameState {
+        return this.copy(
+            players = this.players.popFirstAndMoveToLast(),
+            consecutiveSkips = this.consecutiveSkips + 1
+        )
     }
 
     /**
      * Removes the active player from the queue and from all the tiles. Automatically makes the
      * active player the next player in the queue.
      */
-    fun kickOutActivePlayer() {
-        playerQueue.removeCurrentPlayer()
+    fun kickOutActivePlayer(): GameState {
+        return this.copy(
+            players = this.players.getNext()
+        )
+    }
+
+    fun endActivePlayerRound(): GameState {
+        return this.copy(
+            players = this.players.popFirstAndMoveToLast()
+        )
     }
 
     fun getBoard(): Board {
         return this.board.getCopyOfBoard()
     }
 
+    fun toPublicState(): PublicGameState {
+        return PublicGameState(board, spareTile, lastMovingAction,
+            players.associate { player -> Pair(player.id, player.toPublicPlayerData()) })
+    }
+
+    fun isGameOver(): Boolean {
+        return this.players.isEmpty() || winner?.let { true } ?: (consecutiveSkips >= players.size)
+    }
+
+    private fun playerGoals(): Map<String, Coordinates> {
+        return players.associate { player ->
+            Pair(player.id,  player.getGoal())
+        }
+    }
+
     /**
      * Moves all players in the queue when a row is slid left or right.
      */
-    private fun movePlayersAfterRowSlide(rowBeingSlidPosition: RowPosition, direction: HorizontalDirection) {
-        playerQueue.get().forEach { player ->
+    private fun movePlayersAfterRowSlide(rowBeingSlidPosition: RowPosition, direction: HorizontalDirection): List<Player>{
+        return players.map { player ->
             if (player.currentPosition.row == rowBeingSlidPosition) {
                 val newColumnPosition: ColumnPosition? = player.currentPosition.col.nextPosition(direction)
-                player.currentPosition = newColumnPosition?.let { Coordinates(rowBeingSlidPosition, it) }
+                val newPlayerCoordinates =  newColumnPosition?.let { Coordinates(rowBeingSlidPosition, it) }
                     ?: board.getEmptySlotPositionAfterSliding(rowBeingSlidPosition, direction)
+                player.move(newPlayerCoordinates)
+            } else {
+                player
             }
         }
     }
@@ -102,38 +172,58 @@ class GameState(
     /**
      * Moves all players in thr queue when a column is slide up or down.
      */
-    private fun movePlayersAfterColumnSlide(columnBeingSlidPosition: ColumnPosition, direction: VerticalDirection) {
-        playerQueue.get().forEach { player ->
+    private fun movePlayersAfterColumnSlide(columnBeingSlidPosition: ColumnPosition, direction: VerticalDirection): List<Player> {
+        return players.map { player ->
             if (player.currentPosition.col == columnBeingSlidPosition) {
                 val newRowPosition = player.currentPosition.row.nextPosition(direction)
-                player.currentPosition = newRowPosition?.let { Coordinates(it, columnBeingSlidPosition) }
+                val newPlayerCoordinates = newRowPosition?.let { Coordinates(it, columnBeingSlidPosition) }
                     ?: board.getEmptySlotPositionAfterSliding(columnBeingSlidPosition, direction)
+                player.move(newPlayerCoordinates)
+            } else {
+                player
             }
         }
     }
 
-
-    private fun canPlayerReachTile(player: Player, location: Coordinates): Boolean {
+    private fun canPlayerReachTile(player: Player, location: Coordinates, board: Board): Boolean {
         return board.getReachableTiles(player.currentPosition).contains(location)
     }
 
 
-    private fun movePlayerAcrossBoard(activePlayer: Player, targetCoord: Coordinates) {
-        activePlayer.currentPosition = targetCoord
-        activePlayer.treasureFound = activePlayer.treasureFound || targetCoord == activePlayer.goalPosition
-
-        updateWinner(activePlayer)
-    }
-
-    private fun updateWinner(activePlayer: Player) {
-        if (activePlayer.currentPosition == activePlayer.homePosition && activePlayer.treasureFound) {
-            winner = activePlayer
-        }
-    }
-
-    private fun checkActiveMovePlayer(activePlayer: Player, currentPosition: Coordinates, to: Coordinates) {
-        if (!canPlayerReachTile(activePlayer, to) || currentPosition == to) {
+    private fun checkActivePlayerMove(activePlayer: Player, currentPosition: Coordinates, to: Coordinates, board: Board) {
+        if (!canPlayerReachTile(activePlayer, to, board)) {
             throw IllegalArgumentException("Can not move active player to $to.")
         }
     }
+
+    fun getActivePlayer(): Player {
+        return getActivePlayer(this.players)
+    }
+
+    private fun getActivePlayer(players: List<Player> = this.players): Player {
+        if (players.isEmpty()) {
+            throw IllegalStateException("All playrs have been kicked out, could not get active player.")
+        }
+        return players[0]
+    }
+}
+
+/**
+ * Holds the public data players will know about the game.
+ */
+data class PublicGameState(
+    val board: Board, val spareTile: GameTile, val lastAction: MovingAction?, val publicPlayerData: Map<String, PublicPlayerData>
+) {
+
+    fun getPlayerData(playerName: String): PublicPlayerData {
+        return publicPlayerData[playerName] ?: throw IllegalStateException("Could not find player data for player: $playerName")
+    }
+}
+
+fun <T> List<T>.popFirstAndMoveToLast(): List<T> {
+    return if (this.isEmpty()) listOf() else this.getNext().plus(this.first())
+}
+
+fun <T> List<T>.getNext(): List<T> {
+    return if (this.isEmpty()) listOf() else this.subList(1, this.size )
 }

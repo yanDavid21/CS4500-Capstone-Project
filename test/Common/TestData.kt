@@ -10,7 +10,6 @@ import Common.tile.Path
 import Common.tile.treasure.Gem
 import Common.tile.treasure.Treasure
 import testing.TestUtils
-import java.util.*
 
 object TestData {
 
@@ -22,25 +21,23 @@ object TestData {
         return GameState(board, createSpareTile(), players.toList())
     }
 
-    fun createReferee(tiles: Array<Array<GameTile>>): GameState {
+    fun createReferee(board: Board): GameState {
         val player1 = createPlayer1()
 
         val player2 = createPlayer2()
 
         val player3 = createPlayer3()
-
-        val board = createBoard(tiles)
         return GameState(board, createSpareTile(), listOf(player1, player2, player3))
     }
 
-    fun createReferee(): GameState {
-        val tiles = createTiles()
-        return createReferee(tiles)
+    fun createReferee(tiles: Array<Array<GameTile>>): GameState {
+        return createReferee(createBoard(tiles))
     }
 
+
     fun createTiles(): Array<Array<GameTile>> {
-        return TestUtils.getTilesFromConnectorsAndTreasures(TestData.board,
-            TestUtils.getTreasuresFromStrings(TestData.treasureStrings))
+        return TestUtils.getTilesFromConnectorsAndTreasures(board,
+            TestUtils.getTreasuresFromStrings(treasureStrings))
     }
 
     fun createSpareTile(): GameTile {
@@ -67,8 +64,8 @@ object TestData {
     }
 
     val board = listOf(
-            listOf("│", "─", "┐", "└", "┌", "┘", "┬"),
-            listOf("┘", "│", "┌",  "─", "┐", "└", "┬"),
+            listOf("│", "─", "┐", "└", "┌", "┘", "└"),
+            listOf("┘", "│", "┌",  "─", "┐", "┬", "┬"),
             listOf("┘", "┌", "│",  "┐", "└", "─", "┬"),
             listOf("┘", "│", "┌",  "─", "┐", "└", "┬"),
             listOf("┘", "│", "┌",  "─", "┐", "└", "┬"),
@@ -97,7 +94,7 @@ object TestData {
 
     fun createPlayer(position: Coordinates, treasurePos: Coordinates, homePos: Coordinates): Player {
         return Player(
-            UUID.fromString("f9728f95-96db-4cf4-a9c1-13113635d312"),
+            "player",
             position,
             treasurePos,
             homePos,
@@ -107,7 +104,7 @@ object TestData {
 
     fun createPlayer1(): Player {
         return Player(
-            UUID.fromString("f9728f95-96db-4cf4-a9c1-13113635d312"),
+            "player1",
             Coordinates.fromRowAndValue(0,0),
             Coordinates.fromRowAndValue(1,1),
             Coordinates.fromRowAndValue(5, 5),
@@ -117,7 +114,7 @@ object TestData {
 
     fun createPlayer2(): Player {
         return Player(
-            UUID.fromString("f9728f95-96db-4cf4-a9c1-13113635d312"),
+            "player2",
             Coordinates.fromRowAndValue(0, 2),
             Coordinates.fromRowAndValue(3,3),
             Coordinates.fromRowAndValue(3, 5),
@@ -127,7 +124,7 @@ object TestData {
 
     fun createPlayer3(): Player {
         return Player(
-            UUID.fromString("f25bc452-5ccc-4d29-8ad1-a76f89f42c24"),
+            "player3",
             Coordinates.fromRowAndValue(6,6),
             Coordinates.fromRowAndValue(5,5),
             Coordinates.fromRowAndValue(5, 5),
