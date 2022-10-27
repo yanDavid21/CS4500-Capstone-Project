@@ -48,8 +48,7 @@ class PlayerMechanismImpl(val name: String, randomSeed: Long = 0L) {
 
         val tiles = Array(rows) {
             Array(columns) {
-                GameTile(Path.UP_RIGHT, Degree.ZERO, Treasure(Gem.GROSSULAR_GARNET, Gem.GOLDSTONE))
-                //  GameTile(getRandomPath(), getRandomDegree(), getRandomTreasure(possibleTreasure, rows * columns))
+                GameTile(getRandomPath(), getRandomDegree(), getRandomTreasure(possibleTreasure, rows * columns))
             }
         }
         return tiles

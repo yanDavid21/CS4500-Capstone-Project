@@ -7,6 +7,7 @@ import Common.board.ColumnPosition
 import Common.board.Coordinates
 import Common.board.RowPosition
 import Common.tile.Degree
+import Common.tile.GameTile
 import Common.tile.HorizontalDirection
 import Common.tile.VerticalDirection
 import org.junit.jupiter.api.Assertions
@@ -183,151 +184,78 @@ internal class StateTests {
         val finalState = removedPlayer1.passCurrentPlayer().passCurrentPlayer()
         assert(finalState.isGameOver())
     }
-    /*
-
-
-       @Test
-       fun testInsertRotateZeroDegrees() {
-           val player1 = TestData.createPlayer1()
-           val player2 = TestData.createPlayer2()
-           val player3 = TestData.createPlayer3()
-
-           val referee = GameState(TestData.createBoard(), TestData.createSpareTile(), listOf(player1, player2, player3))
-           referee.slideRowAndInsertSpare(RowPosition(0), HorizontalDirection.RIGHT, Degree.ZERO)
-           val tile = referee.getBoard().getTile(Coordinates(RowPosition(0), ColumnPosition(0)))
-           assertEquals(tile, GameTile(tile.path, Degree.ZERO, tile.treasure))
-       }
-
-
-       @Test
-       fun testInsertRotateNinetyDegrees() {
-           val player1 = TestData.createPlayer1()
-           val player2 = TestData.createPlayer2()
-           val player3 = TestData.createPlayer3()
-
-           val referee = GameState(TestData.createBoard(), TestData.createSpareTile(), listOf(player1, player2, player3))
-           referee.slideRowAndInsertSpare(RowPosition(0), HorizontalDirection.RIGHT, Degree.NINETY)
-           val tile = referee.getBoard().getTile(Coordinates(RowPosition(0), ColumnPosition(0)))
-           assertEquals(tile, GameTile(tile.path, Degree.NINETY, tile.treasure))
-       }
-
-
-       @Test
-       fun testInsertRotateOneEightyDegrees() {
-           val player1 = TestData.createPlayer1()
-           val player2 = TestData.createPlayer2()
-           val player3 = TestData.createPlayer3()
-
-           val referee = GameState(TestData.createBoard(), TestData.createSpareTile(), listOf(player1, player2, player3))
-           referee.slideRowAndInsertSpare(RowPosition(0), HorizontalDirection.RIGHT, Degree.ONE_EIGHTY)
-           val tile = referee.getBoard().getTile(Coordinates(RowPosition(0), ColumnPosition(0)))
-           assertEquals(tile, GameTile(tile.path, Degree.ONE_EIGHTY, tile.treasure))
-       }
-
-
-       @Test
-       fun testInsertRotateTwoSeventyDegrees() {
-           val player1 = TestData.createPlayer1()
-           val player2 = TestData.createPlayer2()
-           val player3 = TestData.createPlayer3()
-
-           val referee = GameState(TestData.createBoard(), TestData.createSpareTile(), listOf(player1, player2, player3))
-           referee.slideRowAndInsertSpare(RowPosition(0), HorizontalDirection.RIGHT, Degree.TWO_SEVENTY)
-           val tile = referee.getBoard().getTile(Coordinates(RowPosition(0), ColumnPosition(0)))
-           assertEquals(tile, GameTile(tile.path, Degree.TWO_SEVENTY, tile.treasure))
-       }
-
-
-       @Test
-       fun testInsertRotateThreeSixtyDegrees() {
-           val player1 = TestData.createPlayer1()
-           val player2 = TestData.createPlayer2()
-           val player3 = TestData.createPlayer3()
-
-           val referee = GameState(TestData.createBoard(), TestData.createSpareTile(), listOf(player1, player2, player3))
-           referee.slideRowAndInsertSpare(
-               RowPosition(0),
-               HorizontalDirection.RIGHT,
-               Degree.ZERO.add(Degree.TWO_SEVENTY).add(Degree.NINETY)
-           )
-           val tile = referee.getBoard().getTile(Coordinates(RowPosition(0), ColumnPosition(0)))
-           assertEquals(tile, GameTile(tile.path, Degree.ZERO, tile.treasure))
-       }
-
-       @Test
-       fun testPassCurrentPlayer() {
-           val player1 = TestData.createPlayer1()
-           val player2 = TestData.createPlayer2()
-
-           val referee = GameState(TestData.createBoard(), TestData.createSpareTile(), listOf(player1, player2))
-
-           referee.passCurrentPlayer()
-
-           referee.moveActivePlayer(Coordinates.fromRowAndValue(0, 1))
-           assertEquals(Coordinates.fromRowAndValue(0, 1), player2.currentPosition)
-
-           referee.passCurrentPlayer()
-           referee.moveActivePlayer(Coordinates.fromRowAndValue(0, 2))
-           assertEquals(Coordinates.fromRowAndValue(0, 2), player2.currentPosition)
-       }
-
-
-
-        */
-
-    /*
 
     @Test
-    fun testMovePlayerToUnreachabletile() {
-        val referee = TestData.createReferee()
+    fun testInsertRotateZeroDegrees() {
+        val player1 = TestData.createPlayer1()
 
-        assertThrows<IllegalArgumentException>("Can not move active player to (0,0)") {
-            referee.moveActivePlayer(Coordinates.fromRowAndValue(0,0))
-        }
-
-        assertThrows<IllegalArgumentException>("Can not move active player to (1,1)") {
-            referee.moveActivePlayer(Coordinates.fromRowAndValue(1,1))
-        }
+        val referee = GameState(TestData.createBoard(), TestData.createSpareTile(), listOf(player1))
+        referee.slideRowAndInsertSpare(
+            RowPosition(6),
+            HorizontalDirection.RIGHT, Degree.ZERO,
+            Coordinates.fromRowAndValue(1, 0)
+        )
+        val tile = referee.getBoard().getTile(Coordinates(RowPosition(6), ColumnPosition(0)))
+        assertEquals(tile, GameTile(tile.path, Degree.ZERO, tile.treasure))
     }
 
+
     @Test
-    fun testMovePlayer() {
+    fun testInsertRotateNinetyDegrees() {
+        val player1 = TestData.createPlayer1()
+
+        val referee = GameState(TestData.createBoard(), TestData.createSpareTile(), listOf(player1))
+        referee.slideRowAndInsertSpare(RowPosition(6), HorizontalDirection.RIGHT, Degree.NINETY,
+            Coordinates.fromRowAndValue(1, 0))
+        val tile = referee.getBoard().getTile(Coordinates(RowPosition(6), ColumnPosition(0)))
+        assertEquals(tile, GameTile(tile.path, Degree.NINETY, tile.treasure))
+    }
+
+
+    @Test
+    fun testInsertRotateOneEightyDegrees() {
+        val player1 = TestData.createPlayer1()
+
+        val referee = GameState(TestData.createBoard(), TestData.createSpareTile(), listOf(player1))
+        referee.slideRowAndInsertSpare(
+            RowPosition(6),
+            HorizontalDirection.RIGHT, Degree.ONE_EIGHTY,
+            Coordinates.fromRowAndValue(1, 0)
+        )
+        val tile = referee.getBoard().getTile(Coordinates(RowPosition(6), ColumnPosition(0)))
+        assertEquals(tile, GameTile(tile.path, Degree.ONE_EIGHTY, tile.treasure))
+    }
+
+
+    @Test
+    fun testInsertRotateTwoSeventyDegrees() {
+        val player1 = TestData.createPlayer1()
+
+        val referee = GameState(TestData.createBoard(), TestData.createSpareTile(), listOf(player1))
+        referee.slideRowAndInsertSpare(RowPosition(6),
+            HorizontalDirection.RIGHT,
+            Degree.TWO_SEVENTY,
+            Coordinates.fromRowAndValue(1, 0)
+        )
+        val tile = referee.getBoard().getTile(Coordinates(RowPosition(6), ColumnPosition(0)))
+        assertEquals(tile, GameTile(tile.path, Degree.TWO_SEVENTY, tile.treasure))
+    }
+
+
+    @Test
+    fun testInsertRotateThreeSixtyDegrees() {
         val player1 = TestData.createPlayer1()
         val player2 = TestData.createPlayer2()
-        val board = TestData.createBoard()
-        val referee = GameState(board, TestData.createSpareTile(), listOf(player1, player2))
+        val player3 = TestData.createPlayer3()
 
-        referee.moveActivePlayer(Coordinates.fromRowAndValue(1, 0))
-
-        assertEquals(Coordinates.fromRowAndValue(1,0), player1.currentPosition)
-
-        referee.moveActivePlayer(Coordinates.fromRowAndValue(0, 1))
-
-        assertEquals(Coordinates.fromRowAndValue(0, 1), player2.currentPosition)
-    }
-
-
-    @Test
-    fun testMovePlayerToTheSameTile() {
-        val referee = TestData.createReferee()
-
-        assertThrows<IllegalArgumentException>("Can not move active player to (0,0).") {
-            referee.moveActivePlayer(Coordinates.fromRowAndValue(0, 0))
-        }
-    }
-
-    @Test
-    fun testMovePlayerToTreasureTile() {
-        val player = TestData.createPlayer(
-            Coordinates.fromRowAndValue(3, 2),
-            Coordinates.fromRowAndValue(3, 3),
-            Coordinates.fromRowAndValue(5, 5)
+        val referee = GameState(TestData.createBoard(), TestData.createSpareTile(), listOf(player1, player2, player3))
+        referee.slideRowAndInsertSpare(
+            RowPosition(6),
+            HorizontalDirection.RIGHT,
+            Degree.ZERO.add(Degree.TWO_SEVENTY).add(Degree.NINETY),
+            Coordinates.fromRowAndValue(1, 0)
         )
-        val referee = TestData.createRefereeWithPlayers(player)
-
-        referee.moveActivePlayer(Coordinates.fromRowAndValue(3,3))
-
-        assert(player.treasureFound)
+        val tile = referee.getBoard().getTile(Coordinates(RowPosition(6), ColumnPosition(0)))
+        assertEquals(tile, GameTile(tile.path, Degree.ZERO, tile.treasure))
     }
-     */
 }
