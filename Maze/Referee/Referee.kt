@@ -11,31 +11,59 @@ import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withTimeout
 import kotlin.math.abs
 
+/**
+ * A Maze game referee entity. To handle player's when running a game to completion.
+ *
+ * The following steps are done when starting a game:
+ *  1. For every player (in the given order of ascending age), get a board suggestion.
+ *  2. Chose a board and create the initial game state.
+ *  3. In the same order as above, transmit the initial public state and treasure goal to every player.
+ *  4. Play a game.
+ *     - Until 1000 rounds pass, or a player wins, or every player passes, get the current player move.
+ *     - If the move request terminates before the timeout with no raised exceptions and the move supplied is valid
+ *       according to the rules of the game, then  apply the move to the state, move on the next player,
+ *       otherwise kick out the player from the game and terminate all communication
+ *     - Once the game is over, determine a winner:
+ *       * A player who found its home after having found the treasure wins.
+ *       * If no single player accomplished this, the players who share the smallest euclidian distance to home after
+ *         having found the treasure are all tied winners.
+ *       * If no player found the treasure, the players who share the smallest euclidian distance to the treasure tile
+ *         are all winner.
+ *  5. For every player with active communication, send its win/loss information.
+ */
 abstract class Referee {
 
-    // implementations will chose square and odd boards
-    abstract fun choseBoard(suggestedBoards: List<Board>, players: List<PlayerMechanism>): GameState
+    /**
+     * Selects a suggested board and creates a game from it.
+     */
+    abstract fun createStateFromChosenBoard(suggestedBoards: List<Board>, players: List<PlayerMechanism>): GameState
 
     fun startGame(players: List<PlayerMechanism>) {
-        val gameState = setUp(players)
+        val gameState = setup(players)
 
         sendInitialGameStateData(gameState, players)
 
-        val endGameData =  playGame(gameState, players.associateBy { it.name })
+        val endGameData =  playGame(gameState, players)
 
         sendGameOverInformation(endGameData, players)
     }
 
-    fun setUp(players: List<PlayerMechanism>): GameState {
+    /**
+     * Get board suggests from all players, creates a game with the chosen one.
+     */
+    private fun setup(players: List<PlayerMechanism>): GameState {
         val suggestedBoards = players.map {
             it.proposeBoard0(Position.WIDTH, Position.HEIGHT)
         }
-        return choseBoard(
+        return createStateFromChosenBoard(
             validateBoards(suggestedBoards), players
         )
     }
 
-    fun sendInitialGameStateData(gameState: GameState, players: List<PlayerMechanism>) {
+    /**
+     * Transmits initial game data to all players, including the public game state and the player's goal.
+     */
+    private fun sendInitialGameStateData(gameState: GameState, players: List<PlayerMechanism>) {
         val initialPlayerState = gameState.toPublicState()
         players.forEach { player ->
             val goal = gameState.getPlayerGoal(player.name)
@@ -43,26 +71,38 @@ abstract class Referee {
         }
     }
 
-    fun sendGameOverInformation(endgameData: Map<String, Boolean>, players: List<PlayerMechanism>) {
-        players.forEach { player ->
-            endgameData[player.name]?.let { playerWon -> player.won(playerWon)}
-        }
-    }
 
-    fun playGame(initialState: GameState, players: Map<String, PlayerMechanism>): Map<String, Boolean> {
+    /**
+     * Runs a single game of maze to completion.
+     */
+    private fun playGame(initialState: GameState, players: List<PlayerMechanism>): Map<String, Boolean> {
+        val playerData = players.associateBy { it.name }
         var state = initialState
         var roundCount = 0
         while (!state.isGameOver() && roundCount < MAX_ROUNDS) {
             val currentPlayer = state.getActivePlayer()
-            val currentMechanism = players[currentPlayer.id] ?: throw IllegalStateException("Invalid player.")
+            val currentMechanism = playerData[currentPlayer.id] ?: throw IllegalStateException("Invalid player.")
 
             state = runRoundSafelyWithTimeout(currentPlayer, currentMechanism, state)
             roundCount++
         }
 
-        return getWinners(state, players.keys)
+        return getWinners(state)
     }
 
+    /**
+     * Transmits endgame data, a single win/loss value.
+     */
+    private fun sendGameOverInformation(endgameData: Map<String, Boolean>, players: List<PlayerMechanism>) {
+        players.forEach { player ->
+            endgameData[player.name]?.let { playerWon -> player.won(playerWon)}
+        }
+    }
+
+    /**
+     * Runs a single round. If the player API call takes longer than TIMEOUT seconds, or throws an exception, the player
+     * will be removed from the game.
+     */
     private fun runRoundSafelyWithTimeout(currentPlayer: Player, currentMechanism: PlayerMechanism, state: GameState): GameState {
         return runBlocking {
             withTimeout(TIMEOUT) {
@@ -88,9 +128,9 @@ abstract class Referee {
         return newState.endActivePlayerRound()
     }
 
-    private fun getWinners(state: GameState, players: Set<String>): Map<String, Boolean> {
+    private fun getWinners(state: GameState): Map<String, Boolean> {
         return state.winner?.let { winner ->
-            players.associate { player -> Pair(player, player == winner.id) }
+            state.getPlayersData().mapValues { (_, player) -> player == winner }
         } ?:  getPlayersClosestToWinning(state)
     }
 
@@ -183,7 +223,7 @@ abstract class Referee {
     }
 
     companion object {
-        const val TIMEOUT = 2L // in seconds
+        const val TIMEOUT = 4L // in seconds
         const val MAX_ROUNDS = 10000
         private const val DELTA = 0.000001
         fun Double.equalsDelta(other: Double) = abs(this - other) < DELTA

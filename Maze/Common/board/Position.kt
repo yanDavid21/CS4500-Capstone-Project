@@ -43,8 +43,8 @@ interface Position {
         const val HEIGHT = 7
         const val MIN_COL_INDEX = 0
         const val MIN_ROW_INDEX = 0
-        const val MAX_COL_INDEX = WIDTH + 1
-        const val MAX_ROW_INDEX = HEIGHT + 1
+        const val MAX_COL_INDEX = WIDTH - 1
+        const val MAX_ROW_INDEX = HEIGHT - 1
     }
 }
 

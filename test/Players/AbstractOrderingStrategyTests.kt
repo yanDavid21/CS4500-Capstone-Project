@@ -41,8 +41,7 @@ abstract class AbstractOrderingStrategyTests {
             Coordinates.fromRowAndValue(1, 3),
             Coordinates.fromRowAndValue(1, 4),
             Coordinates.fromRowAndValue(1,2)
-        )
-        player.treasureFound = true
+        ).copy(treasureFound  = true)
 
         val strategy = Riemann(player)
 

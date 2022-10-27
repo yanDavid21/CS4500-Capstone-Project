@@ -3,13 +3,13 @@ package Players
 import Common.Action
 import Common.PublicGameState
 import Common.board.Coordinates
-import Common.tile.GameTile
-import Common.tile.Degree
-import Common.tile.Path
 import Common.player.Player
-import Common.tile.treasure.Treasure
+import Common.tile.Degree
+import Common.tile.GameTile
+import Common.tile.Path
 import Common.tile.treasure.Gem
-import java.util.Random
+import Common.tile.treasure.Treasure
+import java.util.*
 
 
 /**
@@ -32,10 +32,12 @@ class PlayerMechanism(val name: String, randomSeed: Long = 0L) {
      */
     fun proposeBoard0(rows: Int, columns: Int): Array<Array<GameTile>> {
         checkValidBoardDimensions(rows, columns)
+        val possibleTreasure = mutableSetOf<Treasure>()
 
         val tiles = Array(rows) {
             Array(columns) {
-                GameTile(getRandomPath(), getRandomDegree(), getRandomTreasure(possibleTreasure), rows * columns))
+                GameTile(Path.UP_RIGHT, Degree.ZERO, Treasure(Gem.GROSSULAR_GARNET, Gem.GOLDSTONE))
+                //  GameTile(getRandomPath(), getRandomDegree(), getRandomTreasure(possibleTreasure, rows * columns))
             }
         }
         return tiles

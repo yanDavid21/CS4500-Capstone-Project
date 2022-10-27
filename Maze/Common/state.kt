@@ -38,13 +38,12 @@ data class GameState(
         val (board, spareTile) = board.slideRowAndInsert(rowPosition,direction, rotatedSpare)
 
         val playersAfterRowSlide = movePlayersAfterRowSlide(rowPosition, direction)
-        val playersAfterActivePlayerMove = moveActivePlayer(playersAfterRowSlide, to)
+        val playersAfterActivePlayerMove = moveActivePlayer(playersAfterRowSlide, to, board)
 
         val potentialWinner = checkActivePlayerWon(playersAfterActivePlayerMove)
-        val newPlayerQueue = playersAfterActivePlayerMove.popFirstAndMoveToLast()
 
         val movingAction = RowAction(rowPosition, direction, degree, to)
-        return GameState(board, spareTile, newPlayerQueue, movingAction, potentialWinner)
+        return GameState(board, spareTile, playersAfterActivePlayerMove, movingAction, potentialWinner)
     }
 
     /**
@@ -55,13 +54,12 @@ data class GameState(
         val (board, spareTile) = board.slideColAndInsert(columnPosition, direction, rotatedSpare)
 
         val playersAfterColumnSlide = movePlayersAfterColumnSlide(columnPosition, direction)
-        val playersAfterActivePlayerMove = moveActivePlayer(playersAfterColumnSlide, to)
+        val playersAfterActivePlayerMove = moveActivePlayer(playersAfterColumnSlide, to, board)
 
         val potentialWinner = checkActivePlayerWon(playersAfterActivePlayerMove)
-        val newPlayerQueue = playersAfterActivePlayerMove.popFirstAndMoveToLast()
 
         val movingAction = ColumnAction(columnPosition, direction, degree, to)
-        return GameState(board, spareTile, newPlayerQueue, movingAction, potentialWinner)
+        return GameState(board, spareTile, playersAfterActivePlayerMove, movingAction, potentialWinner)
     }
 
     fun isValidRowMove(rowPosition: RowPosition, direction: HorizontalDirection, degree: Degree, to: Coordinates): Boolean {
@@ -94,11 +92,11 @@ data class GameState(
      *
      * Throws IllegalArgumentException if the given tile is not reachable.
      */
-    fun moveActivePlayer(players: List<Player>, to:Coordinates): List<Player> {
+    private fun moveActivePlayer(players: List<Player>, to:Coordinates, board: Board): List<Player> {
         val activePlayer = getActivePlayer(players)
-        checkActivePlayerMove(activePlayer, activePlayer.currentPosition, to)
+        checkActivePlayerMove(activePlayer, activePlayer.currentPosition, to, board)
         val playerAfterMove = activePlayer.move(to)
-        return listOf(playerAfterMove).plus(players.subList(1, players.size - 1))
+        return listOf(playerAfterMove).plus(players.getNext())
     }
 
     private fun checkActivePlayerWon(players: List<Player>): Player? {
@@ -191,12 +189,9 @@ data class GameState(
         return board.getReachableTiles(player.currentPosition).contains(location)
     }
 
-    private fun canPlayerReachTile(player: Player, location: Coordinates): Boolean {
-        return canPlayerReachTile(player, location, board)
-    }
 
-    private fun checkActivePlayerMove(activePlayer: Player, currentPosition: Coordinates, to: Coordinates) {
-        if (!canPlayerReachTile(activePlayer, to) || currentPosition == to) {
+    private fun checkActivePlayerMove(activePlayer: Player, currentPosition: Coordinates, to: Coordinates, board: Board) {
+        if (!canPlayerReachTile(activePlayer, to, board)) {
             throw IllegalArgumentException("Can not move active player to $to.")
         }
     }
@@ -230,5 +225,5 @@ fun <T> List<T>.popFirstAndMoveToLast(): List<T> {
 }
 
 fun <T> List<T>.getNext(): List<T> {
-    return if (this.isEmpty()) listOf() else this.subList(1, this.size - 1)
+    return if (this.isEmpty()) listOf() else this.subList(1, this.size )
 }
