@@ -76,10 +76,11 @@ internal class PlayerMechanismTest {
 
     @Test
     fun setupAndUpdateGoalHome() {
-        val player = RandomBoardRiemannPlayerMechanism("Jose", Coordinates.fromRowAndValue(0,5) )
-        player.setupAndUpdateGoal(gamestate.toPublicState(), Coordinates.fromRowAndValue(0,1))
-        val newGamestate = gamestate.slideColumnAndInsertSpare(ColumnPosition(6), VerticalDirection.DOWN,Degree.TWO_SEVENTY, Coordinates.fromRowAndValue(0,2))
-        assertEquals(newGamestate.getActivePlayer().getGoal(), player.nextGoal)
+        val playerData = PlayerData("Jose", currentPosition = Coordinates.fromRowAndValue(0,0),
+            goalPosition = Coordinates.fromRowAndValue(1, 0), homePosition = Coordinates.fromRowAndValue(0, 0),BaseColor.PURPLE)
+        val player = RandomBoardRiemannPlayerMechanism("Jose", Coordinates.fromRowAndValue(1,0) )
+        player.setupAndUpdateGoal(null, Coordinates.fromRowAndValue(0,0))
+        assertEquals(playerData.homePosition, player.nextGoal)
     }
 
     @Test
@@ -94,16 +95,18 @@ internal class PlayerMechanismTest {
     @Test
     fun testTakeTurn() {
         val player1 = createPlayerMechanism()
-        assertEquals(player1.takeTurn(gamestate.toPublicState()),
-            RowAction(RowPosition(1), HorizontalDirection.LEFT, Degree.ZERO, Coordinates.fromRowAndValue(0,2)))
+        assertEquals(RowAction(RowPosition(0), HorizontalDirection.RIGHT, Degree.ZERO, Coordinates.fromRowAndValue(0,1)),
+            player1.takeTurn(gamestate.toPublicState()))
     }
 
     @Test
     fun testTakeTurnPass() {
         val player1 = createPlayerMechanism()
         val playerData1 = PlayerData("Jose", Coordinates.fromRowAndValue(1,1),
-            Coordinates.fromRowAndValue(0,1), Coordinates.fromRowAndValue(0,1),BaseColor.PURPLE)
-        val gamestate = GameState(createBoard(impossibleBoard), tile1, listOf(playerData1, playerData),
+            Coordinates.fromRowAndValue(1,0), Coordinates.fromRowAndValue(0,1),BaseColor.PURPLE)
+        val playerData2 = PlayerData("David", currentPosition = Coordinates.fromRowAndValue(0,0),
+            goalPosition = Coordinates.fromRowAndValue(0,1), homePosition = Coordinates.fromRowAndValue(0,0),BaseColor.PURPLE)
+        val gamestate = GameState(createBoard(impossibleBoard), tile1, listOf(playerData1, playerData2),
             null)
 
         assertEquals(player1.takeTurn(gamestate.toPublicState()), Skip)
@@ -120,7 +123,7 @@ internal class PlayerMechanismTest {
 
     companion object {
         fun createPlayerMechanism(): PlayerMechanism {
-            return RandomBoardRiemannPlayerMechanism("Jose", Coordinates.fromRowAndValue(0,0), 0L)
+            return RandomBoardRiemannPlayerMechanism("Jose", Coordinates.fromRowAndValue(0,1), 0L)
         }
 
         fun createPlayerMechanismRandom(): PlayerMechanism {
@@ -135,11 +138,11 @@ internal class PlayerMechanismTest {
             return RandomBoardRiemannPlayerMechanism("Jose", Coordinates.fromRowAndValue(0,0), 0L)
         }
 
-        val tile1 = GameTile(Path.T, Degree.TWO_SEVENTY, Treasure(Gem.RAW_BERYL, Gem.ZIRCON))
+        val tile1 = GameTile(Path.T, Degree.NINETY, Treasure(Gem.RAW_BERYL, Gem.ZIRCON))
         val publicPlayerData = PublicPlayerData("Jose", Coordinates.fromRowAndValue(0,1),
             Coordinates.fromRowAndValue(0,1), BaseColor.PURPLE)
-        val playerData = PlayerData("Jose", Coordinates.fromRowAndValue(0,1),
-            Coordinates.fromRowAndValue(0,1), Coordinates.fromRowAndValue(0,1),BaseColor.PURPLE)
+        val playerData = PlayerData("Jose", currentPosition = Coordinates.fromRowAndValue(0,0),
+            goalPosition = Coordinates.fromRowAndValue(0,1), homePosition = Coordinates.fromRowAndValue(0,0),BaseColor.PURPLE)
         val gamestate = GameState(createBoard(), tile1, listOf(playerData),
             null)
     }
