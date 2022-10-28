@@ -62,6 +62,10 @@ data class GameState(
         return GameState(board, spareTile, playersAfterActivePlayerMove, movingAction, potentialWinner, 0)
     }
 
+    /**
+     * Checks if a sliding action is valid by performing the move on the board and seeing if the active player
+     * can reach the target position. Target position can not equal active player's previous position.
+     */
     fun isValidRowMove(rowPosition: RowPosition, direction: HorizontalDirection, degree: Degree, to: Coordinates): Boolean {
         val activePlayer = getActivePlayer()
         val (board, _) = board.slideRowAndInsert(rowPosition, direction, spareTile.rotate(degree))
@@ -69,6 +73,10 @@ data class GameState(
         return to != activePlayer.currentPosition && canPlayerReachTile(getActivePlayer(playersAfterRowSlide), to, board)
     }
 
+    /**
+     * Checks if a sliding action is valid by performing the move on the board and seeing if the active player
+     * can reach the target position. Target position can not equal active player's previous position.
+     */
     fun isValidColumnMove(columnPosition: ColumnPosition, direction: VerticalDirection, degree: Degree, to: Coordinates): Boolean {
         val activePlayer = getActivePlayer()
         val (board, _) = board.slideColAndInsert(columnPosition, direction, spareTile.rotate(degree))
@@ -85,6 +93,9 @@ data class GameState(
         }
     }
 
+    /**
+     * Returns a mapping of player identifiers to their data.
+     */
     fun getPlayersData(): Map<String, PlayerData> {
         return players.associateBy { it.id }
     }
@@ -111,7 +122,7 @@ data class GameState(
     }
 
     /**
-     * Passes the current player.
+     * Passes the current player. Increments the player's consecutive skips. Does not end the turn.
      */
     fun passCurrentPlayer(): GameState {
         return this.copy(
@@ -129,6 +140,10 @@ data class GameState(
         )
     }
 
+    /**
+     * Finishes the current round. The new state will have the next player as the active player and the
+     * currently active player at the end of the queue.
+     */
     fun endActivePlayerRound(): GameState {
         return this.copy(
             players = this.players.popFirstAndMoveToLast()
@@ -144,6 +159,12 @@ data class GameState(
             players.associate { player -> Pair(player.id, player.toPublicPlayerData()) })
     }
 
+    /**
+     * Determines if the game is finished. Ending conditions are:
+     *  - All players have been kicked out
+     *  - There is a winner
+     *  - A round has passed with everyone skipping.
+     */
     fun isGameOver(): Boolean {
         return this.players.isEmpty() || winner?.let { true } ?: (consecutiveSkips >= players.size)
     }

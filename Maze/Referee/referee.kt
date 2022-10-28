@@ -16,7 +16,7 @@ import kotlin.math.abs
  *  3. In the same order as above, transmit the initial public state and treasure goal to every player.
  *  4. Play a game.
  *     - Until 1000 rounds pass, or a player wins, or every player passes, get the current player move.
- *     - If the move request terminates before the timeout with no raised exceptions and the move supplied is valid
+ *     - If the move request terminates with no raised exceptions and the move supplied is valid
  *       according to the rules of the game, then  apply the move to the state, move on the next player,
  *       otherwise kick out the player from the game and terminate all communication
  *     - Once the game is over, determine a winner:
@@ -26,6 +26,9 @@ import kotlin.math.abs
  *       * If no player found the treasure, the players who share the smallest euclidian distance to the treasure tile
  *         are all winner.
  *  5. For every player with active communication, send its win/loss information.
+ *
+ *  The TCP server component must deal with a player exceeding the alotted time to respond to a request, if this happens
+ *  the player must be removed.
  */
 abstract class Referee {
 
@@ -85,7 +88,7 @@ abstract class Referee {
             val currentPlayer = state.getActivePlayer()
 
             state = playerData[currentPlayer.id]?.let { playerMechanism ->
-                runRoundSafelyWithTimeout(currentPlayer, playerMechanism, state)
+                runRoundSafely(currentPlayer, playerMechanism, state)
             } ?: state.kickOutActivePlayer()
 
             roundCount += 1
@@ -115,19 +118,17 @@ abstract class Referee {
 
     private fun <T> safelyQueryPlayer(player: PlayerMechanism, action: (PlayerMechanism) -> T): T? {
         return try {
-            //runBlocking { withTimeout(TIMEOUT) {
-                action(player)
-            //} }
+            action(player)
         } catch (_: Exception) {
             null
         }
     }
 
     /**
-     * Runs a single round. If the player API call takes longer than TIMEOUT seconds, or throws an exception, the player
+     * Runs a single round. If the player API call throws an exception, the player
      * will be removed from the game.
      */
-    private fun runRoundSafelyWithTimeout(currentPlayer: PlayerData, currentMechanism: PlayerMechanism, state: GameState): GameState {
+    private fun runRoundSafely(currentPlayer: PlayerData, currentMechanism: PlayerMechanism, state: GameState): GameState {
         return safelyQueryPlayer(currentMechanism) {
             playOneRound(currentPlayer, currentMechanism, state)
         } ?: state.kickOutActivePlayer()
@@ -251,7 +252,6 @@ abstract class Referee {
 
 
     companion object {
-        const val TIMEOUT = 15L // in seconds
         const val MAX_ROUNDS = 10000
         private const val DELTA = 0.000001
         fun Double.equalsDelta(other: Double) = abs(this - other) < DELTA // equality check for Doubles using DELTA

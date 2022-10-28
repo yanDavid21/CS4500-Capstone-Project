@@ -7,8 +7,17 @@ import Common.tile.Degree
 import Common.tile.HorizontalDirection
 import Common.tile.VerticalDirection
 
+/**
+ * An Action is one of:
+ *  - Skip
+ *  - MoveAction which can be either a row or a column move which includes a sliding position, direction, rotation and
+ *    new position.
+ */
 interface Action
 
+/**
+ * An action that modifies the game state by moving the board.
+ */
 sealed interface MovingAction: Action {
 
     fun isUndoingAction(other: MovingAction): Boolean
@@ -44,4 +53,7 @@ data class ColumnAction(
     }
 }
 
+/**
+ * To represent a skipping player action.
+ */
 object Skip: Action
