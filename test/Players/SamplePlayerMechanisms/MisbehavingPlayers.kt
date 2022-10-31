@@ -30,3 +30,9 @@ class MisbehavingOnRound(override val name: String): PassingPlayerMechanism(name
         throw IllegalStateException("This should not be raised, would mean won was called after this player misbehaved.")
     }
 }
+
+class MisbehavingOnWon(override val name: String): PassingPlayerMechanism(name) {
+    override fun won(hasPlayerWon: Boolean) {
+        throw IllegalStateException("MEAN")
+    }
+}

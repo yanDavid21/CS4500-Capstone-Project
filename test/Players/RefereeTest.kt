@@ -2,6 +2,7 @@ package Players
 
 import Common.GameState
 import Common.TestData
+import Common.board.Board
 import Common.board.Coordinates
 import Common.player.BaseColor
 import Common.player.PlayerData
@@ -10,13 +11,9 @@ import Common.tile.GameTile
 import Common.tile.Path
 import Common.tile.treasure.Gem
 import Common.tile.treasure.Treasure
-import Players.SamplePlayerMechanisms.MisbehavingOnBoardRequest
-import Players.SamplePlayerMechanisms.MisbehavingOnRound
-import Players.SamplePlayerMechanisms.MisbehavingOnSetup
-import Players.SamplePlayerMechanisms.PassingPlayerMechanism
+import Players.SamplePlayerMechanisms.*
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertDoesNotThrow
-import testing.TestableReferee
 import kotlin.test.assertEquals
 
 internal class RefereeTest {
@@ -185,6 +182,15 @@ internal class RefereeTest {
         )
     }
 
+    @Test
+    fun testGracefulWhenPlayerMisbehavesOnWon() {
+        val players = listOf(
+            PassingPlayerMechanism("player1"), MisbehavingOnWon("player2"), MisbehavingOnWon("player3")
+        )
+
+        assertDoesNotThrow { referee.startGame(players) }
+    }
+
     fun createRiemannPlayers(): List<RandomBoardRiemannPlayerMechanism> {
         return listOf(
             RandomBoardRiemannPlayerMechanism("player1", player1.getGoal()),
@@ -246,6 +252,16 @@ internal class RefereeTest {
     }
 
 
+}
+
+class TestableReferee: Referee() {
+    override fun createStateFromChosenBoard(suggestedBoards: List<Board>, players: List<PlayerMechanism>): GameState {
+        val testPlayers = listOf(TestData.createPlayer1(), TestData.createPlayer2(), TestData.createPlayer3())
+            .associateBy { it.id }
+        val playerData = players.map { testPlayers[it.name] ?: throw IllegalStateException("Need test data for $it.name") }
+
+        return TestData.createRefereeWithPlayers(playerData)
+    }
 }
 
 
