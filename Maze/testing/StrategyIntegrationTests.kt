@@ -75,7 +75,6 @@ fun serializeChoice(choice: Common.Action, gson: Gson): JsonElement {
                 TestCoordinate.fromCoordinates(choice.newPosition)
             )
         )
-        else -> throw IllegalStateException("Invalid choice: $choice")
     }
 }
 

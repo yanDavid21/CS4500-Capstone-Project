@@ -3,7 +3,7 @@ package Common.tile
 /**
  * Represents the cardinal directions of UP, DOWN, LEFT, RIGHT for describing slides and directions on a path.
  */
-interface Direction {
+sealed interface Direction {
 
     /**
      * Returns a new direction after applying the given degree to this direction.

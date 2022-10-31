@@ -89,7 +89,6 @@ class Board(private val tiles: Array<Array<GameTile>>) {
             HorizontalDirection.RIGHT -> tiles[position.value][this.width - 1]
             VerticalDirection.UP -> tiles[0][position.value]
             VerticalDirection.DOWN -> tiles[this.height - 1][position.value]
-            else -> throw IllegalArgumentException("LEFT,RIGHT,UP,DOWN are the only possible directions.")
         }
     }
 
@@ -100,7 +99,6 @@ class Board(private val tiles: Array<Array<GameTile>>) {
             HorizontalDirection.RIGHT -> Coordinates(RowPosition(position.value), ColumnPosition(0))
             VerticalDirection.UP -> Coordinates(RowPosition(height-1), ColumnPosition(position.value))
             VerticalDirection.DOWN -> Coordinates(RowPosition(0), ColumnPosition(position.value))
-            else -> throw IllegalArgumentException("LEFT,RIGHT,UP,DOWN are the only possible directions.")
         }
     }
 
@@ -120,7 +118,6 @@ class Board(private val tiles: Array<Array<GameTile>>) {
             HorizontalDirection.LEFT -> 0 until width-1
             VerticalDirection.DOWN -> height-1 downTo   1
             VerticalDirection.UP -> 0 until height-1
-            else -> throw IllegalArgumentException("YOU WILL NEVER REACH THIS")
         }
     }
 
@@ -129,7 +126,6 @@ class Board(private val tiles: Array<Array<GameTile>>) {
         return when(direction) {
             HorizontalDirection.LEFT, VerticalDirection.UP -> 1
             HorizontalDirection.RIGHT, VerticalDirection.DOWN -> -1
-            else -> throw IllegalArgumentException("")
         }
     }
 
@@ -146,7 +142,6 @@ class Board(private val tiles: Array<Array<GameTile>>) {
         return when (direction) {
             is HorizontalDirection -> Coordinates(RowPosition(position.value), ColumnPosition(index))
             is VerticalDirection -> Coordinates(RowPosition(index), ColumnPosition(position.value))
-            else -> throw IllegalArgumentException("Direction must be horizontal and vertical.")
         }
     }
 
@@ -155,7 +150,6 @@ class Board(private val tiles: Array<Array<GameTile>>) {
         return when (direction) {
             is HorizontalDirection -> Coordinates(RowPosition(position.value ), ColumnPosition(index + difference))
             is VerticalDirection -> Coordinates(RowPosition(index + difference), ColumnPosition(position.value))
-            else -> throw IllegalArgumentException("Direction must be horizontal and vertical.")
         }
     }
 
