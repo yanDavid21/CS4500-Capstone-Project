@@ -2,7 +2,6 @@ package Players
 
 import Common.GameState
 import Common.TestData
-import Common.board.Board
 import Common.board.Coordinates
 import Common.player.BaseColor
 import Common.player.PlayerData
@@ -17,6 +16,7 @@ import Players.SamplePlayerMechanisms.MisbehavingOnSetup
 import Players.SamplePlayerMechanisms.PassingPlayerMechanism
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertDoesNotThrow
+import testing.TestableReferee
 import kotlin.test.assertEquals
 
 internal class RefereeTest {
@@ -248,14 +248,4 @@ internal class RefereeTest {
 
 }
 
-
-class TestableReferee: Referee() {
-    override fun createStateFromChosenBoard(suggestedBoards: List<Board>, players: List<PlayerMechanism>): GameState {
-        val testPlayers = listOf(TestData.createPlayer1(), TestData.createPlayer2(), TestData.createPlayer3())
-            .associateBy { it.id }
-        val playerData = players.map { testPlayers[it.name] ?: throw IllegalStateException("Need test data for $it.name") }
-
-        return TestData.createRefereeWithPlayers(playerData)
-    }
-}
 

@@ -55,12 +55,12 @@ tasks.test {
 tasks.jar {
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
     manifest {
-        attributes["Main-Class"] = "testing/StrategyIntegrationTestsKt"
+        attributes["Main-Class"] = "testing/ObserverIntegrationTestsKt"
     }
 
     from(configurations.compileClasspath.get().map { if (it.isDirectory()) it else zipTree(it) })
 
-    destinationDirectory.set(File("5/Other"))
+    destinationDirectory.set(File("6/Other"))
 }
 
 tasks.withType<KotlinCompile> {
