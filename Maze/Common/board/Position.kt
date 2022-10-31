@@ -76,6 +76,12 @@ data class ColumnPosition(override val value: Int): Position {
     override fun toString(): String {
         return value.toString()
     }
+
+    companion object {
+        fun getAll(): List<ColumnPosition> {
+            return (Position.MIN_COL_INDEX .. Position.MAX_COL_INDEX).map { ColumnPosition(it) }
+        }
+    }
 }
 
 /**
