@@ -38,14 +38,10 @@ fun getStateFromStdIn(): Pair<GameState, List<PlayerMechanism>> {
 }
 
 class JavaFXObserver(
-    gameState: GameState,
-    private val stage: Stage
+    gameState: GameState
 ): Observer, MazeUserInterface {
     private val receivedStates = mutableListOf(gameState)
     private var willReceiveMore = true
-
-    override fun start() {
-    }
 
     override fun updateState(newState: GameState) {
         receivedStates.add(newState)
@@ -87,13 +83,12 @@ class JavaFXObserver(
     }
 }
 
-class CommandLineRefereeApp: Application() {
-
+abstract class RefereeApplication: Application() {
+    abstract fun getStateAndPlayers(): Pair<GameState, List<PlayerMechanism>>
     override fun start(primaryStage: Stage?) {
-
         primaryStage?.run {
-            val (initialState, players) = getStateFromStdIn()
-            val observer = JavaFXObserver(initialState, primaryStage)
+            val (initialState, players) = getStateAndPlayers()
+            val observer = JavaFXObserver(initialState)
             val controller = ObservableReferee(observer)
 
             val view = HBox().apply{
@@ -101,7 +96,12 @@ class CommandLineRefereeApp: Application() {
 
                 val button = Button("Next")
 
-                button.onAction = EventHandler { children[0] = renderGameState(observer.next()) }
+                button.onAction = EventHandler {
+                    children[0] = renderGameState(observer.next())
+                    if (observer.isGameOver()) {
+                        this.isVisible = false
+                    }
+                }
                 children.add(button)
             }
 
@@ -109,9 +109,16 @@ class CommandLineRefereeApp: Application() {
 
             show()
 
-            println(controller.playGame(initialState, players))
+            controller.playGame(initialState, players)
         }
     }
+}
+
+class CommandLineRefereeApp: RefereeApplication() {
+    override fun getStateAndPlayers(): Pair<GameState, List<PlayerMechanism>> {
+        return getStateFromStdIn()
+    }
+
 }
 
 
