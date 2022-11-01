@@ -5,5 +5,5 @@ import Common.GameState
 interface MazeUserInterface {
     fun next(): GameState
 
-    fun save()
+    fun save(filepath: String)
 }

@@ -114,35 +114,6 @@ class CommandLineRefereeApp: Application() {
     }
 }
 
-class RunGui: Application() {
-
-    private var parentNode: Parent
-
-    init {
-        parentNode = initialParentNode
-        singletonInstance = this
-    }
-
-    override fun start(primaryStage: Stage) {
-        primaryStage.run {
-            scene = Scene(parentNode)
-            show()
-        }
-    }
-
-    fun setParentNode(parent: Parent) {
-        parentNode = parent
-    }
-
-    companion object {
-        lateinit var singletonInstance: RunGui
-        private lateinit var initialParentNode: Parent
-        
-        fun setInitialParent(node: Parent) {
-            initialParentNode = node
-        }
 
 
-    }
-}
 
