@@ -132,7 +132,7 @@ abstract class Referee {
      * Runs a single round. If the player API call throws an exception, the player
      * will be removed from the game.
      */
-    private fun runRoundSafely(currentPlayer: PlayerData, currentMechanism: PlayerMechanism, state: GameState): GameState {
+    protected open fun runRoundSafely(currentPlayer: PlayerData, currentMechanism: PlayerMechanism, state: GameState): GameState {
         return safelyQueryPlayer(currentMechanism) {
             playOneRound(currentPlayer, currentMechanism, state)
         } ?: state.kickOutActivePlayer()

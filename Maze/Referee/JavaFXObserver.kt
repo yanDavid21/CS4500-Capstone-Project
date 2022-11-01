@@ -4,35 +4,47 @@ import Common.GameState
 import Common.board.ColumnPosition
 import Common.board.Coordinates
 import Common.board.RowPosition
-import Common.tile.Degree
-import Common.tile.VerticalDirection
+import Players.PlayerMechanism
 import com.google.gson.Gson
 import com.google.gson.stream.JsonReader
 import javafx.application.Application
 import javafx.application.Application.launch
-import javafx.application.Platform
-import javafx.scene.Parent
+import javafx.event.EventHandler
 import javafx.scene.Scene
-import javafx.scene.layout.StackPane
-import javafx.scene.paint.Color
-import javafx.scene.shape.Rectangle
+import javafx.scene.control.Button
+import javafx.scene.layout.HBox
 import javafx.stage.Stage
 import testing.BoardTest
 import testing.RefereeState
+import testing.getPlayerMechanisms
 import testing.getRefereeState
 import java.io.InputStreamReader
 
-// launch -> create RunGui instance -> init { static variable -> this current instance } -> RunGui.getSingletonInstance()
+fun main() {
+    launch(CommandLineRefereeApp::class.java)
+}
+
+fun getStateFromStdIn(): Pair<GameState, List<PlayerMechanism>> {
+    val jsonReader = JsonReader(InputStreamReader(System.`in`, "UTF-8"))
+    val gson = Gson()
+
+    val playerSpec = gson.fromJson<List<List<String>>>(jsonReader, List::class.java)
+    val refereeState = gson.fromJson<RefereeState>(jsonReader, RefereeState::class.java)
+
+    val state = getRefereeState(refereeState, playerSpec.map { it[0] })
+
+    val mechanisms = getPlayerMechanisms(playerSpec, state)
+    return Pair(state, mechanisms)
+}
 
 class JavaFXObserver(
-    val gameState: GameState
+    gameState: GameState,
+    private val stage: Stage
 ): Observer, MazeUserInterface {
     private val receivedStates = mutableListOf(gameState)
     private var willReceiveMore = true
 
     override fun start() {
-        RunGui.setInitialParent(renderGameState(gameState))
-        launch(RunGui::class.java)
     }
 
     override fun updateState(newState: GameState) {
@@ -43,14 +55,14 @@ class JavaFXObserver(
         willReceiveMore = false
     }
 
-    override fun next() {
+    override fun next(): GameState {
         if (receivedStates.isNotEmpty()) {
-            val currentState = receivedStates.first()
-            Platform.runLater { RunGui.singletonInstance.setParentNode(renderGameState(currentState)) }
+            return receivedStates.removeAt(0)
         }
+        throw IllegalStateException("No more states")
     }
 
-    override fun save() {
+    override fun save(filename: String) {
         if (receivedStates.isNotEmpty()) {
             val currentState = receivedStates.first()
 
@@ -68,67 +80,38 @@ class JavaFXObserver(
 
 
             //val serialized = RefereeState(
-              //  serializedBoard,
+            //  serializedBoard,
             //)
         }
         TODO("Not yet implemented")
     }
 }
 
+class CommandLineRefereeApp: Application() {
 
-/*
- *
- * GUI:
- *
- * - Designing a JavaFX component that renders a game state (must be constructed with game state)
- *
- * - Making an application that reads a state and player mechanisms from stdin, creates the above component
- *   renders it, and takes user input for next and save
- */
+    override fun start(primaryStage: Stage?) {
 
-fun main() {
-    val jsonReader = JsonReader(InputStreamReader(System.`in`, "UTF-8"))
-    val gson = Gson()
+        primaryStage?.run {
+            val (initialState, players) = getStateFromStdIn()
+            val observer = JavaFXObserver(initialState, primaryStage)
+            val controller = ObservableReferee(observer)
 
-    val playerSpec = gson.fromJson<List<List<String>>>(jsonReader, List::class.java)
-    val refereeState = gson.fromJson<RefereeState>(jsonReader, RefereeState::class.java)
+            val view = HBox().apply{
+                children.add(renderGameState(initialState))
 
-    val state = getRefereeState(refereeState, playerSpec.map { it[0] })
+                val button = Button("Next")
 
-    val observer = JavaFXObserver(state)
+                button.onAction = EventHandler { children[0] = renderGameState(observer.next()) }
+                children.add(button)
+            }
 
-    observer.start()
-    val newState = state.slideColumnAndInsertSpare(ColumnPosition(0), VerticalDirection.DOWN, Degree.ZERO, Coordinates.fromRowAndValue(1, 1))
-    observer.updateState(newState)
-    observer.next()
-}
+            scene = Scene(view)
 
-private fun renderGameState(gameState: GameState): Parent {
-    val board = gameState.getBoard()
-    val horizontal = Rectangle(70.0, 20.0)
-    val vertical = Rectangle(20.0, 70.0)
+            show()
 
-    horizontal.fill = Color.BLACK
-    vertical.fill = Color.BLACK
-
-    val sp = StackPane(horizontal, vertical)
-    return sp
-    // TODO: draw game state
-}
-
-// TODO: read from std. in, return corresponding gamestate
-private fun createParentFromStdIn(): Parent {
-    val jsonReader = JsonReader(InputStreamReader(System.`in`, "UTF-8"))
-    val gson = Gson()
-
-    val playerSpec = gson.fromJson<List<List<String>>>(jsonReader, List::class.java)
-    val refereeState = gson.fromJson<RefereeState>(jsonReader, RefereeState::class.java)
-
-    val state = getRefereeState(refereeState, playerSpec.map { it[0] })
-    //val playerMechanisms = getPlayerMechanisms(playerSpec, state)
-    //val referee = TestableReferee()
-
-    return renderGameState(state)
+            println(controller.playGame(initialState, players))
+        }
+    }
 }
 
 class RunGui: Application() {

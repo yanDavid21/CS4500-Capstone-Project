@@ -5,7 +5,7 @@ import java.util.*
 /**
  * Represents an avatar's unique color.
  */
-interface Color {
+sealed interface Color {
     companion object {
         private val currentColors = mutableSetOf<Color>()
 

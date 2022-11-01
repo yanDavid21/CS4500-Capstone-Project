@@ -1,7 +1,9 @@
 package Referee
 
+import Common.GameState
+
 interface MazeUserInterface {
-    fun next()
+    fun next(): GameState
 
     fun save()
 }
