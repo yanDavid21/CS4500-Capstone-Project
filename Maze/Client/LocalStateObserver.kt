@@ -6,7 +6,9 @@ import Common.board.Coordinates
 import Common.board.RowPosition
 import Common.getNext
 import Referee.ObserverMechanism
-import testing.BoardTest
+import serialization.data.BoardDTO
+import serialization.data.StateDTO
+import serialization.data.TileDTO
 
 
 class LocalStateObserver(state: GameState): ObserverMechanism {
@@ -34,24 +36,31 @@ class LocalStateObserver(state: GameState): ObserverMechanism {
 
     fun save(filepath: String) {
         if (gamestates.isNotEmpty()) {
-            val currentState = gamestates.first()
+            val currentState = gamestates.first().toPublicState()
 
-            val board = currentState.getBoard()
+            val board = currentState.board
             val allTiles = RowPosition.getAll().map { row ->
                 ColumnPosition.getAll().map { col ->
                     board.getTile(Coordinates(row, col))
                 }
             }
-
-            val serializedBoard = BoardTest(
-                allTiles.map { row -> row.map { it.path.symbol } },
+            val serializedBoard = BoardDTO(
+                allTiles.map { row -> row.map { it.toString() } },
                 allTiles.map { row -> row.map { listOf(it.treasure.gem1.toString(), it.treasure.gem2.toString()) } }
             )
 
+            val spareTile = currentState.spareTile
+            val serializedSpareTile = TileDTO(
+                spareTile.toString(),
+                spareTile.treasure.gem1.toString(),
+                spareTile.treasure.gem2.toString()
+            )
 
-            //val serialized = RefereeState(
-            //  serializedBoard,
-            //)
+
+
+            val serializedState = StateDTO(
+                serializedBoard, serializedSpareTile,
+            )
         }
         TODO("Not yet implemented")
     }

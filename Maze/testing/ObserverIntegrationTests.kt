@@ -11,6 +11,10 @@ import Common.tile.GameTile
 import Players.PlayerMechanism
 import com.google.gson.Gson
 import com.google.gson.stream.JsonReader
+import serialization.converters.ActionConverter
+import serialization.converters.TileConverter
+import serialization.converters.TreasureConverter
+import serialization.data.RefereeStateDTO
 import java.io.InputStreamReader
 
 
@@ -19,7 +23,7 @@ fun main() {
     val gson = Gson()
 
     val playerSpec = gson.fromJson<List<List<String>>>(jsonReader, List::class.java)
-    val refereeState = gson.fromJson<RefereeState>(jsonReader, RefereeState::class.java)
+    val refereeState = gson.fromJson<RefereeStateDTO>(jsonReader, RefereeStateDTO::class.java)
 
     val state = getRefereeState(refereeState, playerSpec.map { it[0] })
     val playerMechanisms = getPlayerMechanisms(playerSpec, state)
@@ -32,14 +36,14 @@ fun main() {
     println(gson.toJson(winners))
 }
 
-fun getRefereeState(state: RefereeState, names: List<String>): GameState {
+fun getRefereeState(state: RefereeStateDTO, names: List<String>): GameState {
     val board = Board(
-        TestUtils.getTilesFromConnectorsAndTreasures(state.board.connectors,
-            TestUtils.getTreasuresFromStrings(state.board.treasures))
+        TileConverter.getTilesFromConnectorsAndTreasures(state.board.connectors,
+            TreasureConverter.getTreasuresFromStrings(state.board.treasures))
     )
-    val spareTile = TestUtils.getTileFromStringAndTreasure(
+    val spareTile = TileConverter.getTileFromStringAndTreasure(
         state.spare.tilekey,
-        TestUtils.getTreasureFromString(state.spare.image1, state.spare.image2)
+        TreasureConverter.getTreasureFromString(state.spare.image1, state.spare.image2)
     )
     val players = state.plmt.mapIndexed { index, it ->
         PlayerData(
@@ -51,7 +55,7 @@ fun getRefereeState(state: RefereeState, names: List<String>): GameState {
             color = Color.valueOf(it.color)
         )
     }
-    val action = TestUtils.getLastMovingAction(state.last)
+    val action = ActionConverter.getLastMovingAction(state.last)
     return GameState(board, spareTile, players, action)
 }
 
@@ -74,7 +78,8 @@ fun getPlayerMechanisms(specs: List<List<String>>, state: GameState): List<Playe
             }
 
             override fun takeTurn(state: PublicGameState): Action {
-                return strategy.getStrategy(playerData).decideMove(state)
+                val newPublicPlayerData = state.getPlayerData(name)
+                return strategy.getStrategy(playerData.copy(currentPosition = newPublicPlayerData.currentPosition)).decideMove(state)
             }
 
             override fun won(hasPlayerWon: Boolean) {
@@ -84,16 +89,3 @@ fun getPlayerMechanisms(specs: List<List<String>>, state: GameState): List<Playe
     }
 }
 
-data class RefereeState(
-    val board: BoardTest,
-    val spare: TileTest,
-    val plmt: List<RefereePlayer>,
-    val last: List<String>
-)
-
-data class RefereePlayer(
-    val current: TestCoordinate,
-    val home: TestCoordinate,
-    val goto: TestCoordinate,
-    val color: String
-)

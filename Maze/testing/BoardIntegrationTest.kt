@@ -1,47 +1,26 @@
 package testing
 
-import Common.board.Board
-import Common.board.Coordinates
 import com.google.gson.Gson
 import com.google.gson.stream.JsonReader
+import serialization.converters.BoardConverter
+import serialization.converters.CoordinateConverter
+import serialization.data.BoardDTO
+import serialization.data.CoordinateDTO
 import java.io.InputStreamReader
-
-data class TileMatrix(
-   val connectors: List<List<String>>,
-   val treasures: List<List<List<String>>>
-)
-
-data class TestCoordinate(
-    val `row#` : Int, val `column#`: Int
-) {
-    companion object {
-        fun fromCoordinates(coordinates: Coordinates): TestCoordinate {
-            return TestCoordinate(coordinates.row.value, coordinates.col.value)
-        }
-    }
-
-    fun toCoordinate(): Coordinates {
-        return Coordinates.fromRowAndValue(`row#`, `column#`)
-    }
-}
 
 fun main() {
     val jsonReader = JsonReader(InputStreamReader(System.`in`, "UTF-8"))
     val gson = Gson()
 
-    val testBoard = gson.fromJson<TileMatrix>(jsonReader, TileMatrix::class.java)
-    val coordinates = gson.fromJson<TestCoordinate>(jsonReader, TestCoordinate::class.java)
+    val testBoard = gson.fromJson<BoardDTO>(jsonReader, BoardDTO::class.java)
+    val coordinates = gson.fromJson<CoordinateDTO>(jsonReader, CoordinateDTO::class.java)
 
-    val treasures = TestUtils.getTreasuresFromStrings(testBoard.treasures)
+    val board = BoardConverter.getBoardFromBoardDTO(testBoard)
+    val testCoordinate = CoordinateConverter.coordinateFromDTO(coordinates)
 
-    val tiles = TestUtils.getTilesFromConnectorsAndTreasures(testBoard.connectors, treasures)
+    val reachablePositions = board.getReachableTiles(testCoordinate).map { CoordinateDTO.fromCoordinates(it) }
 
-    val board = Board(tiles)
+    val comp = compareBy<CoordinateDTO>({ it.`row#`}, {it.`column#`})
 
-    val testCoordinate = Coordinates.fromRowAndValue(coordinates.`row#`, coordinates.`column#`)
-    val reachablePositions = board.getReachableTiles(testCoordinate).map { TestCoordinate.fromCoordinates(it) }
-
-    val comp = compareBy<TestCoordinate>({ it.`row#`}, {it.`column#`})
-
-    println(reachablePositions.sortedWith(comp).map { gson.toJson(it, TestCoordinate::class.java) })
+    println(reachablePositions.sortedWith(comp).map { gson.toJson(it, CoordinateDTO::class.java) })
 }

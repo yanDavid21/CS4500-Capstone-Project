@@ -13,7 +13,7 @@ import javafx.scene.Scene
 import javafx.scene.control.Button
 import javafx.scene.layout.HBox
 import javafx.stage.Stage
-import testing.RefereeState
+import serialization.data.RefereeStateDTO
 import testing.getPlayerMechanisms
 import testing.getRefereeState
 import java.io.InputStreamReader
@@ -31,11 +31,11 @@ abstract class RefereeObserverApplication: Application() {
         val observer = LocalStateObserver(initialState)
         val controller = ObservableReferee(listOf(observer))
 
+        val button = Button("Next")
+
         primaryStage?.run {
             val view = HBox().apply{
                 children.add(renderGameState(initialState))
-
-                val button = Button("Next")
 
                 button.onAction = EventHandler {
                     val nextStateOpt = observer.next()
@@ -43,6 +43,7 @@ abstract class RefereeObserverApplication: Application() {
                         children[0] = renderGameState(nextState)
                     }
                 }
+
                 children.add(button)
             }
 
@@ -60,7 +61,7 @@ class CommandLineRefereeApp: RefereeObserverApplication() {
         val gson = Gson()
 
         val playerSpec = gson.fromJson<List<List<String>>>(jsonReader, List::class.java)
-        val refereeState = gson.fromJson<RefereeState>(jsonReader, RefereeState::class.java)
+        val refereeState = gson.fromJson<RefereeStateDTO>(jsonReader, RefereeStateDTO::class.java)
 
         val state = getRefereeState(refereeState, playerSpec.map { it[0] })
 

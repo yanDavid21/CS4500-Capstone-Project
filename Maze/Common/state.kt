@@ -67,10 +67,10 @@ data class GameState(
      * can reach the target position. Target position can not equal active player's previous position.
      */
     fun isValidRowMove(rowPosition: RowPosition, direction: HorizontalDirection, degree: Degree, to: Coordinates): Boolean {
-        val activePlayer = getActivePlayer()
+        val activePlayerTile = this.board.getTile(getActivePlayer().currentPosition)
         val (board, _) = board.slideRowAndInsert(rowPosition, direction, spareTile.rotate(degree))
         val playersAfterRowSlide = movePlayersAfterRowSlide(rowPosition, direction)
-        return to != activePlayer.currentPosition && canPlayerReachTile(getActivePlayer(playersAfterRowSlide), to, board)
+        return board.getTile(to) != activePlayerTile && canPlayerReachTile(getActivePlayer(playersAfterRowSlide), to, board)
     }
 
     /**
@@ -78,10 +78,10 @@ data class GameState(
      * can reach the target position. Target position can not equal active player's previous position.
      */
     fun isValidColumnMove(columnPosition: ColumnPosition, direction: VerticalDirection, degree: Degree, to: Coordinates): Boolean {
-        val activePlayer = getActivePlayer()
+        val activePlayerTile = this.board.getTile(getActivePlayer().currentPosition)
         val (board, _) = board.slideColAndInsert(columnPosition, direction, spareTile.rotate(degree))
         val playersAfterColumnSlide = movePlayersAfterColumnSlide(columnPosition, direction)
-        return to != activePlayer.currentPosition && canPlayerReachTile(getActivePlayer(playersAfterColumnSlide), to, board)
+        return board.getTile(to) != activePlayerTile && canPlayerReachTile(getActivePlayer(playersAfterColumnSlide), to, board)
     }
 
     /**
