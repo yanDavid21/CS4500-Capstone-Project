@@ -80,7 +80,7 @@ abstract class Referee {
     /**
      * Runs a single game of maze to completion.
      */
-    fun playGame(initialState: GameState, players: List<PlayerMechanism>): Map<String, Boolean> {
+    open fun playGame(initialState: GameState, players: List<PlayerMechanism>): Map<String, Boolean> {
         val playerMechanisms = players.associateBy { it.name }
         var state = initialState
         var roundCount = 0

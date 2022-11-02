@@ -29,6 +29,6 @@
     ["apricot-square-radiant", "jaspilite"], ["magnesite", "moonstone"], ["ametrine", "ruby"], ["citrine", "diamond"],
     ["blue-ceylon-sapphire", "chrysoberyl-cushion"]]]}, "spare": {"tilekey": "└", "1-image":"grossular-garnet", "2-image":"sunstone"},
   "plmt": [
-    {"current":  {"row#": 0, "column#": 0}, "home": {"row#": 1, "column#": 1}, "goto":{"row#": 1, "column#": 1}, "color": "red"},
+    {"current":  {"row#": 0, "column#": 0}, "home": {"row#": 1, "column#": 1}, "goto":{"row#": 1, "column#": 2}, "color": "red"},
     {"current":  {"row#": 1, "column#": 5}, "home": {"row#": 5, "column#": 5}, "goto":  {"row#": 1, "column#": 5}, "color": "blue"}],
       "last": null}}

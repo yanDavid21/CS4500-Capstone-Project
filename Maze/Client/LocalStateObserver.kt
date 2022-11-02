@@ -1,44 +1,38 @@
 package Client
 
-import Client.javafx.JavaFXObserverView
-import Client.javafx.MazeObserverInterface
 import Common.GameState
 import Common.board.ColumnPosition
 import Common.board.Coordinates
 import Common.board.RowPosition
 import Common.getNext
+import Referee.ObserverMechanism
 import testing.BoardTest
 
-// create observers
-//     observer -> javafxview() -> application launch
-// create observable referee (observers)
-//
 
-class LocalStateController(state: GameState, private val view: JavaFXObserverView): MazeObserverInterface {
-    private var gamestates = listOf<GameState>(state)
+class LocalStateObserver(state: GameState): ObserverMechanism {
+    private var gamestates = listOf(state)
+    private var isGameOver = false
 
-    init {
-        view.giveFeatures(this)
+    override fun updateState(newState: GameState) {
+        gamestates = gamestates + listOf(newState)
     }
 
-    // REFEREE REQUESTS
-    fun notifyGameOver() {
-        view.gameOver()
+    override fun gameOver() {
+        isGameOver = true
     }
-
-    fun updateQueueOfGameStates(gameState: GameState) {
-        gamestates = gamestates + listOf(gameState)
-    }
-
 
     // CLIENT REQUESTS
-    override fun next(): GameState? {
-        val first = gamestates.first()
-        gamestates = gamestates.getNext()
-        return first
+    fun next(): GameState? {
+        if (gamestates.isNotEmpty()) {
+            val first = gamestates.first()
+            gamestates = gamestates.getNext()
+            return first
+        }
+        return null
     }
 
-    override fun save(filepath: String) {
+
+    fun save(filepath: String) {
         if (gamestates.isNotEmpty()) {
             val currentState = gamestates.first()
 
@@ -61,5 +55,4 @@ class LocalStateController(state: GameState, private val view: JavaFXObserverVie
         }
         TODO("Not yet implemented")
     }
-
 }

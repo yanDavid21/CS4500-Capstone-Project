@@ -21,4 +21,12 @@ class ObservableReferee(
         return newState
     }
 
+    override fun playGame(initialState: GameState, players: List<PlayerMechanism>): Map<String, Boolean> {
+        val endGameData= super.playGame(initialState, players)
+        listOfObserver.forEach {
+            observerMechanism -> observerMechanism.gameOver()
+        }
+        return endGameData
+    }
+
 }
