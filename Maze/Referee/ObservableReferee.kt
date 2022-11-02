@@ -7,7 +7,7 @@ import Players.PlayerMechanism
 import Players.Referee
 
 class ObservableReferee(
-    val observer: Observer
+    private val listOfObserver: List<ObserverMechanism>
 ): Referee() {
     override fun createStateFromChosenBoard(suggestedBoards: List<Board>, players: List<PlayerMechanism>): GameState {
         TODO("Not yet implemented")
@@ -15,7 +15,9 @@ class ObservableReferee(
 
     override fun runRoundSafely(currentPlayer: PlayerData, currentMechanism: PlayerMechanism, state: GameState): GameState {
         val newState = super.runRoundSafely(currentPlayer, currentMechanism, state)
-        observer.updateState(newState)
+        listOfObserver.forEach {
+            observerMechanism ->  observerMechanism.updateState(newState)
+        }
         return newState
     }
 

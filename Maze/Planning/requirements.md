@@ -16,7 +16,7 @@
 	- maintain connection
 	- update observers
 	- able to host multiple games on multiple ports
-- Observer
+- Client
 	- display GUI and gamestate
 	- error handle joining non-existing
 - Business logic

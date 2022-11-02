@@ -1,4 +1,4 @@
-package Referee
+package Client.javafx
 
 import Common.GameState
 import Common.board.ColumnPosition
@@ -10,6 +10,8 @@ import com.google.gson.stream.JsonReader
 import javafx.application.Application
 import javafx.application.Application.launch
 import javafx.event.EventHandler
+import Referee.ObservableReferee
+import Referee.ObserverMechanism
 import javafx.scene.Scene
 import javafx.scene.control.Button
 import javafx.scene.layout.HBox
@@ -39,7 +41,7 @@ fun getStateFromStdIn(): Pair<GameState, List<PlayerMechanism>> {
 
 class JavaFXObserver(
     gameState: GameState
-): Observer, MazeUserInterface {
+): ObserverMechanism, MazeObserverInterface {
     private val receivedStates = mutableListOf(gameState)
     private var willReceiveMore = true
 
@@ -59,27 +61,7 @@ class JavaFXObserver(
     }
 
     override fun save(filename: String) {
-        if (receivedStates.isNotEmpty()) {
-            val currentState = receivedStates.first()
 
-            val board = currentState.getBoard()
-            val allTiles = RowPosition.getAll().map { row ->
-                ColumnPosition.getAll().map { col ->
-                    board.getTile(Coordinates(row, col))
-                }
-            }
-
-            val serializedBoard = BoardTest(
-                allTiles.map { row -> row.map { it.path.symbol } },
-                allTiles.map { row -> row.map { listOf(it.treasure.gem1.toString(), it.treasure.gem2.toString()) } }
-            )
-
-
-            //val serialized = RefereeState(
-            //  serializedBoard,
-            //)
-        }
-        TODO("Not yet implemented")
     }
 }
 

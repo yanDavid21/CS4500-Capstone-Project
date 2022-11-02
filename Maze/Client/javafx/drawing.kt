@@ -1,4 +1,4 @@
-package Referee
+package Client.javafx
 
 import Common.GameState
 import Common.board.Board
