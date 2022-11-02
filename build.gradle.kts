@@ -20,7 +20,11 @@ sourceSets {
         java {
             srcDirs("Maze")
         }
+        resources {
+            srcDirs("resources")
+        }
     }
+
 }
 
 repositories {

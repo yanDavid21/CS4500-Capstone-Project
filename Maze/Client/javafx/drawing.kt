@@ -20,7 +20,7 @@ import javafx.scene.text.Font
 import javafx.scene.text.Text
 import testing.TestUtils
 
-fun renderGameState(gameState: GameState): Parent {
+fun renderGameState(gameState: GameState): Pair<VBox, StackPane> {
     val board = gameState.getBoard()
     val playerData = gameState.getPlayersData()
 
@@ -30,11 +30,7 @@ fun renderGameState(gameState: GameState): Parent {
 
     val spareTileImage = drawTile(gameState.toPublicState().spareTile, null, mapOf())
 
-    return HBox().apply{
-        children.add(boardImage)
-
-        children.add(spareTileImage)
-    }
+    return Pair(boardImage, spareTileImage)
 }
 
 fun javaFxColorFromColor(color: Common.player.Color): Color {
@@ -53,7 +49,7 @@ fun javaFxColorFromColor(color: Common.player.Color): Color {
 }
 
 
-private fun drawBoard(board: Board, payerColorAndPos: Map<Coordinates, Color>): Parent {
+private fun drawBoard(board: Board, payerColorAndPos: Map<Coordinates, Color>): VBox {
     return VBox().apply {
         RowPosition.getAll().forEach { rowPosition ->
             val row = drawRow(TestUtils.getTilesInRow(rowPosition.value, board), rowPosition, payerColorAndPos)
@@ -69,7 +65,7 @@ private fun drawRow(tiles: Array<GameTile>, rowPosition: RowPosition,  payerColo
     }
 }
 
-fun drawTile(tile: GameTile, pos: Coordinates?, playerColorAndPos: Map<Coordinates, Color>?): Node {
+fun drawTile(tile: GameTile, pos: Coordinates?, playerColorAndPos: Map<Coordinates, Color>?): StackPane {
     val stack = StackPane()
     val background = Rectangle()
     background.fill = Color.WHITE

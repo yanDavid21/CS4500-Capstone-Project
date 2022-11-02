@@ -1,5 +1,6 @@
 package Client
 
+import Client.javafx.renderGameState
 import Common.GameState
 import Common.board.ColumnPosition
 import Common.board.Coordinates
@@ -9,10 +10,33 @@ import Referee.ObserverMechanism
 import serialization.data.BoardDTO
 import serialization.data.StateDTO
 import serialization.data.TileDTO
+import javafx.fxml.FXML
+import javafx.scene.Parent
+import javafx.scene.control.Button
+import javafx.scene.layout.HBox
+import javafx.scene.layout.StackPane
+import javafx.scene.layout.VBox
+import javafx.stage.FileChooser
+import testing.BoardTest
+import java.io.File
 
 
-class LocalStateObserver(state: GameState): ObserverMechanism {
-    private var gamestates = listOf(state)
+class LocalStateObserver: ObserverMechanism {
+
+
+    @FXML
+    lateinit var board: VBox
+    @FXML
+    lateinit var parent: HBox
+    @FXML
+    lateinit var controlPanel: VBox
+    @FXML
+    lateinit var spareTile: StackPane
+    @FXML
+    lateinit var saveButton: Button
+    @FXML
+    lateinit var nextButton: Button
+    private var gamestates = listOf<GameState>()
     private var isGameOver = false
 
     override fun updateState(newState: GameState) {
@@ -24,17 +48,17 @@ class LocalStateObserver(state: GameState): ObserverMechanism {
     }
 
     // CLIENT REQUESTS
-    fun next(): GameState? {
+    fun next() {
         if (gamestates.isNotEmpty()) {
             val first = gamestates.first()
             gamestates = gamestates.getNext()
-            return first
+            val (board, spareTile) = renderGameState(first)
+            this.board = board
+            this.spareTile = spareTile
         }
-        return null
     }
 
-
-    fun save(filepath: String) {
+    fun save(file: File) {
         if (gamestates.isNotEmpty()) {
             val currentState = gamestates.first().toPublicState()
 

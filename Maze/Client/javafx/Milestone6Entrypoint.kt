@@ -9,14 +9,16 @@ import com.google.gson.stream.JsonReader
 import javafx.application.Application
 import javafx.application.Application.launch
 import javafx.event.EventHandler
+import javafx.fxml.FXMLLoader
+import javafx.scene.Parent
 import javafx.scene.Scene
-import javafx.scene.control.Button
-import javafx.scene.layout.HBox
+import javafx.stage.FileChooser
 import javafx.stage.Stage
 import serialization.data.RefereeStateDTO
 import testing.getPlayerMechanisms
 import testing.getRefereeState
 import java.io.InputStreamReader
+
 
 fun main() {
     launch(CommandLineRefereeApp::class.java)
@@ -28,30 +30,22 @@ abstract class RefereeObserverApplication: Application() {
 
     override fun start(primaryStage: Stage?) {
         val (initialState, players) = getStateAndPlayers()
-        val observer = LocalStateObserver(initialState)
-        val controller = ObservableReferee(listOf(observer))
-
-        val button = Button("Next")
+        val fxmlLoader = FXMLLoader(javaClass.getResource("/JavaFXObserver.fxml"))
+        val parent = fxmlLoader.load<Parent>()
+        val controller = fxmlLoader.getController<LocalStateObserver>()
+        val referee = ObservableReferee(listOf(controller))
 
         primaryStage?.run {
-            val view = HBox().apply{
-                children.add(renderGameState(initialState))
-
-                button.onAction = EventHandler {
-                    val nextStateOpt = observer.next()
-                    nextStateOpt?.let {nextState ->
-                        children[0] = renderGameState(nextState)
-                    }
-                }
-
-                children.add(button)
+            val fileChooser = FileChooser()
+            controller.saveButton.onAction = EventHandler {
+                fileChooser.extensionFilters.addAll(FileChooser.ExtensionFilter("All Files", "*.*"))
+                val file = fileChooser.showSaveDialog(this)
+                controller.save(file)
             }
-
-            scene = Scene(view)
-
+            scene = Scene(parent)
             show()
         }
-        controller.playGame(initialState, players)
+        referee.playGame(initialState, players)
     }
 }
 

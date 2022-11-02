@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<HBox xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:controller="Client.LocalStateObserver"
+      prefWidth="600.0" fx:id="parent">
+    <VBox fx:id="board">
+
+    </VBox>
+    <VBox fx:id="controlPanel">
+        <StackPane fx:id="spareTile">
+
+        </StackPane>
+        <ButtonBar>
+            <buttons>
+                <Button text="save" fx:id="saveButton"></Button>
+                <Button text="next" fx:id="nextButton" onAction="#next"></Button>
+            </buttons>
+        </ButtonBar>
+    </VBox>
+
+</HBox>
