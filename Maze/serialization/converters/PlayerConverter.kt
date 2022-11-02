@@ -22,4 +22,12 @@ object PlayerConverter {
             Color.valueOf(playerDTO.color)
         )
     }
+
+    fun serializePlayer(player: PlayerData): PlayerDTO {
+        return PlayerDTO(
+            CoordinateConverter.toDto(player.currentPosition),
+            CoordinateConverter.toDto(player.homePosition),
+            player.color.toString()
+        )
+    }
 }

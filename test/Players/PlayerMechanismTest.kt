@@ -2,26 +2,25 @@ package Players
 
 import Common.*
 import Common.TestData.createBoard
-import Common.board.ColumnPosition
+import Common.TestData.impossibleBoard
 import Common.board.Coordinates
 import Common.board.RowPosition
 import Common.player.BaseColor
 import Common.player.PlayerData
 import Common.player.PublicPlayerData
-import Common.tile.*
-import java.util.*
-import org.junit.Assert.assertArrayEquals
-import org.junit.Assert.assertFalse
+import Common.tile.Degree
+import Common.tile.GameTile
+import Common.tile.HorizontalDirection
+import Common.tile.Path
 import Common.tile.treasure.Gem
 import Common.tile.treasure.Treasure
+import org.junit.Assert.assertArrayEquals
+import org.junit.Assert.assertFalse
+import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
-import java.lang.IllegalArgumentException
+import java.util.*
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
-import Common.TestData
-import Common.TestData.impossibleBoard
-import Common.tile.GameTile
-import org.junit.jupiter.api.Test
 
 
 internal class PlayerMechanismTest {
@@ -95,7 +94,8 @@ internal class PlayerMechanismTest {
     @Test
     fun testTakeTurn() {
         val player1 = createPlayerMechanism()
-        assertEquals(RowAction(RowPosition(0), HorizontalDirection.RIGHT, Degree.ZERO, Coordinates.fromRowAndValue(0,1)),
+        assertEquals(
+            RowAction(RowPosition(0), HorizontalDirection.RIGHT, Degree.ZERO, Coordinates.fromRowAndValue(0,1)),
             player1.takeTurn(gamestate.toPublicState()))
     }
 

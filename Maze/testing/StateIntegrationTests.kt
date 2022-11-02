@@ -46,6 +46,5 @@ fun main() {
     println(reachablePositions.sortedWith(comp).map { gson.toJson(it, CoordinateDTO::class.java).toString() })
 }
 
-typealias Action = Pair<Int, String>?
 
 

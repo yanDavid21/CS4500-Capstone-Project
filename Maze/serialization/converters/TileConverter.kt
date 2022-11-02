@@ -14,6 +14,15 @@ object TileConverter {
             TreasureConverter.getTreasureFromString(tileDTO.image1, tileDTO.image2)
         )
     }
+
+    fun serializeTile(tile: GameTile): TileDTO {
+        return TileDTO(
+            tile.toString(),
+            tile.treasure.gem1.toString(),
+            tile.treasure.gem2.toString()
+        )
+    }
+
     fun getTilesFromConnectorsAndTreasures(connectors: List<List<String>>,
                                            treasures: List<List<Treasure>>): Array<Array<GameTile>> {
         return connectors.mapIndexed { rowIndex, row ->

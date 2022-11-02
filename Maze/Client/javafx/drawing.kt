@@ -43,7 +43,7 @@ fun javaFxColorFromColor(color: Common.player.Color): Color {
         BaseColor.RED -> Color.RED
         BaseColor.BLUE -> Color.BLUE
         BaseColor.PURPLE -> Color.PURPLE
-        BaseColor.YEllOW -> Color.YELLOW
+        BaseColor.YELLOW -> Color.YELLOW
         BaseColor.PINK -> Color.PINK
         BaseColor.WHITE -> Color.WHITE
         BaseColor.GREEN -> Color.GREEN

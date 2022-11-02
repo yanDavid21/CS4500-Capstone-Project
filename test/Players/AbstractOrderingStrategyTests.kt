@@ -8,7 +8,8 @@ import Common.board.RowPosition
 import Common.player.PlayerData
 import Common.tile.*
 import org.junit.jupiter.api.Test
-import testing.TestUtils
+import serialization.converters.TileConverter
+import serialization.converters.TreasureConverter
 import kotlin.test.assertEquals
 
 abstract class AbstractOrderingStrategyTests {
@@ -140,8 +141,8 @@ abstract class AbstractOrderingStrategyTests {
     }
 
     protected fun makeBoard(): Board {
-        val treasures = TestUtils.getTreasuresFromStrings(TestData.treasureStrings)
-        return Board(TestUtils.getTilesFromConnectorsAndTreasures(tiles, treasures))
+        val treasures = TreasureConverter.getTreasuresFromStrings(TestData.treasureStrings)
+        return Board(TileConverter.getTilesFromConnectorsAndTreasures(tiles, treasures))
     }
 
     protected val tiles = listOf(

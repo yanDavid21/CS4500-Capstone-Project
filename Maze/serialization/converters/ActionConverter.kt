@@ -3,12 +3,17 @@ package serialization.converters
 import Common.ColumnAction
 import Common.MovingAction
 import Common.RowAction
+import Common.Skip
 import Common.board.ColumnPosition
 import Common.board.Coordinates
 import Common.board.RowPosition
 import Common.tile.Degree
 import Common.tile.HorizontalDirection
 import Common.tile.VerticalDirection
+import com.google.gson.Gson
+import com.google.gson.JsonElement
+import com.google.gson.JsonPrimitive
+import serialization.data.CoordinateDTO
 import serialization.data.DirectionDTO
 
 object ActionConverter {
@@ -27,6 +32,29 @@ object ActionConverter {
                 DirectionDTO.UP -> ColumnAction(ColumnPosition(index), VerticalDirection.UP, zero, zerozero)
                 DirectionDTO.DOWN -> ColumnAction(ColumnPosition(index), VerticalDirection.DOWN, zero, zerozero)
             }
+        }
+    }
+
+    fun serializeChoice(choice: Common.Action, gson: Gson): JsonElement {
+        return when(choice) {
+            Skip -> JsonPrimitive("PASS")
+            is ColumnAction ->
+                gson.toJsonTree(
+                    listOf(
+                        choice.columnPosition.value,
+                        choice.direction,
+                        choice.rotation.value,
+                        CoordinateDTO.fromCoordinates(choice.newPosition)
+                    )
+                )
+            is RowAction -> gson.toJsonTree(
+                listOf(
+                    choice.rowPosition.value,
+                    choice.direction,
+                    choice.rotation.value,
+                    CoordinateDTO.fromCoordinates(choice.newPosition)
+                )
+            )
         }
     }
 }

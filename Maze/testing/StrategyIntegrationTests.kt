@@ -1,9 +1,6 @@
 package testing
 
-import Common.ColumnAction
 import Common.PublicGameState
-import Common.RowAction
-import Common.Skip
 import Common.board.Board
 import Common.board.Coordinates
 import Common.player.Color
@@ -12,8 +9,6 @@ import Players.Euclid
 import Players.MazeStrategy
 import Players.Riemann
 import com.google.gson.Gson
-import com.google.gson.JsonElement
-import com.google.gson.JsonPrimitive
 import com.google.gson.stream.JsonReader
 import serialization.converters.ActionConverter
 import serialization.converters.TileConverter
@@ -38,7 +33,7 @@ fun main() {
 
     val choice = strategy.decideMove(playerState)
 
-    val output = serializeChoice(choice, gson)
+    val output = ActionConverter.serializeChoice(choice, gson)
 
     println(output)
 }
@@ -61,28 +56,7 @@ fun getCurrentPlayer(playerData: PlayerDTO, target: Coordinates): PlayerData {
     return PlayerData(id, playerCoord, target, homeCoord, Color.valueOf(playerData.color))
 }
 
-fun serializeChoice(choice: Common.Action, gson: Gson): JsonElement {
-    return when(choice) {
-        Skip -> JsonPrimitive("PASS")
-        is ColumnAction ->
-            gson.toJsonTree(
-                listOf(
-                    choice.columnPosition.value,
-                    choice.direction,
-                    choice.rotation.value,
-                    CoordinateDTO.fromCoordinates(choice.newPosition)
-                )
-            )
-        is RowAction -> gson.toJsonTree(
-            listOf(
-                choice.rowPosition.value,
-                choice.direction,
-                choice.rotation.value,
-                CoordinateDTO.fromCoordinates(choice.newPosition)
-            )
-        )
-    }
-}
+
 
 enum class StrategyDesignation {
     Riemann, Euclid;

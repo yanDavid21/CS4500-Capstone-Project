@@ -13,9 +13,9 @@ import javafx.scene.Scene
 import javafx.scene.control.Button
 import javafx.scene.layout.HBox
 import javafx.stage.Stage
+import serialization.converters.GameStateConverter
 import serialization.data.RefereeStateDTO
 import testing.getPlayerMechanisms
-import testing.getRefereeState
 import java.io.InputStreamReader
 
 fun main() {
@@ -63,7 +63,7 @@ class CommandLineRefereeApp: RefereeObserverApplication() {
         val playerSpec = gson.fromJson<List<List<String>>>(jsonReader, List::class.java)
         val refereeState = gson.fromJson<RefereeStateDTO>(jsonReader, RefereeStateDTO::class.java)
 
-        val state = getRefereeState(refereeState, playerSpec.map { it[0] })
+        val state = GameStateConverter.getRefereeStateFromDTO(refereeState, playerSpec.map { it[0] })
 
         val mechanisms = getPlayerMechanisms(playerSpec, state)
         return Pair(state, mechanisms)

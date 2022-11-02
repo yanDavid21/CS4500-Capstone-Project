@@ -1,14 +1,10 @@
 package Client
 
 import Common.GameState
-import Common.board.ColumnPosition
-import Common.board.Coordinates
-import Common.board.RowPosition
 import Common.getNext
 import Referee.ObserverMechanism
-import serialization.data.BoardDTO
-import serialization.data.StateDTO
-import serialization.data.TileDTO
+import com.google.gson.Gson
+import serialization.converters.GameStateConverter
 
 
 class LocalStateObserver(state: GameState): ObserverMechanism {
@@ -36,32 +32,12 @@ class LocalStateObserver(state: GameState): ObserverMechanism {
 
     fun save(filepath: String) {
         if (gamestates.isNotEmpty()) {
-            val currentState = gamestates.first().toPublicState()
+            val currentState = gamestates.first()
 
-            val board = currentState.board
-            val allTiles = RowPosition.getAll().map { row ->
-                ColumnPosition.getAll().map { col ->
-                    board.getTile(Coordinates(row, col))
-                }
-            }
-            val serializedBoard = BoardDTO(
-                allTiles.map { row -> row.map { it.toString() } },
-                allTiles.map { row -> row.map { listOf(it.treasure.gem1.toString(), it.treasure.gem2.toString()) } }
-            )
+            val serializedState = GameStateConverter.serializeGameState(currentState)
 
-            val spareTile = currentState.spareTile
-            val serializedSpareTile = TileDTO(
-                spareTile.toString(),
-                spareTile.treasure.gem1.toString(),
-                spareTile.treasure.gem2.toString()
-            )
-
-
-
-            val serializedState = StateDTO(
-                serializedBoard, serializedSpareTile,
-            )
+            val stateAsJson = Gson().toJson(serializedState)
+            //TODO("Not yet implemented")  save to path
         }
-        TODO("Not yet implemented")
     }
 }
