@@ -9,9 +9,9 @@ object PublicGameStateConverter {
         return StateDTO(
             BoardConverter.serializeBoard(publicGameState.board),
             TileConverter.serializeTile(publicGameState.spareTile),
-            publicGameState.publicPlayerData.map { _, player ->
+            publicGameState.publicPlayerData.map { (_, player) ->
                 PlayerConverter.serializePlayer(player)
-            },
+            }
             
 
         )

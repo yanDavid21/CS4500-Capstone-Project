@@ -1,7 +1,6 @@
 package Client
 
 import Client.javafx.renderGameState
-import Common.GameState
 import Common.PublicGameState
 import Common.getNext
 import Referee.ObserverMechanism
@@ -11,8 +10,7 @@ import javafx.scene.control.Button
 import javafx.scene.layout.HBox
 import javafx.scene.layout.StackPane
 import javafx.scene.layout.VBox
-import serialization.converters.GameStateConverter
-import serialization.data.RefereeStateDTO
+import serialization.converters.PublicGameStateConverter
 import java.io.File
 import java.io.FileWriter
 
@@ -68,7 +66,7 @@ class LocalStateObserver: ObserverMechanism {
         if (gamestates.isNotEmpty()) {
             val currentState = gamestates.first()
 
-            val serializedState = GameStateConverter.serializeGameState(currentState)
+            val serializedState = PublicGameStateConverter.serializeGameState(currentState)
 
             val fileWriter = FileWriter(file)
             val gson = GsonBuilder()
@@ -79,5 +77,4 @@ class LocalStateObserver: ObserverMechanism {
         }
     }
 
-    private fun writeStateToFile(file: File, state: RefereeStateDTO)
 }
