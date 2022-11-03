@@ -4,6 +4,6 @@ parent_path=$( cd "$(dirname "${BASH_SOURCE[0]}")" ; pwd -P )
 
 cd "$parent_path"
 
-JAR_PATH="Other/Observer/CS4500Gradle-1.0-SNAPSHOT.jar"
+JAR_PATH="Other/CS4500Gradle-1.0-SNAPSHOT.jar"
 
 java -jar $JAR_PATH "xgames-with-observer"

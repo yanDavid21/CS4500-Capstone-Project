@@ -1,6 +1,7 @@
 package Client.javafx
 
 import Common.GameState
+import Common.PublicGameState
 import Common.board.Board
 import Common.board.ColumnPosition
 import Common.board.Coordinates
@@ -20,7 +21,7 @@ import javafx.scene.text.Font
 import javafx.scene.text.Text
 import testing.TestUtils
 
-fun renderGameState(gameState: GameState): Pair<VBox, StackPane> {
+fun renderGameState(gameState: PublicGameState): Pair<VBox, StackPane> {
     val board = gameState.getBoard()
     val playerData = gameState.getPlayersData()
 

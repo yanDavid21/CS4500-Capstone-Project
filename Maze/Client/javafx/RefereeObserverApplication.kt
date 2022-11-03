@@ -13,6 +13,13 @@ import javafx.stage.FileChooser
 import javafx.stage.Stage
 
 
+/**
+ * To create a Graphical User Interface that observers a game being executed by a referee.
+ * Applications will provide users with a "next" button to display the next state available, and
+ * a "save" button to save the serialized state into a specified file.
+ *
+ * Implementing classes must specify how to construct a game and the player mechanisms.
+ */
 abstract class RefereeObserverApplication: Application() {
     private val SCREEN_WIDTH = 1000.0
     private val SCREEN_HEIGHT = 1000.0
@@ -33,10 +40,12 @@ abstract class RefereeObserverApplication: Application() {
                 val file = fileChooser.showSaveDialog(this)
                 controller.save(file)
             }
-            scene
             scene = Scene(parent, SCREEN_WIDTH, SCREEN_HEIGHT)
             show()
         }
+
+        controller.updateState(initialState)
+        controller.displayState(initialState)
         referee.playGame(initialState, players)
     }
 }

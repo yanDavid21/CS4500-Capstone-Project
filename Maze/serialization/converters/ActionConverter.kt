@@ -35,6 +35,16 @@ object ActionConverter {
         }
     }
 
+    fun serializeAction(action: MovingAction?): List<String>? {
+        return when (action) {
+            is ColumnAction ->
+                listOf(action.columnPosition.value.toString(), action.direction.toString())
+            is RowAction ->
+                listOf(action.rowPosition.value.toString(), action.direction.toString())
+            else -> null
+        }
+    }
+
     fun serializeChoice(choice: Common.Action, gson: Gson): JsonElement {
         return when(choice) {
             Skip -> JsonPrimitive("PASS")

@@ -6,6 +6,10 @@ import Common.player.PlayerData
 import Players.PlayerMechanism
 import Players.Referee
 
+/**
+ * A referee implementation that has multiple subscribed observers. After evert player turn, it will notify observers
+ * of the new game state. After a game is over, it will notify observers that the game is over.
+ */
 class ObservableReferee(
     private val listOfObserver: List<ObserverMechanism>
 ): Referee() {
@@ -16,7 +20,7 @@ class ObservableReferee(
     override fun runRoundSafely(currentPlayer: PlayerData, currentMechanism: PlayerMechanism, state: GameState): GameState {
         val newState = super.runRoundSafely(currentPlayer, currentMechanism, state)
         listOfObserver.forEach {
-            observerMechanism ->  observerMechanism.updateState(newState)
+            observerMechanism ->  observerMechanism.updateState(newState.toPublicState())
         }
         return newState
     }

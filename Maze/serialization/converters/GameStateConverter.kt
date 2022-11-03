@@ -1,8 +1,6 @@
 package serialization.converters
 
 import Common.GameState
-import Common.Skip
-import com.google.gson.Gson
 import serialization.data.RefereeStateDTO
 
 object GameStateConverter {
@@ -30,11 +28,11 @@ object GameStateConverter {
             RefereePlayerConverter.serializeRefereePlayer(player)
         }
 
-        val serializedAction = ActionConverter.serializeChoice(publicGameState.lastAction ?: Skip, Gson())
+        val serializedAction = ActionConverter.serializeAction(publicGameState.lastAction)
 
 
         return RefereeStateDTO(
-            serializedBoard, serializedTile, serializedPlayers, listOf() // TODO
+            serializedBoard, serializedTile, serializedPlayers, serializedAction
         )
     }
 }
