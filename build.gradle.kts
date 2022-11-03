@@ -62,7 +62,7 @@ tasks.jar {
         attributes["Main-Class"] = "MainKt"
     }
 
-    from(configurations.compileClasspath.get().map { if (it.isDirectory()) it else zipTree(it) })
+    from(configurations.runtimeClasspath.get().map { if (it.isDirectory()) it else zipTree(it) })
 
     destinationDirectory.set(File("6/Other"))
 }
