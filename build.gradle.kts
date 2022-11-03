@@ -49,6 +49,7 @@ dependencies {
     runtimeOnly("org.openjfx:javafx-fxml:18.0.2:linux")
     runtimeOnly("org.openjfx:javafx-media:18.0.2:linux")
     runtimeOnly("org.openjfx:javafx-swing:18.0.2:linux")
+    runtimeOnly("org.openjfx:javafx-web:18.0.2:linux")
 }
 
 tasks.test {
@@ -74,5 +75,5 @@ tasks.withType<KotlinCompile> {
 javafx {
     version = "19"
     modules = mutableListOf("javafx.controls", "javafx.fxml" , "javafx.base", "javafx.media", "javafx.graphics",
-        "javafx.swing")
+        "javafx.swing", "javafx.web")
 }
