@@ -9,22 +9,24 @@ import serialization.data.RefereeStateDTO
 import java.io.InputStreamReader
 
 
-fun main() {
-    val jsonReader = JsonReader(InputStreamReader(System.`in`, "UTF-8"))
-    val gson = Gson()
+object ObserverIntegrationTests {
+    fun run() {
+        val jsonReader = JsonReader(InputStreamReader(System.`in`, "UTF-8"))
+        val gson = Gson()
 
-    val playerSpec = gson.fromJson<List<List<String>>>(jsonReader, List::class.java)
-    val refereeState = gson.fromJson<RefereeStateDTO>(jsonReader, RefereeStateDTO::class.java)
+        val playerSpec = gson.fromJson<List<List<String>>>(jsonReader, List::class.java)
+        val refereeState = gson.fromJson<RefereeStateDTO>(jsonReader, RefereeStateDTO::class.java)
 
-    val state = GameStateConverter.getRefereeStateFromDTO(refereeState, playerSpec.map { it[0] })
-    val playerMechanisms = getPlayerMechanisms(playerSpec, state)
-    val referee = TestableReferee()
+        val state = GameStateConverter.getRefereeStateFromDTO(refereeState, playerSpec.map { it[0] })
+        val playerMechanisms = getPlayerMechanisms(playerSpec, state)
+        val referee = TestableReferee()
 
-    val endgameData = referee.playGame(state, playerMechanisms)
+        val endgameData = referee.playGame(state, playerMechanisms)
 
-    val winners = endgameData.filter { it.value }.keys.sorted()
+        val winners = endgameData.filter { it.value }.keys.sorted()
 
-    println(gson.toJson(winners))
+        println(gson.toJson(winners))
+    }
 }
 
 

@@ -14,21 +14,9 @@ import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import testing.TestUtils
 import kotlin.test.assertEquals
+import kotlin.test.assertFalse
 
 internal class StateTests {
-
-    /**
-     * Test cases to consider:
-     *
-     * Sliding horizontally
-     * Sliding vertically
-     * Sliding an dislodging a player
-     * Sliding and moving player to treasure
-     * Moving all players
-     * Is valid row
-     * Is valid column
-     * Ending round
-     */
 
     @Test
     fun testSlideHorizontal() {
@@ -257,5 +245,37 @@ internal class StateTests {
         )
         val tile = referee.getBoard().getTile(Coordinates(RowPosition(6), ColumnPosition(0)))
         assertEquals(tile, GameTile(tile.path, Degree.ZERO, tile.treasure))
+    }
+
+    @Test
+    fun testIsValidColumnMove() {
+        val board = TestData.createBoard()
+        val referee = TestData.createReferee(board)
+
+
+        assert(referee.isValidColumnMove(ColumnPosition(0),
+            VerticalDirection.DOWN,
+            Degree.ONE_EIGHTY,
+            Coordinates.fromRowAndValue(0,0)))
+
+        assertFalse(
+            referee.isValidColumnMove(ColumnPosition(0),
+                VerticalDirection.DOWN,
+                Degree.ONE_EIGHTY,
+                Coordinates.fromRowAndValue(1,0))
+        )
+    }
+
+    @Test
+    fun testIsValidColumnMovedPoppedOff() {
+        val board = TestData.createBoard()
+        val referee = TestData.createReferee(board)
+
+        assertFalse(referee.isValidColumnMove(
+            ColumnPosition(0),
+            VerticalDirection.UP,
+            Degree.ZERO,
+            Coordinates.fromRowAndValue(6,0)
+        ))
     }
 }

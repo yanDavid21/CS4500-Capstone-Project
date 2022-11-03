@@ -32,7 +32,7 @@ data class RowAction(
 
     override fun isUndoingAction(other: MovingAction): Boolean {
         if (other is RowAction) {
-            return (other.rowPosition == rowPosition) && other.direction == direction.reverse()
+            return (other.rowPosition == this.rowPosition) && other.direction == this.direction.reverse()
         }
         return false
     }
@@ -47,7 +47,7 @@ data class ColumnAction(
 
     override fun isUndoingAction(other: MovingAction): Boolean {
         if (other is ColumnAction) {
-            return (other.columnPosition == columnPosition) && other.direction == direction.reverse()
+            return (other.columnPosition == this.columnPosition) && other.direction == this.direction.reverse()
         }
         return false
     }

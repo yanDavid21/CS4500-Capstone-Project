@@ -6,4 +6,4 @@ cd "$parent_path"
 
 JAR_PATH="Other/CS4500Gradle-1.0-SNAPSHOT.jar"
 
-java -jar $JAR_PATH
+java -jar $JAR_PATH "xgames"
