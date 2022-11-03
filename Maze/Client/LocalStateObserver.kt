@@ -1,6 +1,7 @@
 package Client
 
 import Client.javafx.renderGameState
+import Common.GameState
 import Common.PublicGameState
 import Common.getNext
 import Referee.ObserverMechanism
@@ -11,7 +12,9 @@ import javafx.scene.layout.HBox
 import javafx.scene.layout.StackPane
 import javafx.scene.layout.VBox
 import javafx.scene.text.Text
+import serialization.converters.GameStateConverter
 import serialization.converters.PublicGameStateConverter
+import serialization.data.RefereeStateDTO
 import serialization.data.StateDTO
 import java.io.File
 import java.io.FileWriter
@@ -33,13 +36,13 @@ class LocalStateObserver: ObserverMechanism {
     lateinit var saveButton: Button
     @FXML
     lateinit var nextButton: Button
-    private var gamestates = listOf<PublicGameState>()
+    private var gamestates = listOf<GameState>()
     private var isGameOver = false
 
     /**
      * Adds a new state to be displayed.
      */
-    override fun updateState(newState: PublicGameState) {
+    override fun updateState(newState: GameState) {
         gamestates = gamestates + listOf(newState)
     }
 
@@ -65,7 +68,7 @@ class LocalStateObserver: ObserverMechanism {
     /**
      * Displays the provided state.
      */
-    fun displayState(gameState: PublicGameState) {
+    fun displayState(gameState: GameState) {
         val (board, spareTile) = renderGameState(gameState)
         this.board.children.clear()
         this.board.children.addAll(board.children)
@@ -85,13 +88,13 @@ class LocalStateObserver: ObserverMechanism {
         if (gamestates.isNotEmpty()) {
             val currentState = gamestates.first()
 
-            val serializedState = PublicGameStateConverter.serializeGameState(currentState)
+            val serializedState = GameStateConverter.serializeGameState(currentState)
 
             writeStateToFile(file, serializedState)
         }
     }
 
-    private fun writeStateToFile(file: File, serializedState: StateDTO) {
+    private fun writeStateToFile(file: File, serializedState: RefereeStateDTO) {
         val fileWriter = FileWriter(file)
         val gson = GsonBuilder()
             .serializeNulls()

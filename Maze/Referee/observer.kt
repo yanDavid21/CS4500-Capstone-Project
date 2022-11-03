@@ -1,6 +1,6 @@
 package Referee
 
-import Common.PublicGameState
+import Common.GameState
 
 
 /**
@@ -11,7 +11,7 @@ interface ObserverMechanism {
     /**
      * Adds a new state to the queue of received state.
      */
-    fun updateState(newState: PublicGameState)
+    fun updateState(newState: GameState)
 
     /**
      * To notify an observer the game has finished.

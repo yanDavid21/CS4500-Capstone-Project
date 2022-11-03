@@ -1,7 +1,7 @@
 package Client.javafx
 
 
-import Common.PublicGameState
+import Common.GameState
 import Common.board.Board
 import Common.board.ColumnPosition
 import Common.board.Coordinates
@@ -29,16 +29,16 @@ import testing.TestUtils
  * Draws a public game state. Including all the tiles with their gems, players and homes (if applicable) and
  * a spare tile next to it.
  */
-fun renderGameState(gameState: PublicGameState): Pair<VBox, StackPane> {
-    val board = gameState.board
-    val playerDataMap = gameState.publicPlayerData
+fun renderGameState(gameState: GameState): Pair<VBox, StackPane> {
+    val board = gameState.getBoard()
+    val playerDataMap = gameState.getPlayersData()
     val playerDataMapCurrentPosition = playerDataMap.mapValues { (_, value) -> Pair(value.currentPosition, value.color) }
     val playerDataMapHomePosition = playerDataMap.mapValues { (_, value) -> Pair(value.homePosition, value.color) }
 
     val boardImage = drawBoard(board, mapPositionToPlayerColors(playerDataMapCurrentPosition),
         mapPositionToPlayerColors(playerDataMapHomePosition))
 
-    val spareTileImage = drawTile(gameState.spareTile, null, mapOf(), mapOf())
+    val spareTileImage = drawTile(gameState.toPublicState().spareTile, null, mapOf(), mapOf())
 
     return Pair(boardImage, spareTileImage)
 }
