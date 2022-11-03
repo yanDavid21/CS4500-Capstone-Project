@@ -22,7 +22,7 @@ import javafx.stage.Stage
  */
 abstract class RefereeObserverApplication: Application() {
     private val SCREEN_WIDTH = 1000.0
-    private val SCREEN_HEIGHT = 1000.0
+    private val SCREEN_HEIGHT = 750.0
 
     abstract fun getStateAndPlayers(): Pair<GameState, List<PlayerMechanism>>
 
@@ -38,7 +38,9 @@ abstract class RefereeObserverApplication: Application() {
             controller.saveButton.onAction = EventHandler {
                 fileChooser.extensionFilters.addAll(FileChooser.ExtensionFilter("All Files", "*.*"))
                 val file = fileChooser.showSaveDialog(this)
-                controller.save(file)
+                file?.let {
+                    controller.save(file)
+                }
             }
             scene = Scene(parent, SCREEN_WIDTH, SCREEN_HEIGHT)
             show()

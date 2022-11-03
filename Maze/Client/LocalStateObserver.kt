@@ -10,6 +10,7 @@ import javafx.scene.control.Button
 import javafx.scene.layout.HBox
 import javafx.scene.layout.StackPane
 import javafx.scene.layout.VBox
+import javafx.scene.text.Text
 import serialization.converters.PublicGameStateConverter
 import serialization.data.StateDTO
 import java.io.File
@@ -50,6 +51,10 @@ class LocalStateObserver: ObserverMechanism {
             gamestates = gamestates.getNext()
             displayState(first)
         }
+
+        if (isGameOver && gamestates.isEmpty()) {
+            displayGameOver()
+        }
     }
 
     fun displayState(gameState: PublicGameState) {
@@ -58,6 +63,11 @@ class LocalStateObserver: ObserverMechanism {
         this.board.children.addAll(board.children)
         this.spareTile.children.clear()
         this.spareTile.children.addAll(spareTile.children)
+    }
+
+    fun displayGameOver() {
+        this.controlPanel.children.add(Text("Game Over!"))
+        this.nextButton.isDisable = true
     }
 
     /**

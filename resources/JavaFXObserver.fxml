@@ -1,16 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
 <HBox xmlns="http://javafx.com/javafx"
       xmlns:fx="http://javafx.com/fxml"
-      fx:controller="Client.LocalStateObserver"
-      prefWidth="600.0" fx:id="parent">
-    <VBox fx:id="board" prefHeight="1000" prefWidth = "1000">
+      fx:controller="Client.LocalStateObserver" fx:id="parent">
+    <padding>
+        <Insets top="10" right="20" bottom="30" left="40"/>
+    </padding>
+    <VBox fx:id="board">
 
     </VBox>
-    <VBox fx:id="controlPanel" prefHeight="1000">
+    <VBox fx:id="controlPanel">
         <StackPane fx:id="spareTile">
 
         </StackPane>

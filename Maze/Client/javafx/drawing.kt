@@ -6,8 +6,11 @@ import Common.board.*
 import Common.player.BaseColor
 import Common.player.HexColor
 import Common.tile.GameTile
+import javafx.geometry.Insets
 import javafx.geometry.Pos
 import javafx.scene.Node
+import javafx.scene.image.Image
+import javafx.scene.image.ImageView
 import javafx.scene.layout.HBox
 import javafx.scene.layout.StackPane
 import javafx.scene.layout.VBox
@@ -85,12 +88,22 @@ fun drawTile(tile: GameTile, tileCoord: Coordinates?, playerColorAndPos: Map<Coo
              playerHomeToColor: Map<Coordinates, List<Color>>): StackPane {
     val TILE_WIDTH = 100.0
     val TILE_HEIGHT = 100.0
+    val IMAGE_WIDTH = TILE_WIDTH / 5
     val BORDER_WIDTH = 5.0
+    val BASE_TILE_PADDING = 1.0
     val stack = StackPane()
+    stack.padding = Insets(BASE_TILE_PADDING, BASE_TILE_PADDING, BASE_TILE_PADDING, BASE_TILE_PADDING)
     val base = Rectangle()
     base.width = TILE_WIDTH
     base.height = TILE_HEIGHT
-
+    val gemOneImage = Image("gems/${tile.treasure.gem1.getImagePath()}",
+        IMAGE_WIDTH, IMAGE_WIDTH, true, false)
+    val gemTwoImage = Image("gems/${tile.treasure.gem2.getImagePath()}",
+        IMAGE_WIDTH, IMAGE_WIDTH, true, false)
+    val gemOneStack = StackPane(ImageView(gemOneImage))
+    gemOneStack.alignment = Pos.TOP_LEFT
+    val gemTwoStack = StackPane(ImageView(gemTwoImage))
+    gemTwoStack.alignment = Pos.BOTTOM_RIGHT
 
     // border
     playerHomeToColor[tileCoord]?.let {
@@ -127,5 +140,5 @@ fun drawTile(tile: GameTile, tileCoord: Coordinates?, playerColorAndPos: Map<Coo
             circleSize -= difference
         }
     }
-    return stack
+    return StackPane(stack, gemOneStack, gemTwoStack)
 }
