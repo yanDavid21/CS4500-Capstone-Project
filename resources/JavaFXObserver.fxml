@@ -7,10 +7,10 @@
       xmlns:fx="http://javafx.com/fxml"
       fx:controller="Client.LocalStateObserver"
       prefWidth="600.0" fx:id="parent">
-    <VBox fx:id="board">
+    <VBox fx:id="board" prefHeight="1000" prefWidth = "1000">
 
     </VBox>
-    <VBox fx:id="controlPanel">
+    <VBox fx:id="controlPanel" prefHeight="1000">
         <StackPane fx:id="spareTile">
 
         </StackPane>
