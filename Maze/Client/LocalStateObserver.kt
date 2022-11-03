@@ -2,27 +2,18 @@ package Client
 
 import Client.javafx.renderGameState
 import Common.GameState
-import Common.board.ColumnPosition
-import Common.board.Coordinates
-import Common.board.RowPosition
 import Common.getNext
 import Referee.ObserverMechanism
-import serialization.data.BoardDTO
-import serialization.data.StateDTO
-import serialization.data.TileDTO
 import javafx.fxml.FXML
-import javafx.scene.Parent
 import javafx.scene.control.Button
 import javafx.scene.layout.HBox
 import javafx.scene.layout.StackPane
 import javafx.scene.layout.VBox
-import javafx.stage.FileChooser
-import testing.BoardTest
+import serialization.converters.GameStateConverter
 import java.io.File
 
 
 class LocalStateObserver: ObserverMechanism {
-
 
     @FXML
     lateinit var board: VBox
@@ -60,32 +51,12 @@ class LocalStateObserver: ObserverMechanism {
 
     fun save(file: File) {
         if (gamestates.isNotEmpty()) {
-            val currentState = gamestates.first().toPublicState()
+            val currentState = gamestates.first()
 
-            val board = currentState.board
-            val allTiles = RowPosition.getAll().map { row ->
-                ColumnPosition.getAll().map { col ->
-                    board.getTile(Coordinates(row, col))
-                }
-            }
-            val serializedBoard = BoardDTO(
-                allTiles.map { row -> row.map { it.toString() } },
-                allTiles.map { row -> row.map { listOf(it.treasure.gem1.toString(), it.treasure.gem2.toString()) } }
-            )
-
-            val spareTile = currentState.spareTile
-            val serializedSpareTile = TileDTO(
-                spareTile.toString(),
-                spareTile.treasure.gem1.toString(),
-                spareTile.treasure.gem2.toString()
-            )
+            val serializedState = GameStateConverter.serializeGameState(currentState)
 
 
-
-            val serializedState = StateDTO(
-                serializedBoard, serializedSpareTile,
-            )
         }
-        TODO("Not yet implemented")
+
     }
 }
