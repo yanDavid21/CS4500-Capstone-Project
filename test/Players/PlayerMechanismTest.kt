@@ -3,15 +3,15 @@ package Players
 import Common.*
 import Common.TestData.createBoard
 import Common.TestData.impossibleBoard
+import Common.board.ColumnPosition
 import Common.board.Coordinates
-import Common.board.RowPosition
 import Common.player.BaseColor
 import Common.player.PlayerData
 import Common.player.PublicPlayerData
 import Common.tile.Degree
 import Common.tile.GameTile
-import Common.tile.HorizontalDirection
 import Common.tile.Path
+import Common.tile.VerticalDirection
 import Common.tile.treasure.Gem
 import Common.tile.treasure.Treasure
 import org.junit.Assert.assertArrayEquals
@@ -95,7 +95,7 @@ internal class PlayerMechanismTest {
     fun testTakeTurn() {
         val player1 = createPlayerMechanism()
         assertEquals(
-            RowAction(RowPosition(0), HorizontalDirection.RIGHT, Degree.ZERO, Coordinates.fromRowAndValue(0,1)),
+            ColumnAction(ColumnPosition(0), VerticalDirection.DOWN, Degree.ZERO, Coordinates.fromRowAndValue(0,1)),
             player1.takeTurn(gamestate.toPublicState()))
     }
 
