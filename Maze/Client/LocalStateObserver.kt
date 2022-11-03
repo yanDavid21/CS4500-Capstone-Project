@@ -44,8 +44,10 @@ class LocalStateObserver: ObserverMechanism {
             val first = gamestates.first()
             gamestates = gamestates.getNext()
             val (board, spareTile) = renderGameState(first)
-            this.board = board
-            this.spareTile = spareTile
+            this.board.children.clear()
+            this.board.children.addAll(board.children)
+            this.spareTile.children.clear()
+            this.spareTile.children.addAll(spareTile.children)
         }
     }
 

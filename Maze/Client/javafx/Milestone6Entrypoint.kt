@@ -25,6 +25,8 @@ fun main() {
 }
 
 abstract class RefereeObserverApplication: Application() {
+    private val SCREEN_WIDTH = 1000.0
+    private val SCREEN_HEIGHT = 1000.0
 
     abstract fun getStateAndPlayers(): Pair<GameState, List<PlayerMechanism>>
 
@@ -42,7 +44,8 @@ abstract class RefereeObserverApplication: Application() {
                 val file = fileChooser.showSaveDialog(this)
                 controller.save(file)
             }
-            scene = Scene(parent)
+            scene
+            scene = Scene(parent, SCREEN_WIDTH, SCREEN_HEIGHT)
             show()
         }
         referee.playGame(initialState, players)
