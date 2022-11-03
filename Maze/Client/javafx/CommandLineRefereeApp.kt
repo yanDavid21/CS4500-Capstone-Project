@@ -9,6 +9,10 @@ import serialization.data.RefereeStateDTO
 import testing.getPlayerMechanisms
 import java.io.InputStreamReader
 
+/**
+ * A RefereeObserverApplication that reads a game's intial state and player strategies from the command
+ * line and executes a game.
+ */
 class CommandLineRefereeApp: RefereeObserverApplication() {
     override fun getStateAndPlayers(): Pair<GameState, List<PlayerMechanism>> {
         val jsonReader = JsonReader(InputStreamReader(System.`in`, "UTF-8"))

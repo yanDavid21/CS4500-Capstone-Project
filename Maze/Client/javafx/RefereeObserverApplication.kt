@@ -48,6 +48,7 @@ abstract class RefereeObserverApplication: Application() {
 
         controller.updateState(initialState.toPublicState())
         controller.displayState(initialState.toPublicState())
+
         referee.playGame(initialState, players)
     }
 }
