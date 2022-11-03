@@ -2,7 +2,10 @@ package Client.javafx
 
 
 import Common.PublicGameState
-import Common.board.*
+import Common.board.Board
+import Common.board.ColumnPosition
+import Common.board.Coordinates
+import Common.board.RowPosition
 import Common.player.BaseColor
 import Common.player.HexColor
 import Common.tile.GameTile
@@ -19,6 +22,10 @@ import javafx.scene.text.Text
 import javafx.scene.text.TextAlignment
 import testing.TestUtils
 
+/**
+ * Draws a public game state. Including all the tiles with their gems, players and homes (if applicable) and
+ * a spare tile next to it.
+ */
 fun renderGameState(gameState: PublicGameState): Pair<VBox, StackPane> {
     val board = gameState.board
     val playerDataMap = gameState.publicPlayerData

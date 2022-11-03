@@ -8,7 +8,13 @@ import Common.PublicGameState
  */
 interface ObserverMechanism {
 
+    /**
+     * Adds a new state to the queue of received state.
+     */
     fun updateState(newState: PublicGameState)
 
+    /**
+     * To notify an observer the game has finished.
+     */
     fun gameOver()
 }

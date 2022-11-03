@@ -35,6 +35,9 @@ class LocalStateObserver: ObserverMechanism {
     private var gamestates = listOf<PublicGameState>()
     private var isGameOver = false
 
+    /**
+     * Adds a new state to be displayed.
+     */
     override fun updateState(newState: PublicGameState) {
         gamestates = gamestates + listOf(newState)
     }
@@ -43,7 +46,9 @@ class LocalStateObserver: ObserverMechanism {
         isGameOver = true
     }
 
-    // CLIENT REQUESTS
+    /**
+     * Retrieves the latest state, displays it graphically.
+     */
     fun next() {
         if (gamestates.isNotEmpty()) {
             val first = gamestates.first()
@@ -52,6 +57,9 @@ class LocalStateObserver: ObserverMechanism {
         }
     }
 
+    /**
+     * Displays the provided state.
+     */
     fun displayState(gameState: PublicGameState) {
         val (board, spareTile) = renderGameState(gameState)
         this.board.children.clear()
