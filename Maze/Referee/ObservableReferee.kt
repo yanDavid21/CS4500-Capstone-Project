@@ -20,7 +20,7 @@ class ObservableReferee(
     override fun runRoundSafely(currentPlayer: PlayerData, currentMechanism: PlayerMechanism, state: GameState): GameState {
         val newState = super.runRoundSafely(currentPlayer, currentMechanism, state)
         listOfObserver.forEach {
-            observerMechanism ->  observerMechanism.updateState(newState.toPublicState())
+            observerMechanism ->  observerMechanism.updateState(newState)
         }
         return newState
     }
