@@ -15,6 +15,7 @@ import Players.SamplePlayerMechanisms.*
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertDoesNotThrow
 import kotlin.test.assertEquals
+import kotlin.test.assertFalse
 
 internal class RefereeTest {
 
@@ -191,6 +192,18 @@ internal class RefereeTest {
         assertDoesNotThrow { referee.startGame(players) }
     }
 
+    @Test
+    fun playerTakesTooLongIsRemoved() {
+        val players = listOf(
+            PassingPlayerMechanism("david"), PlayerDoesNotReturn("Matthias"), PassingPlayerMechanism("Megan")
+        )
+
+        val endgame = referee.playGame(state, players)
+
+        assertFalse(endgame.containsKey("Matthias"))
+
+    }
+
     fun createRiemannPlayers(): List<RandomBoardRiemannPlayerMechanism> {
         return listOf(
             RandomBoardRiemannPlayerMechanism("player1", player1.getGoal()),
@@ -250,6 +263,8 @@ internal class RefereeTest {
             )
         )
     }
+
+
 
 
 }

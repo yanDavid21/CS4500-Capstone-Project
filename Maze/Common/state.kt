@@ -134,7 +134,8 @@ data class GameState(
      */
     fun kickOutActivePlayer(): GameState {
         return this.copy(
-            players = this.players.getNext()
+            players = this.players.getNext(),
+            consecutiveSkips = 0
         )
     }
 

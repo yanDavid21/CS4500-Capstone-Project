@@ -2,6 +2,7 @@ package Players.SamplePlayerMechanisms
 
 import Common.Action
 import Common.PublicGameState
+import Common.Skip
 import Common.board.Coordinates
 import Common.tile.GameTile
 
@@ -34,5 +35,14 @@ class MisbehavingOnRound(override val name: String): PassingPlayerMechanism(name
 class MisbehavingOnWon(override val name: String): PassingPlayerMechanism(name) {
     override fun won(hasPlayerWon: Boolean) {
         throw IllegalStateException("MEAN")
+    }
+}
+
+class PlayerDoesNotReturn(override val name: String): PassingPlayerMechanism(name) {
+    override fun takeTurn(state: PublicGameState): Action {
+        while (true) {
+
+        }
+        return Skip
     }
 }
