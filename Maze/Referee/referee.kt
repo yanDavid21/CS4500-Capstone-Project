@@ -80,14 +80,14 @@ abstract class Referee {
     /**
      * Runs a single game of maze to completion.
      */
-    fun playGame(initialState: GameState, players: List<PlayerMechanism>): Map<String, Boolean> {
-        val playerData = players.associateBy { it.name }
+    open fun playGame(initialState: GameState, players: List<PlayerMechanism>): Map<String, Boolean> {
+        val playerMechanisms = players.associateBy { it.name }
         var state = initialState
         var roundCount = 0
         while (!state.isGameOver() && roundCount < MAX_ROUNDS) {
             val currentPlayer = state.getActivePlayer()
 
-            state = playerData[currentPlayer.id]?.let { playerMechanism ->
+            state = playerMechanisms[currentPlayer.id]?.let { playerMechanism ->
                 runRoundSafely(currentPlayer, playerMechanism, state)
             } ?: state.kickOutActivePlayer()
 
@@ -101,11 +101,15 @@ abstract class Referee {
      * Transmits endgame data, a single win/loss value.
      */
     private fun sendGameOverInformation(endgameData: Map<String, Boolean>, players: List<PlayerMechanism>) {
-        players.forEach { player ->
-            endgameData[player.name]?.let { playerWon -> player.won(playerWon)}
+        queryAllPlayers(players) {player ->
+            endgameData[player.name]?.let { playerWon -> player.won(playerWon) }
         }
     }
 
+    /**
+     * Performs an action on every player sequentially. If the action correctly returns a value, it notes it.
+     * If the player misbehaves, the player is not included in the returned mechanisms so it never gets used again.
+     */
     private fun <T> queryAllPlayers(players: List<PlayerMechanism>, action: (PlayerMechanism) -> T): Pair<List<T>, List<PlayerMechanism>> {
         val answers = mutableListOf<T>()
         val playersThatResponded = mutableListOf<PlayerMechanism>()
@@ -128,7 +132,7 @@ abstract class Referee {
      * Runs a single round. If the player API call throws an exception, the player
      * will be removed from the game.
      */
-    private fun runRoundSafely(currentPlayer: PlayerData, currentMechanism: PlayerMechanism, state: GameState): GameState {
+    protected open fun runRoundSafely(currentPlayer: PlayerData, currentMechanism: PlayerMechanism, state: GameState): GameState {
         return safelyQueryPlayer(currentMechanism) {
             playOneRound(currentPlayer, currentMechanism, state)
         } ?: state.kickOutActivePlayer()
@@ -140,15 +144,14 @@ abstract class Referee {
      */
     private fun playOneRound(currentPlayer: PlayerData, currentMechanism: PlayerMechanism, state: GameState): GameState {
         val suggestedMove = currentMechanism.takeTurn(state.toPublicState())
-        val newState = if (isMoveValid(suggestedMove, state)) {
-            performMove(suggestedMove, state)
-        } else {
-            state.kickOutActivePlayer()
+        if (isMoveValid(suggestedMove, state)) {
+            val newState = performMove(suggestedMove, state)
+            if (newState.hasActivePlayerReachedTreasure()) {
+                currentMechanism.setupAndUpdateGoal(null, currentPlayer.homePosition)
+            }
+            return newState.endActivePlayerRound()
         }
-        if (newState.hasActivePlayerReachedTreasure()) {
-            currentMechanism.setupAndUpdateGoal(null, currentPlayer.homePosition)
-        }
-        return newState.endActivePlayerRound()
+        return state.kickOutActivePlayer()
     }
 
     /**
@@ -220,7 +223,6 @@ abstract class Referee {
             is Skip -> true
             is RowAction -> state.isValidRowMove(action.rowPosition, action.direction, action.rotation, action.newPosition)
             is ColumnAction -> state.isValidColumnMove(action.columnPosition, action.direction, action.rotation, action.newPosition)
-            else -> throw IllegalArgumentException("Not a valid action: $action")
         }
     }
 
@@ -232,7 +234,6 @@ abstract class Referee {
             is Skip -> state.passCurrentPlayer()
             is RowAction -> state.slideRowAndInsertSpare(action.rowPosition, action.direction, action.rotation, action.newPosition)
             is ColumnAction -> state.slideColumnAndInsertSpare(action.columnPosition, action.direction, action.rotation, action.newPosition)
-            else -> throw IllegalArgumentException("Not a valid action: $action")
         }
     }
 
@@ -249,10 +250,8 @@ abstract class Referee {
         return validBoards
     }
 
-
-
     companion object {
-        const val MAX_ROUNDS = 10000
+        const val MAX_ROUNDS = 1000
         private const val DELTA = 0.000001
         fun Double.equalsDelta(other: Double) = abs(this - other) < DELTA // equality check for Doubles using DELTA
     }

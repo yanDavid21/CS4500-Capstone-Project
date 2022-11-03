@@ -11,10 +11,7 @@ import Common.tile.GameTile
 import Common.tile.Path
 import Common.tile.treasure.Gem
 import Common.tile.treasure.Treasure
-import Players.SamplePlayerMechanisms.MisbehavingOnBoardRequest
-import Players.SamplePlayerMechanisms.MisbehavingOnRound
-import Players.SamplePlayerMechanisms.MisbehavingOnSetup
-import Players.SamplePlayerMechanisms.PassingPlayerMechanism
+import Players.SamplePlayerMechanisms.*
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertDoesNotThrow
 import kotlin.test.assertEquals
@@ -185,6 +182,15 @@ internal class RefereeTest {
         )
     }
 
+    @Test
+    fun testGracefulWhenPlayerMisbehavesOnWon() {
+        val players = listOf(
+            PassingPlayerMechanism("player1"), MisbehavingOnWon("player2"), MisbehavingOnWon("player3")
+        )
+
+        assertDoesNotThrow { referee.startGame(players) }
+    }
+
     fun createRiemannPlayers(): List<RandomBoardRiemannPlayerMechanism> {
         return listOf(
             RandomBoardRiemannPlayerMechanism("player1", player1.getGoal()),
@@ -248,7 +254,6 @@ internal class RefereeTest {
 
 }
 
-
 class TestableReferee: Referee() {
     override fun createStateFromChosenBoard(suggestedBoards: List<Board>, players: List<PlayerMechanism>): GameState {
         val testPlayers = listOf(TestData.createPlayer1(), TestData.createPlayer2(), TestData.createPlayer3())
@@ -258,4 +263,5 @@ class TestableReferee: Referee() {
         return TestData.createRefereeWithPlayers(playerData)
     }
 }
+
 

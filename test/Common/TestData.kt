@@ -9,7 +9,8 @@ import Common.tile.GameTile
 import Common.tile.Path
 import Common.tile.treasure.Gem
 import Common.tile.treasure.Treasure
-import testing.TestUtils
+import serialization.converters.TileConverter
+import serialization.converters.TreasureConverter
 
 object TestData {
 
@@ -44,8 +45,8 @@ object TestData {
 
 
     fun createTiles(): Array<Array<GameTile>> {
-        return TestUtils.getTilesFromConnectorsAndTreasures(board,
-            TestUtils.getTreasuresFromStrings(treasureStrings))
+        return TileConverter.getTilesFromConnectorsAndTreasures(board,
+            TreasureConverter.getTreasuresFromStrings(treasureStrings))
     }
 
     fun createSpareTile(): GameTile {
@@ -62,8 +63,8 @@ object TestData {
     }
 
     fun createBoard(connectors: List<List<String>>): Board {
-        val tiles = TestUtils.getTilesFromConnectorsAndTreasures(connectors,
-            TestUtils.getTreasuresFromStrings(this.treasureStrings))
+        val tiles = TileConverter.getTilesFromConnectorsAndTreasures(connectors,
+            TreasureConverter.getTreasuresFromStrings(this.treasureStrings))
         return createBoard(tiles)
     }
 

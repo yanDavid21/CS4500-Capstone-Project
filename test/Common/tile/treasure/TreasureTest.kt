@@ -1,9 +1,8 @@
 package Common.tile.treasure
 
-import Common.TestData.createBoard
 import Common.TestData.treasureStrings
 import org.junit.jupiter.api.Test
-import testing.TestUtils.getTreasuresFromStrings
+import serialization.converters.TreasureConverter
 import kotlin.test.assertTrue
 
 internal class TreasureTest {
@@ -61,7 +60,8 @@ internal class TreasureTest {
 
     @Test
     fun testAreAllTreasuresUnique() {
-        assertTrue(Treasure.allTreasuresAreUnique(getTreasuresFromStrings(treasureStrings).fold(listOf())
+        assertTrue(Treasure.allTreasuresAreUnique(
+            TreasureConverter.getTreasuresFromStrings(treasureStrings).fold(listOf())
         { accum, list -> accum + list }))
     }
 

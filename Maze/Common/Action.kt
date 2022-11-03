@@ -13,7 +13,7 @@ import Common.tile.VerticalDirection
  *  - MoveAction which can be either a row or a column move which includes a sliding position, direction, rotation and
  *    new position.
  */
-interface Action
+sealed interface Action
 
 /**
  * An action that modifies the game state by moving the board.

@@ -1,11 +1,9 @@
 package Common.player
 
-import java.util.*
-
 /**
  * Represents an avatar's unique color.
  */
-interface Color {
+sealed interface Color {
     companion object {
         private val currentColors = mutableSetOf<Color>()
 
@@ -14,7 +12,7 @@ interface Color {
          */
         fun valueOf(color: String): Color {
             val color = if (color.matches(Regex("^[A-F|\\d][A-F|\\d][A-F|\\d][A-F|\\d][A-F|\\d][A-F|\\d]$")))
-                HexColor(color) else BaseColor.valueOf(color.uppercase(Locale.getDefault()))
+                HexColor(color) else BaseColor.valueOf(color.uppercase())
 
             if (currentColors.contains(color)) {
                 throw IllegalArgumentException("Must be unique color.")
@@ -42,7 +40,7 @@ enum class BaseColor : Color {
     RED,
     BLUE,
     GREEN,
-    YEllOW,
+    YELLOW,
     BLACK,
     WHITE
 }
