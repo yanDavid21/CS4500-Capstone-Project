@@ -10,10 +10,9 @@ object PublicGameStateConverter {
             BoardConverter.serializeBoard(publicGameState.board),
             TileConverter.serializeTile(publicGameState.spareTile),
             publicGameState.publicPlayerData.map { (_, player) ->
-                PlayerConverter.serializePlayer(player)
-            }
-            
-
+                PlayerConverter.serializePublicPlayer(player)
+            },
+            ActionConverter.serializeAction(publicGameState.lastAction)
         )
     }
 }

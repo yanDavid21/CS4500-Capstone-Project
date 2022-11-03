@@ -3,6 +3,7 @@ package serialization.converters
 import Common.board.Coordinates
 import Common.player.Color
 import Common.player.PlayerData
+import Common.player.PublicPlayerData
 import Common.tile.treasure.Gem
 import Common.tile.treasure.Treasure
 import serialization.data.PlayerDTO
@@ -24,6 +25,14 @@ object PlayerConverter {
     }
 
     fun serializePlayer(player: PlayerData): PlayerDTO {
+        return PlayerDTO(
+            CoordinateConverter.toDto(player.currentPosition),
+            CoordinateConverter.toDto(player.homePosition),
+            player.color.toString()
+        )
+    }
+
+    fun serializePublicPlayer(player: PublicPlayerData): PlayerDTO {
         return PlayerDTO(
             CoordinateConverter.toDto(player.currentPosition),
             CoordinateConverter.toDto(player.homePosition),

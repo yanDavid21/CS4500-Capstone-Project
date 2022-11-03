@@ -11,6 +11,7 @@ import javafx.scene.layout.HBox
 import javafx.scene.layout.StackPane
 import javafx.scene.layout.VBox
 import serialization.converters.PublicGameStateConverter
+import serialization.data.StateDTO
 import java.io.File
 import java.io.FileWriter
 
@@ -68,13 +69,17 @@ class LocalStateObserver: ObserverMechanism {
 
             val serializedState = PublicGameStateConverter.serializeGameState(currentState)
 
-            val fileWriter = FileWriter(file)
-            val gson = GsonBuilder()
-                .serializeNulls()
-                .create()
-            fileWriter.write(gson.toJson(serializedState))
-            fileWriter.close()
+            writeStateToFile(file, serializedState)
         }
+    }
+
+    private fun writeStateToFile(file: File, serializedState: StateDTO) {
+        val fileWriter = FileWriter(file)
+        val gson = GsonBuilder()
+            .serializeNulls()
+            .create()
+        fileWriter.write(gson.toJson(serializedState))
+        fileWriter.close()
     }
 
 }
