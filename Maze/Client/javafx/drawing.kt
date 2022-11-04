@@ -9,6 +9,7 @@ import Common.board.RowPosition
 import Common.player.BaseColor
 import Common.player.HexColor
 import Common.tile.GameTile
+import Common.tile.treasure.Gem
 import javafx.geometry.Insets
 import javafx.geometry.Pos
 import javafx.scene.Node
@@ -24,6 +25,12 @@ import javafx.scene.text.Font
 import javafx.scene.text.Text
 import javafx.scene.text.TextAlignment
 import testing.TestUtils
+
+const val TILE_WIDTH = 100.0
+const val TILE_HEIGHT = 100.0
+const val IMAGE_WIDTH = TILE_WIDTH / 5
+const val BORDER_WIDTH = 5.0
+const val BASE_TILE_PADDING = 1.0
 
 /**
  * Draws a public game state. Including all the tiles with their gems, players and homes (if applicable) and
@@ -91,33 +98,25 @@ private fun drawRow(tiles: Array<GameTile>, rowPosition: RowPosition,  playerPos
     }
 }
 
+<<<<<<< HEAD
 fun drawTile(tile: GameTile, tileCoord: Coordinates?, playerColorAndPos: Map<Coordinates, List<Color>>,
+=======
+/**
+ * Draws a single tile with the avatars and/or homes on it.
+ */
+private fun drawTile(tile: GameTile, tileCoord: Coordinates?, playerColorAndPos: Map<Coordinates, List<Color>>,
+>>>>>>> 751654e... 6.6 - Finished gui, spare tile + cleaned up with purpose statements
              playerHomeToColor: Map<Coordinates, List<Color>>): StackPane {
-    val TILE_WIDTH = 100.0
-    val TILE_HEIGHT = 100.0
-    val IMAGE_WIDTH = TILE_WIDTH / 5
-    val BORDER_WIDTH = 5.0
-    val BASE_TILE_PADDING = 1.0
     val stack = StackPane()
     stack.padding = Insets(BASE_TILE_PADDING, BASE_TILE_PADDING, BASE_TILE_PADDING, BASE_TILE_PADDING)
-    val base = Rectangle()
-    base.width = TILE_WIDTH
-    base.height = TILE_HEIGHT
-    val gemOneImage = Image("gems/${tile.treasure.gem1.getImagePath()}",
-        IMAGE_WIDTH, IMAGE_WIDTH, true, false)
-    val gemTwoImage = Image("gems/${tile.treasure.gem2.getImagePath()}",
-        IMAGE_WIDTH, IMAGE_WIDTH, true, false)
-    val gemOneStack = StackPane(ImageView(gemOneImage))
-    gemOneStack.alignment = Pos.TOP_LEFT
-    val gemTwoStack = StackPane(ImageView(gemTwoImage))
-    gemTwoStack.alignment = Pos.BOTTOM_RIGHT
+    stack.alignment = Pos.CENTER
+    val base = getBaseTile()
+    val gemOneStack = getImageFromGem(tile.treasure.gem1, Pos.TOP_LEFT)
+    val gemTwoStack = getImageFromGem(tile.treasure.gem2, Pos.BOTTOM_RIGHT)
 
-    // border
+    // border if there is a home
     playerHomeToColor[tileCoord]?.let {
-        val background = Rectangle()
-        background.fill = Color.WHITE
-        background.width = TILE_WIDTH - BORDER_WIDTH
-        background.height = TILE_HEIGHT - BORDER_WIDTH
+        val background = getBackgroundOfTileForBorder()
         base.fill = it[0]
         stack.children.addAll(base, background)
     } ?: run {
@@ -125,27 +124,72 @@ fun drawTile(tile: GameTile, tileCoord: Coordinates?, playerColorAndPos: Map<Coo
         stack.children.add(base)
     }
 
+    val text = getPathAsTextComponent(tile)
+    stack.children.add(text)
+    playerColorAndPos[tileCoord]?.let {
+        addPlayerIconsToTile(it, stack)
+    }
+    return StackPane(stack, gemOneStack, gemTwoStack)
+}
 
+/**
+ * Gets the image of the given gem aligned in certain position.
+ */
+private fun getImageFromGem(gem: Gem, pos: Pos): StackPane {
+    val gemImage = Image("gems/${gem.getImagePath()}",
+        IMAGE_WIDTH, IMAGE_WIDTH, true, false)
+    val gemStack = StackPane(ImageView(gemImage))
+    gemStack.alignment = pos
+    gemStack.maxHeight = TILE_HEIGHT
+    gemStack.maxWidth = TILE_WIDTH
+    return gemStack
+}
+
+/**
+ * Gets the base rectangle to build the tile off of.
+ */
+private fun getBaseTile(): Rectangle {
+    val base = Rectangle()
+    base.width = TILE_WIDTH
+    base.height = TILE_HEIGHT
+    return base
+}
+
+/**
+ * Gets a plain white background used in junction with another square to create a pseudo-border.
+ */
+private fun getBackgroundOfTileForBorder(): Rectangle {
+    val background = Rectangle()
+    background.fill = Color.WHITE
+    background.width = TILE_WIDTH - BORDER_WIDTH
+    background.height = TILE_HEIGHT - BORDER_WIDTH
+    return background
+}
+
+/**
+ * Returns a text component rendering of the given tile.
+ */
+private fun getPathAsTextComponent(tile: GameTile): Text {
     val text = Text()
     text.text = tile.toString()
     text.font = Font.font(75.0)
     text.fill = Color.BLACK
     text.textAlignment = TextAlignment.CENTER
+    return text
+}
 
-    stack.children.add(text)
-    stack.alignment = Pos.CENTER
-
-    playerColorAndPos[tileCoord]?.let {
-        val initCircleSize = 25.0
-        val maxDifference = 5.0
-        var circleSize = initCircleSize
-        val difference = (initCircleSize / it.size).coerceAtMost(maxDifference)
-        it.forEach { color ->
-            val icon = Circle(circleSize)
-            icon.fill = color
-            stack.children.add(icon)
-            circleSize -= difference
-        }
+/**
+ * Given a stackpane, adds an icon for every color in the supplied list of colors
+ */
+private fun addPlayerIconsToTile(playerColors: List<Color>, stack: StackPane) {
+    val initCircleSize = 25.0
+    val maxDifference = 5.0
+    var circleSize = initCircleSize
+    val difference = (initCircleSize / playerColors.size).coerceAtMost(maxDifference)
+    playerColors.forEach { color ->
+        val icon = Circle(circleSize)
+        icon.fill = color
+        stack.children.add(icon)
+        circleSize -= difference
     }
-    return StackPane(stack, gemOneStack, gemTwoStack)
 }
